@@ -33,6 +33,12 @@ public class Segment implements Serializable{
 	//The steps that form the segment
 	private List<Step> steps;
 	
+	//Max velocity
+	private int maxVelocity;
+	
+	//Kilometric points
+	private int pkMin, pkMax;
+
 	/**
 	 * Default constructor. 
 	 */
@@ -45,6 +51,9 @@ public class Segment implements Serializable{
 		this.capacity = 0;
 		this.numberTracks = 0;
 		this.steps = new LinkedList<Step>();
+		this.maxVelocity = 0;
+		this.pkMin = 0;
+		this.pkMax = 0;
 	}
 	
 	/**
@@ -100,5 +109,17 @@ public class Segment implements Serializable{
 
 	public void setSteps(List<Step> steps) {
 		this.steps = steps;
+	}
+	
+	public int getMaxVelocity() {
+		return maxVelocity;
+	}
+
+	public int getPkMin() {
+		return pkMin;
+	}
+
+	public int getPkMax() {
+		return pkMax;
 	}
 }

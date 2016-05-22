@@ -161,7 +161,7 @@ public class CanvasWorld extends JFrame {
 //				g.setColor(Color.GRAY);
 //				g.fillOval(x - 8, y, 6, 6);
 //				g.fillOval(x + 2, y, 6, 6);
-//				
+				
 				//Duck
 				
 				//Body
@@ -177,7 +177,20 @@ public class CanvasWorld extends JFrame {
 				
 				//Eye
 				g.setColor(Color.BLACK);
-				g.fillOval(x - 2, y - 2, 2, 2);			
+				g.fillOval(x - 2, y - 2, 2, 2);
+				
+				//Feet
+				g.setStroke(new BasicStroke(1));
+
+				//Right foot
+				g.drawLine(x + 2, y + 3, x + 4, y + 5);
+				g.drawLine(x + 2, y + 3, x + 2, y + 6);
+				g.drawLine(x + 2, y + 3, x,     y + 5);
+				
+				//Left foot
+				g.drawLine(x - 3, y + 3, x - 1, y + 5);
+				g.drawLine(x - 3, y + 3, x - 3, y + 6);
+				g.drawLine(x - 3, y + 3, x - 6, y + 5);
 
 			}			
 		}

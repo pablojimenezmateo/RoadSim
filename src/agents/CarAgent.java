@@ -18,7 +18,7 @@ import environment.Map;
 import environment.Step;
 
 /**
- * This code represents a car mobile car.
+ * This code represents a mobile car.
  *
  */
 public class CarAgent extends Agent {
