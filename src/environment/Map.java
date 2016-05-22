@@ -125,6 +125,7 @@ public class Map {
 					
 					//Populate the map
 					Segment segment = new Segment(seg.getString("id"), origin, destination, seg.getDouble("length"), seg.getInt("capacity"), seg.getInt("numberTracks"));
+					System.out.println("SEGMENTO " + seg.getString("id"));
 					
 					if(origin != null){
 						origin.addOutSegment(segment);

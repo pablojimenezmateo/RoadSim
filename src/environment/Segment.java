@@ -4,6 +4,12 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import agents.SegmentAgent;
+import jade.core.Profile;
+import jade.core.ProfileImpl;
+import jade.wrapper.AgentController;
+import jade.wrapper.StaleProxyException;
+
 /**
  * Represents a section of a road in a single direction.
  * This section is only accessible from its origin and can only be left by its destination.
@@ -14,36 +20,39 @@ public class Segment implements Serializable{
 
 	//Unique id
 	private String id;
-	
+
 	//Where the segment is accessed from
 	private Intersection origin;
-	
+
 	//Where the segment is left
 	private Intersection destination;
-	
+
 	//Length in kilometers of the segment
 	private double length;
-	
+
 	//Capacity
 	private int capacity;
-	
+
 	//Number of tracks
 	private int numberTracks;
-	
+
 	//The steps that form the segment
 	private List<Step> steps;
-	
+
 	//Max velocity
 	private int maxVelocity;
-	
+
 	//Kilometric points
 	private int pkMin, pkMax;
+
+	//Segment agent
+	private SegmentAgent segmentAgent;
 
 	/**
 	 * Default constructor. 
 	 */
 	public Segment(){
-		
+
 		this.id = "";
 		this.origin = new Intersection();
 		this.destination = new Intersection();
@@ -55,7 +64,7 @@ public class Segment implements Serializable{
 		this.pkMin = 0;
 		this.pkMax = 0;
 	}
-	
+
 	/**
 	 * Constructor. 
 	 *
@@ -64,7 +73,7 @@ public class Segment implements Serializable{
 	 * @param  length The length of this {@link Segment} in Km.
 	 */
 	public Segment(String id, Intersection origin, Intersection destination, double length, int capacity, int numberTracks){
-		
+
 		this.id = id;
 		this.origin = origin;
 		this.destination = destination;
@@ -72,12 +81,41 @@ public class Segment implements Serializable{
 		this.capacity = capacity;
 		this.numberTracks = numberTracks;
 		this.steps = new LinkedList<Step>();
+
+		//Start the segment agent
+		if (this.id.equals("S-CV10-01asas")) {
+			System.out.println("DIOS SOY YOOOOOOOOOOOO");
+			//Get a hold on JADE runtime
+			jade.core.Runtime rt = jade.core.Runtime.instance();
+
+			//Exit the JVM when there are no more containers around
+			rt.setCloseVM(true);
+
+			//Create a profile
+			Profile profile = new ProfileImpl(null, 1099, null);
+
+			//Container that will hold the agents
+			jade.wrapper.AgentContainer mainContainer = rt.createMainContainer(profile);
+
+			//Create the agents
+			try {
+
+				AgentController agent = mainContainer.createNewAgent(this.id, "agents.SegmentAgent", new Object[]{this});
+
+				agent.start();
+
+			} catch (StaleProxyException e) {
+
+				System.out.println("Error starting " + this.id);
+				e.printStackTrace();
+			}
+		}
 	}
-	
+
 	public void addStep(Step step) {
 		this.steps.add(step);
 	}
-	
+
 	//Setters and getters
 	public String getId() {
 		return id;
@@ -110,7 +148,7 @@ public class Segment implements Serializable{
 	public void setSteps(List<Step> steps) {
 		this.steps = steps;
 	}
-	
+
 	public int getMaxVelocity() {
 		return maxVelocity;
 	}
@@ -121,5 +159,14 @@ public class Segment implements Serializable{
 
 	public int getPkMax() {
 		return pkMax;
+	}
+
+	public SegmentAgent getSegmentAgent() {
+		return segmentAgent;
+	}
+
+	public void setSegmentAgent(SegmentAgent segmentAgent) {
+		this.segmentAgent = segmentAgent;
+		this.segmentAgent.setSegment(this);
 	}
 }

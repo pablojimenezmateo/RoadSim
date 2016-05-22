@@ -1,4 +1,5 @@
 package agents;
+
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -6,7 +7,6 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -24,10 +24,10 @@ import environment.Step;
 public class CarAgent extends Agent {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	public static final int MAXWORLDX = 800;
 	public static final int MAXWORLDY = 695;
-	
+
 	private int x, y;
 	private int direction;
 	private int curentSpeed,maxSpeed;
@@ -40,14 +40,8 @@ public class CarAgent extends Agent {
 
 	protected void setup() {
 
-		//Read the map
-		try {
-			this.map = new Map("map/base");
-		} catch (IOException e1) {
-
-			System.out.println("Car agent couldn't open the map files.");
-			e1.printStackTrace();
-		}
+		//Get the map from an argument
+		this.map = (Map) this.getArguments()[0];
 
 		//It starts in a random intersection, and ends in a random intersection
 		String initialIntersection = this.map.getRandomIntersection();//this.map.getIntersectionByID("I-N340-01").getId();//this.map.getRandomIntersection();
@@ -61,21 +55,21 @@ public class CarAgent extends Agent {
 		//We get the shortest path from the origin to the destination
 		HashMap<Intersection, Intersection> dijks = map.shortestPathsFrom(initialIntersection);
 		this.graphicalPath = map.getGraphicalPath(dijks, map.getIntersectionByID(finalIntersection));
-		
+
 		//Debug
 		this.path = map.getPath(dijks, map.getIntersectionByID(finalIntersection));
-		
+
 		System.out.println("I am " + this.getLocalName() + " and I am doing this trip:");
-		
+
 		for(String inter: this.path){
-			
+
 			System.out.println(inter + " (" + this.map.getIntersectionByID(inter).getX() + ", " + this.map.getIntersectionByID(inter).getY() + ")");
 		}
-		
+
 		//Starting point
 		setX(map.getIntersectionByID(initialIntersection).getX());
 		setY(map.getIntersectionByID(initialIntersection).getY());
-		
+
 		//Speeds, currently the currentSpeed belongs [1, 7]
 		this.maxSpeed = 120;
 		this.curentSpeed = rnd.nextInt((7 - 5) + 1) + 5;
@@ -87,7 +81,7 @@ public class CarAgent extends Agent {
 		dfd.addServices(sd);
 
 		DFAgentDescription[] result = null;
-		
+
 		try {
 			result = DFService.searchUntilFound(
 					this, getDefaultDF(), dfd, null, 5000);
@@ -108,7 +102,7 @@ public class CarAgent extends Agent {
 		// Lanza BAgMovil despues de esperar 1000 mseg
 		addBehaviour(new CarBehaviour(this, 1000));	
 	}
-	
+
 	//Setters and getters
 	public int getX() {
 		return x;
@@ -149,7 +143,7 @@ public class CarAgent extends Agent {
 	public void setMaxSpeed(int maxSpeed) {
 		this.maxSpeed = maxSpeed;
 	}
-	
+
 	public DFAgentDescription getInterfaceAgent() {
 		return interfaceAgent;
 	}
@@ -161,26 +155,26 @@ public class CarAgent extends Agent {
 	public List<Step> getGraphicalPath() {
 		return graphicalPath;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
 
-//	/*
-//	 * Este comportamiento gestiona los mensajes que le lleguen respecto a que
-//	 *   agente sensor (o el agente interfaz si ningun sensor es capaz) es con el
-//	 *   que tiene que comunicarse para enviarle sus posiciones.
-//	 */
-//	private class BRecibeNuevoAgenteSensor extends CyclicBehaviour {
-//
-//		private static final long serialVersionUID = 1L;
-//		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-//		@Override
-//		public void action() {
-//			ACLMessage msg = receive(mt);
-//			if (msg != null) 
-//				sensorAgent = msg.getContent();			
-//			else block();
-//		}
-//	}
+	//	/*
+	//	 * Este comportamiento gestiona los mensajes que le lleguen respecto a que
+	//	 *   agente sensor (o el agente interfaz si ningun sensor es capaz) es con el
+	//	 *   que tiene que comunicarse para enviarle sus posiciones.
+	//	 */
+	//	private class BRecibeNuevoAgenteSensor extends CyclicBehaviour {
+	//
+	//		private static final long serialVersionUID = 1L;
+	//		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+	//		@Override
+	//		public void action() {
+	//			ACLMessage msg = receive(mt);
+	//			if (msg != null) 
+	//				sensorAgent = msg.getContent();			
+	//			else block();
+	//		}
+	//	}
 }

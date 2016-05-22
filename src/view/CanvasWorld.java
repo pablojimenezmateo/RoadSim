@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -23,18 +22,20 @@ public class CanvasWorld extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private PanelRadar contentPane;
-	Map map = null;
+	private Map map = null;
 
 	private String interfaceAgent;
 	public static int MAXWORLDX, MAXWORLDY;
 
-	public CanvasWorld (String interfaceAgent, int maxX, int maxY) {
+	public CanvasWorld (String interfaceAgent, int maxX, int maxY, Map map) {
 		super();
 
 		MAXWORLDX = maxX;
 		MAXWORLDY = maxY;
 
 		this.interfaceAgent = interfaceAgent;
+		
+		this.map = map;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -45,17 +46,7 @@ public class CanvasWorld extends JFrame {
 
 		//Show the frame
 		setVisible(true);
-
-		//Load the map
-		try {
-
-			map = new Map("map/base");
-		} catch (IOException e) {
-
-			System.out.println("Error reading the maps file.");
-			e.printStackTrace();
-		}
-
+		
 		repaint();
 	}
 
@@ -162,7 +153,7 @@ public class CanvasWorld extends JFrame {
 //				g.fillOval(x - 8, y, 6, 6);
 //				g.fillOval(x + 2, y, 6, 6);
 				
-				//Duck
+				//Chicken
 				
 				//Body
 				g.setColor(Color.YELLOW);
