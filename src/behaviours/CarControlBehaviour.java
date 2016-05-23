@@ -35,36 +35,25 @@ public class CarControlBehaviour extends Behaviour {
 		ACLMessage msg = myAgent.receive(mtCarControl);
 
 		if (msg != null) { //There is an agent
-
-			//It can either be a registration or a deregistration
-			if (msg.getContent().equals("register")) { //Register car
-
-				try {
-
-					this.agent.addCar((CarAgent) msg.getContentObject());
-
-				} catch (UnreadableException e) {
-
-					System.out.println("Error getting the car object.");
-					e.printStackTrace();
-				}
-
-			} else if (msg.getContent().equals("deregister")) {
-
-				try {
-
-					this.agent.removeCar((CarAgent) msg.getContentObject());
-
-				} catch (UnreadableException e) {
-
-					System.out.println("Error getting the car object.");
-					e.printStackTrace();
-				}
-
-			} else { //Error
-
-				//TODO: Throw an exception
+			
+			CarAgent agent = null;
+			
+			try {
+				agent = (CarAgent) msg.getContentObject();
+			} catch (UnreadableException e) {
+				
 				System.out.println("Error in the communication with the segment agent " + this.agent.getSegment().getId());
+				System.out.println("Error deserializing the car.");
+				e.printStackTrace();
+			}
+			
+			if (!this.agent.containsAgent(agent)) { //Register
+				
+				this.agent.addCar(agent);
+				
+			} else { //Deregister
+				
+				this.agent.removeCar(agent);
 			}
 		}
 		
@@ -73,9 +62,8 @@ public class CarControlBehaviour extends Behaviour {
 		// -Update car's Dijkstra
 		if (this.agent.getCars().size() > 0){
 
-			System.out.println("I am segment " + this.agent.getSegment().getId() + " and there are " + this.agent.getCars().size() + " cars on me! :D");
+			//System.out.println("I am segment " + this.agent.getSegment().getId() + " and there are " + this.agent.getCars().size() + " cars on me! :D");
 		}
-
 	}
 
 	@Override

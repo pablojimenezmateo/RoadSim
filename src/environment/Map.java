@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -18,8 +19,10 @@ import org.json.JSONObject;
  * Class that holds the representation of a map.
  *
  */
-public class Map {
+public class Map implements Serializable {
 
+	private static final long serialVersionUID = 6521810168990354805L;
+	
 	@SuppressWarnings("unused")
 	private Intersection start;
 	private Integer intersectionCount;
@@ -27,7 +30,7 @@ public class Map {
 	private List<Intersection> intersections;
 
 	//The container where the segment agents will be created
-	private jade.wrapper.AgentContainer mainContainer;
+	private transient jade.wrapper.AgentContainer mainContainer;
 
 	/**
 	 * Constructor that builds a Map from a folder.
@@ -151,7 +154,7 @@ public class Map {
 					String idSegment = step.getString("idSegment");
 
 					//Create the step
-					Step s = new Step(step.getString("id"), idSegment, step.getJSONObject("originCoordinates").getInt("x"), step.getJSONObject("originCoordinates").getInt("y"), step.getJSONObject("destinationCoordinates").getInt("x"), step.getJSONObject("destinationCoordinates").getInt("y"));
+					Step s = new Step(step.getString("id"), segmentsAux.get(idSegment), step.getJSONObject("originCoordinates").getInt("x"), step.getJSONObject("originCoordinates").getInt("y"), step.getJSONObject("destinationCoordinates").getInt("x"), step.getJSONObject("destinationCoordinates").getInt("y"));
 
 					//Add the steps to the segment
 					segmentsAux.get(idSegment).addStep(s);				

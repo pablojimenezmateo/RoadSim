@@ -1,18 +1,21 @@
 package environment;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
  * This class represents a step in a polyline of a segment.
  *
  */
-public class Step {
+public class Step implements Serializable {
+
+	private static final long serialVersionUID = 111995236759060625L;
 
 	//Unique id
 	private String id;
-	
-	//Id of the segment it belongs to
-	private String segmentId;
+		
+	//Segment it belongs to
+	private Segment segment;
 	
 	//Coordinates of the line
 	private int originX, originY, destinationX, destinationY;
@@ -21,7 +24,7 @@ public class Step {
 	public Step(){
 		
 		this.id = UUID.randomUUID().toString();
-		this.segmentId = "";
+		this.segment = null;
 		this.originX = 0;
 		this.originY = 0;
 		this.destinationX = 0;
@@ -29,10 +32,10 @@ public class Step {
 	}
 	
 	//Constructor
-	public Step(String id, String segmentId, int originX, int originY, int destinationX, int destinationY){
+	public Step(String id, Segment segment, int originX, int originY, int destinationX, int destinationY){
 		
 		this.id = id;
-		this.segmentId = segmentId;
+		this.segment = segment;
 		this.originX = originX;
 		this.originY = originY;
 		this.destinationX = destinationX;
@@ -48,12 +51,12 @@ public class Step {
 		this.id = id;
 	}
 
-	public String getSegmentId() {
-		return segmentId;
+	public Segment getSegment() {
+		return segment;
 	}
 
-	public void setSegmentId(String segmentId) {
-		this.segmentId = segmentId;
+	public void setSegment(Segment segment) {
+		this.segment = segment;
 	}
 
 	public int getOriginX() {

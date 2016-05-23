@@ -64,7 +64,30 @@ public class SegmentAgent extends Agent {
 	
 	public void removeCar(CarAgent car) {
 		
-		this.cars.remove(car);
+		for (CarAgent c: this.cars){
+			
+			if (c.getId().equals(car.getId())){
+				
+				this.cars.remove(c);
+				break;
+			}
+		}
+	}
+	
+	public boolean containsAgent(CarAgent car) {
+		
+		boolean ret = false;
+		
+		for (CarAgent c: this.cars){
+			
+			if (c.getId().equals(car.getId())){
+				
+				ret = true;
+				break;
+			}
+		}
+		
+		return ret;
 	}
 	
 	//Getters and setters

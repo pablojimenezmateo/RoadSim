@@ -48,7 +48,7 @@ public class Segment implements Serializable{
 
 	//The container where the agents will be created
 	@SuppressWarnings("unused")
-	private jade.wrapper.AgentContainer mainContainer;
+	private transient jade.wrapper.AgentContainer mainContainer;
 
 	/**
 	 * Default constructor. 

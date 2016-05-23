@@ -94,8 +94,8 @@ public class CarAgent extends Agent {
 		msg.setConversationId("Car");
 		send(msg);	
 
-		//Runs the behaviour
-		addBehaviour(new CarBehaviour(this));	
+		//Runs the agent
+		addBehaviour(new CarBehaviour(this, 1000));	
 	}
 
 	//Setters and getters

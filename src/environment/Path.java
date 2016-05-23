@@ -1,9 +1,12 @@
 package environment;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Path {
+public class Path implements Serializable {
 	
+	private static final long serialVersionUID = -5385591092178183277L;
+
 	//The list of intersections of this path
 	List<String> intersectionPath;
 	
