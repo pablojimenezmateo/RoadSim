@@ -25,24 +25,21 @@ public class Map {
 	private Integer intersectionCount;
 	private Integer segmentCount;
 	private List<Intersection> intersections;
-
-	/**
-	 * Default constructor.
-	 * 
-	 * @throws IOException
-	 */
-	public Map() throws IOException{
-
-		this("map/base");
-	}
+	
+	//The container where the segment agents will be created
+	private jade.wrapper.AgentContainer mainContainer;
 
 	/**
 	 * Constructor that builds a Map from a folder.
 	 * 
 	 * @param folder Folder where the files are stored.
 	 */
-	public Map(String folder) throws IOException{
+	public Map(String folder, jade.wrapper.AgentContainer mainContainer) throws IOException{
 
+		//For the agents
+		this.mainContainer = mainContainer;		
+		
+		//Read the files
 		this.intersectionCount = 0;
 		this.segmentCount = 0;
 
@@ -124,8 +121,7 @@ public class Map {
 					}
 					
 					//Populate the map
-					Segment segment = new Segment(seg.getString("id"), origin, destination, seg.getDouble("length"), seg.getInt("capacity"), seg.getInt("numberTracks"));
-					System.out.println("SEGMENTO " + seg.getString("id"));
+					Segment segment = new Segment(seg.getString("id"), origin, destination, seg.getDouble("length"), seg.getInt("capacity"), seg.getInt("numberTracks"), this.mainContainer);
 					
 					if(origin != null){
 						origin.addOutSegment(segment);

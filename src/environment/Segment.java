@@ -5,8 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import agents.SegmentAgent;
-import jade.core.Profile;
-import jade.core.ProfileImpl;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 
@@ -48,6 +46,10 @@ public class Segment implements Serializable{
 	//Segment agent
 	private SegmentAgent segmentAgent;
 
+	//The container where the agents will be created
+	@SuppressWarnings("unused")
+	private jade.wrapper.AgentContainer mainContainer;
+
 	/**
 	 * Default constructor. 
 	 */
@@ -63,6 +65,7 @@ public class Segment implements Serializable{
 		this.maxVelocity = 0;
 		this.pkMin = 0;
 		this.pkMax = 0;
+		this.mainContainer = null;
 	}
 
 	/**
@@ -72,7 +75,7 @@ public class Segment implements Serializable{
 	 * @param  destination {@link Intersection} where this {@link Segment} ends.
 	 * @param  length The length of this {@link Segment} in Km.
 	 */
-	public Segment(String id, Intersection origin, Intersection destination, double length, int capacity, int numberTracks){
+	public Segment(String id, Intersection origin, Intersection destination, double length, int capacity, int numberTracks, jade.wrapper.AgentContainer mainContainer){
 
 		this.id = id;
 		this.origin = origin;
@@ -81,34 +84,21 @@ public class Segment implements Serializable{
 		this.capacity = capacity;
 		this.numberTracks = numberTracks;
 		this.steps = new LinkedList<Step>();
+		this.mainContainer = mainContainer;
 
 		//Start the segment agent
-		if (this.id.equals("S-CV10-01asas")) {
-			System.out.println("DIOS SOY YOOOOOOOOOOOO");
-			//Get a hold on JADE runtime
-			jade.core.Runtime rt = jade.core.Runtime.instance();
 
-			//Exit the JVM when there are no more containers around
-			rt.setCloseVM(true);
+		//Create the agents
+		try {
 
-			//Create a profile
-			Profile profile = new ProfileImpl(null, 1099, null);
+			AgentController agent = mainContainer.createNewAgent(this.id, "agents.SegmentAgent", new Object[]{this});
 
-			//Container that will hold the agents
-			jade.wrapper.AgentContainer mainContainer = rt.createMainContainer(profile);
+			agent.start();
 
-			//Create the agents
-			try {
+		} catch (StaleProxyException e) {
 
-				AgentController agent = mainContainer.createNewAgent(this.id, "agents.SegmentAgent", new Object[]{this});
-
-				agent.start();
-
-			} catch (StaleProxyException e) {
-
-				System.out.println("Error starting " + this.id);
-				e.printStackTrace();
-			}
+			System.out.println("Error starting " + this.id);
+			e.printStackTrace();
 		}
 	}
 

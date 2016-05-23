@@ -57,14 +57,14 @@ public class CarAgent extends Agent {
 		this.graphicalPath = map.getGraphicalPath(dijks, map.getIntersectionByID(finalIntersection));
 
 		//Debug
-		this.path = map.getPath(dijks, map.getIntersectionByID(finalIntersection));
-
-		System.out.println("I am " + this.getLocalName() + " and I am doing this trip:");
-
-		for(String inter: this.path){
-
-			System.out.println(inter + " (" + this.map.getIntersectionByID(inter).getX() + ", " + this.map.getIntersectionByID(inter).getY() + ")");
-		}
+//		this.path = map.getPath(dijks, map.getIntersectionByID(finalIntersection));
+//
+//		System.out.println("I am " + this.getLocalName() + " and I am doing this trip:");
+//
+//		for(String inter: this.path){
+//
+//			System.out.println(inter + " (" + this.map.getIntersectionByID(inter).getX() + ", " + this.map.getIntersectionByID(inter).getY() + ")");
+//		}
 
 		//Starting point
 		setX(map.getIntersectionByID(initialIntersection).getX());

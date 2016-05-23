@@ -16,28 +16,19 @@ public class Main {
 
 		Map map = null;
 
-		//Load the map
-		try {
-
-			map = new Map("map/base");
-		} catch (IOException e) {
-
-			System.out.println("Error reading the maps file.");
-			e.printStackTrace();
-		}
-
 		//Get a hold on JADE runtime
 		jade.core.Runtime rt = jade.core.Runtime.instance();
 
 		//Exit the JVM when there are no more containers around
 		rt.setCloseVM(true);
 
-		//Create a profile
+		//Create a profile for the main container
 		Profile profile = new ProfileImpl(null, 1099, null);
+		profile.setParameter(Profile.CONTAINER_NAME, "Main container");
 
 		//Container that will hold the agents
 		jade.wrapper.AgentContainer mainContainer = rt.createMainContainer(profile);
-
+		
 		//Start RMA
 		try {
 			AgentController agent = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", new Object[0]);
@@ -49,7 +40,24 @@ public class Main {
 			System.out.println("Error starting the rma agent");
 			e1.printStackTrace();
 		}
+		
+		//Load the map
+		//We will use a container only for the segments
+		profile = new ProfileImpl(null, 1099, null);
+		profile.setParameter(Profile.CONTAINER_NAME, "Segment container");
 
+		//Container that will hold the agents
+		jade.wrapper.AgentContainer segmentContainer = rt.createAgentContainer(profile);
+		
+		try {
+
+			map = new Map("map/base", segmentContainer);
+		} catch (IOException e) {
+
+			System.out.println("Error reading the maps file.");
+			e.printStackTrace();
+		}
+		
 		//Create the agents
 		//Interface
 		try {
@@ -65,11 +73,18 @@ public class Main {
 		}
 
 		//Cars
+		//Create a profile for the car container
+		profile = new ProfileImpl(null, 1099, null);
+		profile.setParameter(Profile.CONTAINER_NAME, "Car container");
+
+		//Container that will hold the agents
+		jade.wrapper.AgentContainer carContainer = rt.createAgentContainer(profile);
+		
 		for (int i=0; i<numberOfCars; i++){
 			
 			try {
 
-				AgentController agent = mainContainer.createNewAgent("car" + Integer.toString(i), "agents.CarAgent", new Object[]{map});
+				AgentController agent = carContainer.createNewAgent("car" + Integer.toString(i), "agents.CarAgent", new Object[]{map});
 
 				agent.start();
 

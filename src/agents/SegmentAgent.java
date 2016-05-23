@@ -53,9 +53,7 @@ public class SegmentAgent extends Agent {
 		
 		CarControlBehaviour b = new CarControlBehaviour(this);
 		
-		addBehaviour(b);
-		
-		System.out.println("Me creo " + this.segment.getId());
+		addBehaviour(b);		
 	}
 
 	//Adds a car to this segment
