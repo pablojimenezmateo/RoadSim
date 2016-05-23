@@ -7,15 +7,13 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
 import behaviours.CarBehaviour;
-import environment.Intersection;
 import environment.Map;
-import environment.Step;
+import environment.Path;
+import environment.Segment;
 
 /**
  * This code represents a mobile car.
@@ -35,8 +33,8 @@ public class CarAgent extends Agent {
 	private DFAgentDescription interfaceAgent;
 	private Random rnd = new Random();
 	private Map map;
-	private List<Step> graphicalPath;
-	private List<String> path;
+	private Path path;
+	private Segment previousSegment;
 
 	protected void setup() {
 
@@ -44,24 +42,21 @@ public class CarAgent extends Agent {
 		this.map = (Map) this.getArguments()[0];
 
 		//It starts in a random intersection, and ends in a random intersection
-		String initialIntersection = this.map.getRandomIntersection();//this.map.getIntersectionByID("I-N340-01").getId();//this.map.getRandomIntersection();
-		String finalIntersection = this.map.getRandomIntersection();//this.map.getIntersectionByID("I-CS22-01").getId();//this.map.getRandomIntersection();
+		String initialIntersection = this.map.getRandomIntersection();
+		String finalIntersection = this.map.getRandomIntersection();
 
 		//Origin an destination must be different
 		while(initialIntersection.equals(finalIntersection)){
 			finalIntersection = this.map.getRandomIntersection();
 		}
 
-		//We get the shortest path from the origin to the destination
-		HashMap<Intersection, Intersection> dijks = map.shortestPathsFrom(initialIntersection);
-		this.graphicalPath = map.getGraphicalPath(dijks, map.getIntersectionByID(finalIntersection));
+		//We get the shortest path from the origin to the destination	
+		this.path = map.getPath(initialIntersection, finalIntersection);
 
 		//Debug
-//		this.path = map.getPath(dijks, map.getIntersectionByID(finalIntersection));
-//
 //		System.out.println("I am " + this.getLocalName() + " and I am doing this trip:");
 //
-//		for(String inter: this.path){
+//		for(String inter: this.path.getIntersectionPath()){
 //
 //			System.out.println(inter + " (" + this.map.getIntersectionByID(inter).getX() + ", " + this.map.getIntersectionByID(inter).getY() + ")");
 //		}
@@ -99,8 +94,8 @@ public class CarAgent extends Agent {
 		msg.setConversationId("Car");
 		send(msg);	
 
-		// Lanza BAgMovil despues de esperar 1000 mseg
-		addBehaviour(new CarBehaviour(this, 1000));	
+		//Runs the behaviour
+		addBehaviour(new CarBehaviour(this));	
 	}
 
 	//Setters and getters
@@ -152,12 +147,20 @@ public class CarAgent extends Agent {
 		return map;
 	}
 
-	public List<Step> getGraphicalPath() {
-		return graphicalPath;
+	public Path getPath() {
+		return path;
 	}
 
 	public String getId() {
 		return id;
+	}
+
+	public Segment getPreviousSegment() {
+		return previousSegment;
+	}
+
+	public void setPreviousSegment(Segment previousSegment) {
+		this.previousSegment = previousSegment;
 	}
 
 	//	/*

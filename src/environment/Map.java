@@ -25,7 +25,7 @@ public class Map {
 	private Integer intersectionCount;
 	private Integer segmentCount;
 	private List<Intersection> intersections;
-	
+
 	//The container where the segment agents will be created
 	private jade.wrapper.AgentContainer mainContainer;
 
@@ -38,7 +38,7 @@ public class Map {
 
 		//For the agents
 		this.mainContainer = mainContainer;		
-		
+
 		//Read the files
 		this.intersectionCount = 0;
 		this.segmentCount = 0;
@@ -59,7 +59,7 @@ public class Map {
 			}else if(files[i].getName().equals("segments")){
 
 				segmentsReader = new BufferedReader(new FileReader(files[i].getAbsolutePath()));
-				
+
 			}else if(files[i].getName().equals("steps")){
 
 				stepsReader = new BufferedReader(new FileReader(files[i].getAbsolutePath()));
@@ -75,7 +75,7 @@ public class Map {
 
 				//This will be used later to append the segments in an efficient way
 				HashMap<String, Intersection> intersectionsAux = new HashMap<String, Intersection>();
-				
+
 				String line = intersectionsReader.readLine();
 
 				//Auxiliar structure
@@ -85,21 +85,21 @@ public class Map {
 				while(line != null){
 
 					JSONObject inter = new JSONObject(line);
-					
+
 					Intersection intersection = new Intersection(inter.getString("id"), inter.getJSONObject("coordinates").getInt("x"), inter.getJSONObject("coordinates").getInt("y"));
-					
+
 					this.intersections.add(intersection);
 					intersectionsAux.put(inter.getString("id"), intersection);
 
 					line = intersectionsReader.readLine();
 					this.intersectionCount++;
 				}
-				
+
 				line = segmentsReader.readLine();
 
 				//This will be used to add the steps later
 				HashMap<String, Segment> segmentsAux = new HashMap<String, Segment>();
-				
+
 				//Read all the segments				
 				while(line != null){
 
@@ -107,7 +107,7 @@ public class Map {
 
 					Intersection origin = null;
 					Intersection destination = null;
-					
+
 					//Origin
 					if(!seg.getString("origin").equals("null")){
 
@@ -119,10 +119,10 @@ public class Map {
 
 						destination = intersectionsAux.get(seg.getString("destination"));
 					}
-					
+
 					//Populate the map
 					Segment segment = new Segment(seg.getString("id"), origin, destination, seg.getDouble("length"), seg.getInt("capacity"), seg.getInt("numberTracks"), this.mainContainer);
-					
+
 					if(origin != null){
 						origin.addOutSegment(segment);
 					}
@@ -130,18 +130,18 @@ public class Map {
 					if(destination != null){
 						destination.addInSegment(segment);
 					}
-					
+
 					segmentsAux.put(segment.getId(), segment);
-					
+
 					line = segmentsReader.readLine();
 					this.segmentCount++;
 				}
 
 				this.start = this.intersections.get(0);
-				
+
 				//Read all the steps
 				line = stepsReader.readLine();
-				
+
 				//Read all the segments				
 				while(line != null){
 
@@ -149,10 +149,10 @@ public class Map {
 
 					//The segment the step belongs to
 					String idSegment = step.getString("idSegment");
-					
+
 					//Create the step
 					Step s = new Step(step.getString("id"), idSegment, step.getJSONObject("originCoordinates").getInt("x"), step.getJSONObject("originCoordinates").getInt("y"), step.getJSONObject("destinationCoordinates").getInt("x"), step.getJSONObject("destinationCoordinates").getInt("y"));
-					
+
 					//Add the steps to the segment
 					segmentsAux.get(idSegment).addStep(s);				
 
@@ -202,16 +202,16 @@ public class Map {
 		while(!q.isEmpty()){
 
 			Intersection u = minDistance(dist, q);
-						
+
 			q.remove(u);
 
 			for(Intersection v: getNeighbours(u)){ //Each neighbour
 
 				if(v == null){
-					
+
 					break;
 				}
-				
+
 				double alt = dist.get(u) + getLenghtToNeighbour(u, v);
 
 				if(alt < dist.get(v)){
@@ -234,7 +234,7 @@ public class Map {
 	 * @return
 	 */
 	public double getDistance(HashMap<Intersection, Intersection> prev, String destination){
-		
+
 		return this.getDistance(prev, this.getIntersectionByID(destination));
 	}
 
@@ -253,58 +253,178 @@ public class Map {
 		Intersection u = destination;
 
 		while(dijks.get(u) != null){
-			
+
 			ret += this.getLenghtToNeighbour(u, dijks.get(u));
 			u = dijks.get(u);
 		}
-		
+
 		return ret;
 	}
-	
+
 	/**
-	 * Returns the shortest path to a destination.
+	 * Returns the shortest intersection path to a destination.
 	 * 
 	 * @param dijks
 	 * @param destination
 	 * @return
 	 */
-	public List<String> getPath(HashMap<Intersection, Intersection> dijks, Intersection destination){
+	public List<String> getIntersectionPath(HashMap<Intersection, Intersection> dijks, Intersection destination){
 
 		ArrayList<String> ret = new ArrayList<String>();
-		
+
 		Intersection u = destination;
 
 		while(dijks.get(u) != null){
-			
+
 			ret.add(0, dijks.get(u).getId());
 			u = dijks.get(u);
 		}
-		
+
 		ret.add(ret.size(), destination.getId());
-		
+
 		return ret;
 	}
-	
+
+	/**
+	 * Returns the shortest graphical path to a destination.
+	 * 
+	 * @param dijks
+	 * @param destination
+	 * @return
+	 */
 	public List<Step> getGraphicalPath(HashMap<Intersection, Intersection> dijks, Intersection destination){
-		
-		List<String> path = this.getPath(dijks, destination);
-				
+
+		List<String> path = this.getIntersectionPath(dijks, destination);
+
 		List<Step> graphicalPath = new LinkedList<Step>();
-		
+
 		for( int i=0; i<path.size()-1; i++){
-						
+
 			Intersection in = this.getIntersectionByID(path.get(i));
-						
+
 			for(Segment seg: in.getOutSegments()){
-				
+
 				if (seg.getDestination().getId().equals(path.get(i+1))){
-				
+
 					graphicalPath.addAll(seg.getSteps());
 				}
 			}
 		}
-		
+
 		return graphicalPath;
+	}
+
+	/**
+	 * Returns the shortest segment path to a destination.
+	 * 
+	 * @param dijks
+	 * @param destination
+	 * @return
+	 */
+	public List<Segment> getSegmentPath(HashMap<Intersection, Intersection> dijks, Intersection destination){
+
+		List<String> path = this.getIntersectionPath(dijks, destination);
+
+		List<Segment> segmentPath = new LinkedList<Segment>();
+
+		for( int i=0; i<path.size()-1; i++){
+
+			Intersection in = this.getIntersectionByID(path.get(i));
+
+			for(Segment seg: in.getOutSegments()){
+
+				if (seg.getDestination().getId().equals(path.get(i+1))){
+
+					segmentPath.add(seg);
+				}
+			}
+		}
+		
+		return segmentPath;
+	}
+	
+	/**
+	 * Returns the shortest graphical path to a destination.
+	 * 
+	 * @param dijks
+	 * @param destination
+	 * @param path
+	 * @return
+	 */
+	public List<Step> getGraphicalPath(HashMap<Intersection, Intersection> dijks, Intersection destination, List<String> path){
+
+		path = this.getIntersectionPath(dijks, destination);
+
+		List<Step> graphicalPath = new LinkedList<Step>();
+
+		for( int i=0; i<path.size()-1; i++){
+
+			Intersection in = this.getIntersectionByID(path.get(i));
+
+			for(Segment seg: in.getOutSegments()){
+
+				if (seg.getDestination().getId().equals(path.get(i+1))){
+
+					graphicalPath.addAll(seg.getSteps());
+				}
+			}
+		}
+
+		return graphicalPath;
+	}
+	
+	/**
+	 * Returns the shortest segment path to a destination.
+	 * 
+	 * @param dijks
+	 * @param destination
+	 * @param path
+	 * @return
+	 */
+	public List<Segment> getSegmentPath(HashMap<Intersection, Intersection> dijks, Intersection destination, List<String> path){
+
+		path = this.getIntersectionPath(dijks, destination);
+
+		List<Segment> segmentPath = new LinkedList<Segment>();
+
+		for( int i=0; i<path.size()-1; i++){
+
+			Intersection in = this.getIntersectionByID(path.get(i));
+
+			for(Segment seg: in.getOutSegments()){
+
+				if (seg.getDestination().getId().equals(path.get(i+1))){
+
+					segmentPath.add(seg);
+				}
+			}
+		}
+		
+		return segmentPath;
+	}
+	
+	/**
+	 * This method calculates all the different ways of representing a path.
+	 * 
+	 * @param initialIntersection
+	 * @param finalIntersection
+	 * @return
+	 */
+	public Path getPath(String initialIntersection, String finalIntersection) {
+		
+		//Calculate dijkstra
+		HashMap<Intersection, Intersection> dijks = this.shortestPathsFrom(initialIntersection);
+		
+		//Calculate the intersection path
+		List<String> intersectionPath = this.getIntersectionPath(dijks, this.getIntersectionByID(finalIntersection));
+		
+		//Calculate the graphical path
+		List<Step> graphicalPath = this.getGraphicalPath(dijks, this.getIntersectionByID(finalIntersection), intersectionPath);
+		
+		//Calculate the segment path
+		List<Segment> segmentPath = this.getSegmentPath(dijks, this.getIntersectionByID(finalIntersection), intersectionPath);
+		
+		return new Path(intersectionPath, graphicalPath, segmentPath);
 	}
 
 	private Intersection minDistance(HashMap<Intersection, Double> dist, Queue<Intersection> queue){
@@ -329,7 +449,7 @@ public class Map {
 	private List<Intersection> getNeighbours(Intersection intersection){
 
 		List<Intersection> ret = new ArrayList<Intersection>();
-				
+
 		for(Segment segment: intersection.getOutSegments()){
 
 			ret.add(segment.getDestination());
@@ -375,27 +495,27 @@ public class Map {
 
 		return ret;
 	}
-	
+
 	/**
 	 * Returns a random valid intersection id
 	 * 
 	 * @return
 	 */
 	public String getRandomIntersection(){
-		
+
 		Random rand = new Random();
 		int randomNum = rand.nextInt(this.intersectionCount);
-		
+
 		return this.intersections.get(randomNum).getId();
 	}
-	
+
 	/**
 	 * Returns the list with the intersections
 	 * 
 	 * @return The Intersection list
 	 */
 	public List<Intersection> getIntersections(){
-		
+
 		return this.intersections;
 	}
 }
