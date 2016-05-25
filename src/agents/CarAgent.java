@@ -88,7 +88,7 @@ public class CarAgent extends Agent {
 		this.id = UUID.randomUUID().toString();
 
 		//We notify the interface about the new car
-		ACLMessage msg = new ACLMessage(ACLMessage.INFORM_REF);
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.addReceiver(interfaceAgent.getName());
 		msg.setContent("x="+this.x+"y="+this.y+"id="+this.id);
 		msg.setConversationId("Car");

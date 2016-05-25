@@ -5,11 +5,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
 import environment.Intersection;
@@ -17,15 +20,18 @@ import environment.Map;
 import environment.Segment;
 import environment.Step;
 
-public class CanvasWorld extends JFrame {
+public class CanvasWorld extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
+	private final int FPS = 40;
 
 	private PanelRadar contentPane;
 	private Map map = null;
 
 	private String interfaceAgent;
 	public static int MAXWORLDX, MAXWORLDY;
+	
+	private Timer timer = new Timer(1000/this.FPS, this);
 
 	public CanvasWorld (String interfaceAgent, int maxX, int maxY, Map map) {
 		super();
@@ -47,7 +53,7 @@ public class CanvasWorld extends JFrame {
 		//Show the frame
 		setVisible(true);
 		
-		repaint();
+		this.timer.start();
 	}
 
 	//Adds a new car to the GUI
@@ -93,8 +99,6 @@ public class CanvasWorld extends JFrame {
 					break;
 				}
 			}
-
-			repaint();
 		}
 
 		public void paint(Graphics gi) {
@@ -123,7 +127,7 @@ public class CanvasWorld extends JFrame {
 			for (Intersection in : map.getIntersections()) {
 
 				g.setColor(Color.RED);
-				g.fillOval(in.getX(), in.getY(), 5, 5);
+				g.fillOval(in.getX()-2, in.getY()-2, 4, 4);
 				
 				//Draw the names of the intersections
 				//				g.setColor(Color.black);	
@@ -172,17 +176,38 @@ public class CanvasWorld extends JFrame {
 				
 				//Feet
 				g.setStroke(new BasicStroke(1));
-
-				//Right foot
-				g.drawLine(x + 2, y + 3, x + 4, y + 5);
-				g.drawLine(x + 2, y + 3, x + 2, y + 6);
-				g.drawLine(x + 2, y + 3, x,     y + 5);
 				
-				//Left foot
-				g.drawLine(x - 3, y + 3, x - 1, y + 5);
-				g.drawLine(x - 3, y + 3, x - 3, y + 6);
-				g.drawLine(x - 3, y + 3, x - 6, y + 5);
-
+				//Make the walking animation
+				boolean rightStep = false;;
+				
+				if(Math.random() < 0.5) {
+				    rightStep = true;
+				}
+				
+				if (rightStep) {
+					
+					//Right foot
+					g.drawLine(x + 2, y + 1, x + 4, y + 4);
+					g.drawLine(x + 2, y + 1, x + 2, y + 5);
+					g.drawLine(x + 2, y + 1, x,     y + 4);
+					
+					//Left foot
+					g.drawLine(x - 3, y + 3, x - 1, y + 5);
+					g.drawLine(x - 3, y + 3, x - 3, y + 6);
+					g.drawLine(x - 3, y + 3, x - 6, y + 5);
+					
+				} else {
+					
+					//Right foot
+					g.drawLine(x + 2, y + 3, x + 4, y + 5);
+					g.drawLine(x + 2, y + 3, x + 2, y + 6);
+					g.drawLine(x + 2, y + 3, x,     y + 5);
+					
+					//Left foot
+					g.drawLine(x - 3, y + 2, x - 1, y + 6);
+					g.drawLine(x - 3, y + 2, x - 3, y + 5);
+					g.drawLine(x - 3, y + 2, x - 6, y + 4);
+				}
 			}			
 		}
 
@@ -216,6 +241,15 @@ public class CanvasWorld extends JFrame {
 				this.id = id;
 
 			}
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		
+		if (e.getSource() == this.timer) {
+			
+			repaint();
 		}
 	}
 }

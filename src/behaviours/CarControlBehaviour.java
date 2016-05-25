@@ -1,10 +1,9 @@
 package behaviours;
-import agents.CarAgent;
+
 import agents.SegmentAgent;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.lang.acl.UnreadableException;
 
 /**
  * This behaviour listens to the cars that want to register or deregister
@@ -32,28 +31,22 @@ public class CarControlBehaviour extends Behaviour {
 	@Override
 	public void action() {
 
-		ACLMessage msg = myAgent.receive(mtCarControl);
+		ACLMessage msg = myAgent.blockingReceive(mtCarControl);
 
 		if (msg != null) { //There is an agent
 			
-			CarAgent agent = null;
-			
-			try {
-				agent = (CarAgent) msg.getContentObject();
-			} catch (UnreadableException e) {
+			String car = msg.getContent();
+						
+			if (!this.agent.getCars().contains(car)) { //Register
 				
-				System.out.println("Error in the communication with the segment agent " + this.agent.getSegment().getId());
-				System.out.println("Error deserializing the car.");
-				e.printStackTrace();
-			}
-			
-			if (!this.agent.containsAgent(agent)) { //Register
-				
-				this.agent.addCar(agent);
+				this.agent.addCar(car);
+				System.out.println("Car: " + car + " has just registered in me " + this.getAgent().getLocalName());
 				
 			} else { //Deregister
 				
-				this.agent.removeCar(agent);
+				this.agent.removeCar(car);
+				System.out.println("Car: " + car + " has just deregistered in me " + this.getAgent().getLocalName());
+
 			}
 		}
 		

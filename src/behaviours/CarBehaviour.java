@@ -1,7 +1,5 @@
 package behaviours;
 
-import java.io.IOException;
-
 import agents.CarAgent;
 import environment.Segment;
 import environment.Step;
@@ -76,11 +74,12 @@ public class CarBehaviour extends WakerBehaviour {
 			msg.setContent("x=" + this.agent.getX() + "y=" + this.agent.getY()); 
 			myAgent.send(msg);
 
-			//Check if we need to notify the segments
-
-
 			//Cycles
 			this.agent.addBehaviour(new CarBehaviour(this.agent, 100));
+			
+		} else { //I better stop
+			
+			this.stop();
 		}
 	}
 
@@ -89,14 +88,8 @@ public class CarBehaviour extends WakerBehaviour {
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setOntology("carToSegment");
 		msg.addReceiver(segment.getSegmentAgent().getAID());
+		msg.setContent(this.agent.getId());
 		
-		try {
-			msg.setContentObject(this.agent);
-		} catch (IOException e) {
-
-			System.out.println("I am " + this.agent.getLocalName() + " Error serializing my agent.");
-			e.printStackTrace();
-		}
 		myAgent.send(msg);
 	}
 }

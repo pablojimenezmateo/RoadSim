@@ -18,7 +18,7 @@ public class AddNewCarBehaviour extends CyclicBehaviour {
 	//Template to listen for the new communications from cars
 	private MessageTemplate mtNewCar = 
 			MessageTemplate.and(
-					MessageTemplate.MatchPerformative(ACLMessage.INFORM_REF),
+					MessageTemplate.MatchPerformative(ACLMessage.INFORM),
 					MessageTemplate.MatchConversationId("Car"));
 	
 	private InterfaceAgent agent;
@@ -55,6 +55,6 @@ public class AddNewCarBehaviour extends CyclicBehaviour {
 
 			//Updates the car position
 			this.agent.addBehaviour(new MoveCarBehaviour(agent, id));
-		}
+		} else block();
 	}
 }

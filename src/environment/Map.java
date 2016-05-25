@@ -22,7 +22,7 @@ import org.json.JSONObject;
 public class Map implements Serializable {
 
 	private static final long serialVersionUID = 6521810168990354805L;
-	
+
 	@SuppressWarnings("unused")
 	private Intersection start;
 	private Integer intersectionCount;
@@ -47,8 +47,8 @@ public class Map implements Serializable {
 		this.segmentCount = 0;
 
 		//Get all files from the given folder
-		String url = Map.class.getClassLoader().getResource(folder).toString().split(":")[1];
-
+		String url = Map.class.getClassLoader().getResource(folder).getPath();
+		
 		File[] files = new File(url).listFiles();
 
 		//Check correct files
@@ -160,6 +160,12 @@ public class Map implements Serializable {
 					segmentsAux.get(idSegment).addStep(s);				
 
 					line = stepsReader.readLine();
+				}
+				
+				//Move the segments
+				for (String string : segmentsAux.keySet()) {
+					
+					this.move(segmentsAux.get(string), 4);
 				}
 
 			}catch(Exception e){
@@ -342,10 +348,10 @@ public class Map implements Serializable {
 				}
 			}
 		}
-		
+
 		return segmentPath;
 	}
-	
+
 	/**
 	 * Returns the shortest graphical path to a destination.
 	 * 
@@ -375,7 +381,7 @@ public class Map implements Serializable {
 
 		return graphicalPath;
 	}
-	
+
 	/**
 	 * Returns the shortest segment path to a destination.
 	 * 
@@ -402,10 +408,10 @@ public class Map implements Serializable {
 				}
 			}
 		}
-		
+
 		return segmentPath;
 	}
-	
+
 	/**
 	 * This method calculates all the different ways of representing a path.
 	 * 
@@ -414,19 +420,19 @@ public class Map implements Serializable {
 	 * @return
 	 */
 	public Path getPath(String initialIntersection, String finalIntersection) {
-		
+
 		//Calculate dijkstra
 		HashMap<Intersection, Intersection> dijks = this.shortestPathsFrom(initialIntersection);
-		
+
 		//Calculate the intersection path
 		List<String> intersectionPath = this.getIntersectionPath(dijks, this.getIntersectionByID(finalIntersection));
-		
+
 		//Calculate the graphical path
 		List<Step> graphicalPath = this.getGraphicalPath(dijks, this.getIntersectionByID(finalIntersection), intersectionPath);
-		
+
 		//Calculate the segment path
 		List<Segment> segmentPath = this.getSegmentPath(dijks, this.getIntersectionByID(finalIntersection), intersectionPath);
-		
+
 		return new Path(intersectionPath, graphicalPath, segmentPath);
 	}
 
@@ -520,5 +526,86 @@ public class Map implements Serializable {
 	public List<Intersection> getIntersections(){
 
 		return this.intersections;
+	}
+
+	/**
+	 * This method moves the segment a given quantity, so two segments don't overlap.
+	 * 
+	 * @param seg
+	 * @param quantity
+	 */
+	private void move(Segment seg, int quantity) {
+
+		List<Step> steps = seg.getSteps();
+
+		Step firstStep = steps.get(0);
+		Step lastSetp = steps.get(steps.size()-1);
+
+		//We will use this to check if the segment is more horizontal than vertical
+		int xIncrement = lastSetp.getOriginX() - firstStep.getDestinationX();
+		int yIncrement = lastSetp.getOriginY() - firstStep.getDestinationY();
+
+		if (xIncrement > yIncrement) { //The line is more horizontal
+
+			if (firstStep.getOriginX() < lastSetp.getDestinationX()) { //Left to right
+
+				this.moveY(steps, quantity); //Move down
+			} else {
+
+				this.moveY(steps, -quantity); //Move up
+			}
+			
+		} else { //The line is more vertical
+
+			if (firstStep.getOriginY() > lastSetp.getDestinationY()) { //Bottom to up
+
+				this.moveX(steps, quantity); //Move right
+			} else {
+
+				this.moveX(steps, -quantity); //Move left
+			}
+		}
+	}
+
+	private void moveX(List<Step> stepList, int quantity){
+		
+		for (int i=0; i < stepList.size(); i++) {
+			
+			Step step = stepList.get(i);
+			
+			if (i == 0) { //First, we don't move its origin
+				
+				step.setDestinationX(step.getDestinationX() + quantity);
+				
+			} else if (i == stepList.size()-1) { //Last, we don't move its destination
+				
+				step.setOriginX(step.getOriginX() + quantity);
+			} else {
+				
+				step.setDestinationX(step.getDestinationX() + quantity);
+				step.setOriginX(step.getOriginX() + quantity);
+			}
+		}
+	}
+
+	private void moveY(List<Step> stepList, int quantity){
+		
+		for (int i=0; i < stepList.size(); i++) {
+			
+			Step step = stepList.get(i);
+			
+			if (i == 0) { //First, we don't move its origin
+				
+				step.setDestinationY(step.getDestinationY() + quantity);
+				
+			} else if (i == stepList.size()) { //Last, we don't move its destination
+				
+				step.setOriginY(step.getOriginY() + quantity);
+			} else {
+				
+				step.setDestinationY(step.getDestinationY() + quantity);
+				step.setOriginY(step.getOriginY() + quantity);
+			}
+		}
 	}
 }

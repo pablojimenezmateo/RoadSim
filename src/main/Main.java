@@ -10,7 +10,7 @@ import jade.wrapper.StaleProxyException;
 
 public class Main {
 
-	private static final int numberOfCars = 1;
+	private static final int numberOfCars = 1000;
 
 	public static void main(String[] args) {
 
@@ -41,7 +41,6 @@ public class Main {
 			e1.printStackTrace();
 		}
 		
-		//Load the map
 		//We will use a container only for the segments
 		profile = new ProfileImpl(null, 1099, null);
 		profile.setParameter(Profile.CONTAINER_NAME, "Segment container");
@@ -49,6 +48,7 @@ public class Main {
 		//Container that will hold the agents
 		jade.wrapper.AgentContainer segmentContainer = rt.createAgentContainer(profile);
 		
+		//Load the map
 		try {
 
 			map = new Map("map/base", segmentContainer);

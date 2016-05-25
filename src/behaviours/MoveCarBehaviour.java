@@ -53,7 +53,7 @@ public class MoveCarBehaviour extends Behaviour {
 					
 				}
 			});
-		} else block();		
+		}
 	}
 
 	@Override

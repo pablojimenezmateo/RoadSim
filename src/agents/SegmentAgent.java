@@ -23,16 +23,15 @@ public class SegmentAgent extends Agent {
 	private Segment segment;
 	
 	//The cars that are currently on this segment
-	private Set<CarAgent> cars;
+	private Set<String> cars;
 	
 	protected void setup() {
 		
-		//TODO: Triple check
 		//Get the segment from parameter
 		this.segment = (Segment) this.getArguments()[0];
 		this.segment.setSegmentAgent(this);
 		
-		this.cars = new HashSet<CarAgent>();
+		this.cars = new HashSet<String>();
 		
 		//Register the service
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -57,39 +56,16 @@ public class SegmentAgent extends Agent {
 	}
 
 	//Adds a car to this segment
-	public void addCar(CarAgent car) {
+	public void addCar(String car) {
 		
 		this.cars.add(car);
 	}
 	
-	public void removeCar(CarAgent car) {
+	public void removeCar(String car) {
 		
-		for (CarAgent c: this.cars){
-			
-			if (c.getId().equals(car.getId())){
-				
-				this.cars.remove(c);
-				break;
-			}
-		}
+		this.cars.remove(car);
 	}
-	
-	public boolean containsAgent(CarAgent car) {
 		
-		boolean ret = false;
-		
-		for (CarAgent c: this.cars){
-			
-			if (c.getId().equals(car.getId())){
-				
-				ret = true;
-				break;
-			}
-		}
-		
-		return ret;
-	}
-	
 	//Getters and setters
 	public Segment getSegment() {
 		return segment;
@@ -99,7 +75,7 @@ public class SegmentAgent extends Agent {
 		this.segment = segment;
 	}
 
-	public Set<CarAgent> getCars() {
+	public Set<String> getCars() {
 		return cars;
 	}
 }
