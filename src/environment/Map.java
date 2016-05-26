@@ -14,6 +14,9 @@ import org.json.JSONObject;
 
 /**
  * Class that holds the representation of a map.
+ * 
+ * It also has al the logic to read the map files and creates the 
+ * {@link SegmentAgent}.
  *
  */
 public class Map implements Serializable {
@@ -52,6 +55,7 @@ public class Map implements Serializable {
 		BufferedReader intersectionsReader = null, segmentsReader = null, stepsReader = null;
 
 		for(int i=0; i<files.length; i++){
+			
 			if(files[i].getName().equals("intersections")){
 
 				intersectionsReader = new BufferedReader(new FileReader(files[i].getAbsolutePath()));
@@ -213,7 +217,7 @@ public class Map implements Serializable {
 	}
 
 	/**
-	 * Returns the list with the intersections
+	 * Returns the list of intersections
 	 * 
 	 * @return The Intersection list
 	 */

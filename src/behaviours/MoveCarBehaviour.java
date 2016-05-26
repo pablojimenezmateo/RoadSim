@@ -8,7 +8,8 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 /**
- * This behaviour will update the car position given the new coordinates.
+ * This behaviour is started by the InterfaceAgent and
+ * will update the car position given the new coordinates.
  *
  */
 public class MoveCarBehaviour extends Behaviour {

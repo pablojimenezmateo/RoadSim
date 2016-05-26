@@ -7,7 +7,12 @@ import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 
 /**
- * This behaviour calculates the next position of the car.  
+ * This behaviour is used by the CarAgent and calculates the next 
+ * graphical position of the car. It also registers and deregisters
+ * the car from the segments.
+ * 
+ * The car is registered when it enters a new segment and deregistered
+ * when it leaves a segment.
  *
  */
 public class CarBehaviour extends WakerBehaviour {
@@ -52,8 +57,10 @@ public class CarBehaviour extends WakerBehaviour {
 				this.informSegment(next.getSegment());
 			}
 
+			//The distance between my current position and my next desired position
 			double distNext = Math.sqrt( Math.pow(agent.getX()- next.getDestinationX(), 2) + Math.pow(this.agent.getY()- next.getDestinationY(), 2));
 
+			//TODO: This doesn't seem like a good idea
 			//Go to the next leg if I am close enough
 			if(distNext <= 10){
 
@@ -77,12 +84,15 @@ public class CarBehaviour extends WakerBehaviour {
 			//Cycles
 			this.agent.addBehaviour(new CarBehaviour(this.agent, 100));
 			
-		} else { //I better stop
+		} else { //I have arrived to my destination
 			
+			//TODO: Remove car from GUI
 			this.stop();
 		}
 	}
 
+	//This method will send a message to a given segment to register/deregister
+	//to/from it
 	private void informSegment(Segment segment) {
 
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);

@@ -8,7 +8,8 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 /**
- * This behaviour adds a new car to the GUI and tries to find a new sensor to take care of it.
+ * This behaviour is used by the InterfaceAgent and adds a new car to the GUI 
+ * and executes a behaviour to update the speed of the car.
  *
  */
 public class AddNewCarBehaviour extends CyclicBehaviour {
@@ -53,8 +54,9 @@ public class AddNewCarBehaviour extends CyclicBehaviour {
 				}
 			});
 
-			//Updates the car position
+			//This behaviour will pdate the car position
 			this.agent.addBehaviour(new MoveCarBehaviour(agent, id));
+			
 		} else block();
 	}
 }

@@ -19,7 +19,8 @@ import environment.Path;
 import environment.Segment;
 
 /**
- * This code represents a mobile car.
+ * This code represents a mobile car, it will have an origin an a destination
+ * and will get there using either the shortest or fastest paths.
  *
  */
 public class CarAgent extends Agent {
@@ -55,11 +56,10 @@ public class CarAgent extends Agent {
 		
 		//Get the method we want
 		AlgorithmFactory factory = new AlgorithmFactory();
-		
 		Algorithm alg = factory.getAlgorithm(Method.SHORTEST);
 		
-		//We get the shortest path from the origin to the destination	
-		this.path = alg.getPath(map, initialIntersection, finalIntersection);//map.getPath(initialIntersection, finalIntersection);
+		//Get the desired Path from the origin to the destination
+		this.path = alg.getPath(map, initialIntersection, finalIntersection);
 
 		//Debug
 //		System.out.println("I am " + this.getLocalName() + " and I am doing this trip:");
@@ -73,7 +73,8 @@ public class CarAgent extends Agent {
 		setX(map.getIntersectionByID(initialIntersection).getX());
 		setY(map.getIntersectionByID(initialIntersection).getY());
 
-		//Speeds, currently the currentSpeed belongs [1, 7]
+		//TODO: Map the speed to real speeds
+		//Speeds, currently the currentSpeed belongs [5, 7]
 		this.maxSpeed = 120;
 		this.curentSpeed = rnd.nextInt((7 - 5) + 1) + 5;
 
@@ -170,22 +171,4 @@ public class CarAgent extends Agent {
 	public void setPreviousSegment(Segment previousSegment) {
 		this.previousSegment = previousSegment;
 	}
-
-	//	/*
-	//	 * Este comportamiento gestiona los mensajes que le lleguen respecto a que
-	//	 *   agente sensor (o el agente interfaz si ningun sensor es capaz) es con el
-	//	 *   que tiene que comunicarse para enviarle sus posiciones.
-	//	 */
-	//	private class BRecibeNuevoAgenteSensor extends CyclicBehaviour {
-	//
-	//		private static final long serialVersionUID = 1L;
-	//		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-	//		@Override
-	//		public void action() {
-	//			ACLMessage msg = receive(mt);
-	//			if (msg != null) 
-	//				sensorAgent = msg.getContent();			
-	//			else block();
-	//		}
-	//	}
 }

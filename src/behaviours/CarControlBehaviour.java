@@ -6,8 +6,12 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
 /**
- * This behaviour listens to the cars that want to register or deregister
- * from this segment.
+ * This behaviour is used by the SegmentAgent and listens to the cars 
+ * that want to register or deregister from this segment.
+ *
+ * The same message works for registering or deregistering, if a car with
+ * an ID that is not in this segment sends me a message, I register it, if
+ * the ID is already in the segment, I deregister it.
  *
  */
 public class CarControlBehaviour extends Behaviour {

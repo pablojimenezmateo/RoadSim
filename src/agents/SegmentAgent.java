@@ -12,7 +12,8 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
 /**
- * This agent will keep track of the cars that are inside an intersection.
+ * This agent will keep track of the cars that are inside an intersection
+ * and will update the data accordingly.
  *
  */
 public class SegmentAgent extends Agent {
@@ -50,17 +51,17 @@ public class SegmentAgent extends Agent {
 			fe.printStackTrace(); 
 		}
 		
-		CarControlBehaviour b = new CarControlBehaviour(this);
-		
-		addBehaviour(b);		
+		//We add the logic to the segment		
+		addBehaviour(new CarControlBehaviour(this));		
 	}
 
-	//Adds a car to this segment
+	//Add a car to this segment
 	public void addCar(String car) {
 		
 		this.cars.add(car);
 	}
 	
+	//Remove a car from this segment
 	public void removeCar(String car) {
 		
 		this.cars.remove(car);
