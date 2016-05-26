@@ -6,6 +6,9 @@ import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import searchAlgorithms.Algorithm;
+import searchAlgorithms.AlgorithmFactory;
+import searchAlgorithms.Method;
 
 import java.util.Random;
 import java.util.UUID;
@@ -49,9 +52,14 @@ public class CarAgent extends Agent {
 		while(initialIntersection.equals(finalIntersection)){
 			finalIntersection = this.map.getRandomIntersection();
 		}
-
+		
+		//Get the method we want
+		AlgorithmFactory factory = new AlgorithmFactory();
+		
+		Algorithm alg = factory.getAlgorithm(Method.SHORTEST);
+		
 		//We get the shortest path from the origin to the destination	
-		this.path = map.getPath(initialIntersection, finalIntersection);
+		this.path = alg.getPath(map, initialIntersection, finalIntersection);//map.getPath(initialIntersection, finalIntersection);
 
 		//Debug
 //		System.out.println("I am " + this.getLocalName() + " and I am doing this trip:");
