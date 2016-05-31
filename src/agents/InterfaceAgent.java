@@ -40,21 +40,26 @@ public class InterfaceAgent extends Agent{
 		} catch (FIPAException fe) { 
 			fe.printStackTrace(); 
 		}
-		
-		//Get the map from an argument
-		Map graphicalMap = (Map) this.getArguments()[0];
 
-		SwingUtilities.invokeLater(new Runnable() {
+		//Check if I need to create the GUI, for testing purposes
+		boolean drawGUI = (boolean) this.getArguments()[1];
 
-			@Override
-			public void run() {
-				map = new CanvasWorld(getLocalName(), MAXWORLDX, MAXWORLDY, graphicalMap);	
-			}
+		if (drawGUI) {
+			
+			//Get the map from an argument
+			Map graphicalMap = (Map) this.getArguments()[0];
 
-		});
+			SwingUtilities.invokeLater(new Runnable() {
 
-		//Launch the behaviour that will add cars
-		addBehaviour(new AddNewCarBehaviour(this));
+				@Override
+				public void run() {
+					map = new CanvasWorld(getLocalName(), MAXWORLDX, MAXWORLDY, graphicalMap);	
+				}
+			});
+
+			//Launch the behaviour that will add cars
+			addBehaviour(new AddNewCarBehaviour(this));
+		}
 	}
 
 	//Setters and getters

@@ -54,7 +54,7 @@ public class AddNewCarBehaviour extends CyclicBehaviour {
 				}
 			});
 
-			//This behaviour will pdate the car position
+			//This behaviour will update the car position
 			this.agent.addBehaviour(new MoveCarBehaviour(agent, id));
 			
 		} else block();

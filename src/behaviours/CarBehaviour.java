@@ -3,7 +3,7 @@ package behaviours;
 import agents.CarAgent;
 import environment.Segment;
 import environment.Step;
-import jade.core.behaviours.WakerBehaviour;
+import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 
 /**
@@ -15,7 +15,7 @@ import jade.lang.acl.ACLMessage;
  * when it leaves a segment.
  *
  */
-public class CarBehaviour extends WakerBehaviour {
+public class CarBehaviour extends TickerBehaviour {
 
 	private CarAgent agent;
 
@@ -27,7 +27,7 @@ public class CarBehaviour extends WakerBehaviour {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public void onWake() {
+	protected void onTick() {
 
 		//If I still have to move somewhere
 		if(this.agent.getPath().getGraphicalPath().size() > 0){
@@ -67,7 +67,7 @@ public class CarBehaviour extends WakerBehaviour {
 				this.agent.getPath().getGraphicalPath().remove(0);
 			}
 
-			//Magic with maths to keep the car on the line between two points
+			//Magic with math to keep the car on the line between two points
 			double T = this.agent.getCurrentSpeed() / distNext;
 
 			//Next point within the line
@@ -81,14 +81,12 @@ public class CarBehaviour extends WakerBehaviour {
 			msg.setContent("x=" + this.agent.getX() + "y=" + this.agent.getY()); 
 			myAgent.send(msg);
 
-			//Cycles
-			this.agent.addBehaviour(new CarBehaviour(this.agent, 100));
-			
 		} else { //I have arrived to my destination
-			
+
 			//TODO: Remove car from GUI
 			this.stop();
 		}
+
 	}
 
 	//This method will send a message to a given segment to register/deregister
@@ -99,7 +97,8 @@ public class CarBehaviour extends WakerBehaviour {
 		msg.setOntology("carToSegment");
 		msg.addReceiver(segment.getSegmentAgent().getAID());
 		msg.setContent(this.agent.getId());
-		
+
 		myAgent.send(msg);
 	}
+
 }

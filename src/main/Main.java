@@ -11,6 +11,8 @@ import jade.wrapper.StaleProxyException;
 public class Main {
 
 	private static final int numberOfCars = 10;
+	private static final boolean drawGUI = true;
+
 
 	public static void main(String[] args) {
 
@@ -62,7 +64,7 @@ public class Main {
 		//Interface
 		try {
 
-			AgentController agent = mainContainer.createNewAgent("Interface", "agents.InterfaceAgent", new Object[]{map});
+			AgentController agent = mainContainer.createNewAgent("Interface", "agents.InterfaceAgent", new Object[]{map, drawGUI});
 
 			agent.start();
 

@@ -35,7 +35,6 @@ public class CarAgent extends Agent {
 	private int curentSpeed,maxSpeed;
 	private String id; 
 	private DFAgentDescription interfaceAgent;
-	private Random rnd = new Random();
 	private Map map;
 	private Path path;
 	private Segment previousSegment;
@@ -76,6 +75,7 @@ public class CarAgent extends Agent {
 		//TODO: Map the speed to real speeds
 		//Speeds, currently the currentSpeed belongs [5, 7]
 		this.maxSpeed = 120;
+		Random rnd = new Random();
 		this.curentSpeed = rnd.nextInt((7 - 5) + 1) + 5;
 
 		//Find the interface agent
