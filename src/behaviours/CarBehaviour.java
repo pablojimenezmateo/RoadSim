@@ -44,6 +44,46 @@ public class CarBehaviour extends TickerBehaviour {
 				this.informSegment(next.getSegment());
 			}
 
+			//The proportion of the map is 1px ~= 29m and one tick is one 1 s
+			//Calculate the pixels per tick I have to move
+			double increment = ((this.agent.getCurrentSpeed() * 0.2778) * 0.035);
+
+			//Virtual position
+			double currentX = this.agent.getX();
+			double currentY = this.agent.getY();
+
+			//The distance between my current position and my next desired position
+			double distNext = Math.sqrt(Math.pow(currentX - next.getDestinationX(), 2) + Math.pow(currentY - next.getDestinationY(), 2));
+
+			//Check if we need to go to the next step
+			while (increment > distNext) {
+
+				//If there is still a node to go
+				if (this.agent.getPath().getGraphicalPath().size() > 1){
+					
+					//Remove the already run path
+					increment -= distNext;
+
+					this.agent.getPath().getGraphicalPath().remove(0);
+					next = this.agent.getPath().getGraphicalPath().get(0);
+
+					currentX = next.getOriginX();
+					currentY = next.getOriginY();
+
+					distNext = Math.sqrt(Math.pow(currentX - next.getDestinationX(), 2) + Math.pow(currentY - next.getDestinationY(), 2));
+				} else {
+					
+					this.stop();
+					break;
+				}
+			}
+
+			//Proportion inside the segment
+			double proportion = increment / distNext;
+
+			this.agent.setX(((1 - proportion) * currentX + proportion * next.getDestinationX()));
+			this.agent.setY(((1 - proportion) * currentY + proportion * next.getDestinationY()));
+
 			//If we are in a new segment
 			if (!this.agent.getPreviousSegment().equals(next.getSegment())) {
 
@@ -56,23 +96,6 @@ public class CarBehaviour extends TickerBehaviour {
 				//Register in the new segment
 				this.informSegment(next.getSegment());
 			}
-
-			//The distance between my current position and my next desired position
-			double distNext = Math.sqrt( Math.pow(agent.getX()- next.getDestinationX(), 2) + Math.pow(this.agent.getY()- next.getDestinationY(), 2));
-
-			//TODO: This doesn't seem like a good idea
-			//Go to the next leg if I am close enough
-			if(distNext <= 10){
-
-				this.agent.getPath().getGraphicalPath().remove(0);
-			}
-
-			//Magic with math to keep the car on the line between two points
-			double T = this.agent.getCurrentSpeed() / distNext;
-
-			//Next point within the line
-			this.agent.setX((int)((1 - T) * this.agent.getX() + T * next.getDestinationX()));
-			this.agent.setY((int)((1 - T) * this.agent.getY() + T * next.getDestinationY()));
 
 			//Send the new position to the interface
 			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);

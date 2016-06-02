@@ -10,7 +10,7 @@ import jade.wrapper.StaleProxyException;
 
 public class Main {
 
-	private static final int numberOfCars = 10;
+	private static final int numberOfCars = 20;
 	private static final boolean drawGUI = true;
 
 

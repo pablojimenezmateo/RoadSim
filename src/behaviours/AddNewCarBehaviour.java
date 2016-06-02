@@ -39,9 +39,9 @@ public class AddNewCarBehaviour extends CyclicBehaviour {
 			//Get the data
 			String cont = msg.getContent();
 
-			final int x = Integer.parseInt(cont.substring(
+			final double x = Double.parseDouble(cont.substring(
 					cont.indexOf("x=")+2, cont.indexOf("y=")));
-			final int y = Integer.parseInt(cont.substring(
+			final double y = Double.parseDouble(cont.substring(
 					cont.indexOf("y=")+2, cont.indexOf("id=")));
 			final String id = cont.substring(cont.indexOf("id=")+3);
 

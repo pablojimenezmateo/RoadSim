@@ -10,7 +10,6 @@ import searchAlgorithms.Algorithm;
 import searchAlgorithms.AlgorithmFactory;
 import searchAlgorithms.Method;
 
-import java.util.Random;
 import java.util.UUID;
 
 import behaviours.CarBehaviour;
@@ -30,7 +29,7 @@ public class CarAgent extends Agent {
 	public static final int MAXWORLDX = 800;
 	public static final int MAXWORLDY = 695;
 
-	private int x, y;
+	private double x, y;
 	private int direction;
 	private int curentSpeed,maxSpeed;
 	private String id; 
@@ -60,23 +59,12 @@ public class CarAgent extends Agent {
 		//Get the desired Path from the origin to the destination
 		this.path = alg.getPath(map, initialIntersection, finalIntersection);
 
-		//Debug
-//		System.out.println("I am " + this.getLocalName() + " and I am doing this trip:");
-//
-//		for(String inter: this.path.getIntersectionPath()){
-//
-//			System.out.println(inter + " (" + this.map.getIntersectionByID(inter).getX() + ", " + this.map.getIntersectionByID(inter).getY() + ")");
-//		}
-
 		//Starting point
 		setX(map.getIntersectionByID(initialIntersection).getX());
 		setY(map.getIntersectionByID(initialIntersection).getY());
 
-		//TODO: Map the speed to real speeds
-		//Speeds, currently the currentSpeed belongs [5, 7]
 		this.maxSpeed = 120;
-		Random rnd = new Random();
-		this.curentSpeed = rnd.nextInt((7 - 5) + 1) + 5;
+		this.curentSpeed = 120;
 
 		//Find the interface agent
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -104,28 +92,28 @@ public class CarAgent extends Agent {
 		send(msg);	
 
 		//Runs the agent
-		addBehaviour(new CarBehaviour(this, 1000));	
+		addBehaviour(new CarBehaviour(this, 50));	
 	}
 
 	//Setters and getters
-	public int getX() {
+	public int getDirection() {
+		return direction;
+	}
+
+	public double getX() {
 		return x;
 	}
 
-	public void setX(int x) {
+	public void setX(double x) {
 		this.x = x;
 	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 
-	public void setY(int y) {
+	public void setY(double y) {
 		this.y = y;
-	}
-
-	public int getDirection() {
-		return direction;
 	}
 
 	public void setDirection(int direction) {

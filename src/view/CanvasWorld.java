@@ -7,6 +7,9 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -30,7 +33,7 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 	private String interfaceAgent;
 	public static int MAXWORLDX, MAXWORLDY;
-	
+
 	private Timer timer = new Timer(1000/this.FPS, this);
 
 	public CanvasWorld (String interfaceAgent, int maxX, int maxY, Map map) {
@@ -40,30 +43,30 @@ public class CanvasWorld extends JFrame implements ActionListener {
 		MAXWORLDY = maxY;
 
 		this.interfaceAgent = interfaceAgent;
-		
+
 		this.map = map;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		setTitle("Interface: "+ this.interfaceAgent);
+		setTitle("Interface: " + this.interfaceAgent);
 		setBounds(10, 10, MAXWORLDX, MAXWORLDY);
 		contentPane = new PanelRadar();
 		setContentPane(contentPane);
 
 		//Show the frame
 		setVisible(true);
-		
+
 		this.timer.start();
 	}
 
 	//Adds a new car to the GUI
-	public void addCar(String ag, String id, int x, int y) {
+	public void addCar(String ag, String id, double x, double y) {
 
 		contentPane.addCar(ag, id, x, y);	
 	}
 
 	//Moves an existing car
-	public void moveCar(String id, int x, int y) {
+	public void moveCar(String id, double x, double y) {
 		contentPane.moveCar(id, x, y);
 	}
 
@@ -84,12 +87,12 @@ public class CanvasWorld extends JFrame implements ActionListener {
 			this.setLayout(null);
 		}
 
-		public void addCar(String ag, String id, int x, int y) {
+		public void addCar(String ag, String id, double x, double y) {
 			carPositions.add(new Mobile(x, y, id));
 			repaint();
 		}
 
-		public void moveCar(String id, int x, int y) {
+		public void moveCar(String id, double x, double y) {
 
 			for(Mobile m: carPositions){
 
@@ -108,27 +111,34 @@ public class CanvasWorld extends JFrame implements ActionListener {
 			//Draw the background
 			g.drawImage(backGround, 0, 0, this);
 
+			Line2D line;
+
 			//Draw the segments
 			for (Intersection in : map.getIntersections()) {
 
 				g.setStroke(new BasicStroke(2));
 				g.setColor(Color.GREEN);
-				
+
 				for (Segment s: in.getOutSegments()){
-					
+
 					for(Step st: s.getSteps()){
-						
-						g.drawLine(st.getOriginX(), st.getOriginY(), st.getDestinationX(), st.getDestinationY());
+
+						line = new Line2D.Double(st.getOriginX(), st.getOriginY(), st.getDestinationX(), st.getDestinationY());
+						g.draw(line);
 					}
 				}
 			}
+
+			Ellipse2D oval;
 
 			//Draw the intersections
 			for (Intersection in : map.getIntersections()) {
 
 				g.setColor(Color.RED);
-				g.fillOval(in.getX()-2, in.getY()-2, 4, 4);
 				
+				oval = new Ellipse2D.Double(in.getX()-2, in.getY()-2, 4, 4);
+				g.fill(oval);
+
 				//Draw the names of the intersections
 				//				g.setColor(Color.black);	
 				//				g.fillRect(in.coordinates[0]-40, in.coordinates[1]+10, 100, 20);
@@ -139,116 +149,150 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 			//Draw the cars
 			for (Mobile m : carPositions) {
-				
-				int x = m.getX();
-				int y = m.getY();
 
-//				g.setColor(Color.WHITE);
-//				g.fillRect(x - 4, y - 8, 8, 4); //Windows
-//				g.fillRect(x - 9, y- 4, 18, 8); //Chasis
-//
-//				g.setColor(Color.BLACK); //Borders
-//				g.setStroke(new BasicStroke(1));
-//				g.drawRect(x - 4, y - 8, 8, 4); //Windows
-//				g.drawRect(x - 9, y - 4, 18, 8); //Chasis
-//
-//				//Tires
-//				g.setColor(Color.GRAY);
-//				g.fillOval(x - 8, y, 6, 6);
-//				g.fillOval(x + 2, y, 6, 6);
-				
+				double x = m.getX();
+				double y = m.getY();
+
+				//				g.setColor(Color.WHITE);
+				//				g.fillRect(x - 4, y - 8, 8, 4); //Windows
+				//				g.fillRect(x - 9, y- 4, 18, 8); //Chasis
+				//
+				//				g.setColor(Color.BLACK); //Borders
+				//				g.setStroke(new BasicStroke(1));
+				//				g.drawRect(x - 4, y - 8, 8, 4); //Windows
+				//				g.drawRect(x - 9, y - 4, 18, 8); //Chasis
+				//
+				//				//Tires
+				//				g.setColor(Color.GRAY);
+				//				g.fillOval(x - 8, y, 6, 6);
+				//				g.fillOval(x + 2, y, 6, 6);
+
 				//Chicken
-				
+
 				//Body
 				g.setColor(Color.YELLOW);
-				g.fillOval(x - 4, y - 4, 8, 8);
+				oval = new Ellipse2D.Double(x - 4, y - 4, 8, 8);
+				g.fill(oval);
+				
 				g.setColor(Color.ORANGE);
-				g.drawOval(x - 4, y - 4, 8, 8);
+				oval = new Ellipse2D.Double(x - 4, y - 4, 8, 8);
+				g.draw(oval);
 
 				//Beak
 				g.setStroke(new BasicStroke(1));
 				g.setColor(Color.ORANGE);
-				g.fillPolygon(new int[] {x - 3, x - 3, x - 8}, new int[] {y - 4, y + 4, y}, 3);
 				
+				Path2D beak = new Path2D.Double();
+				beak.moveTo(x + 3, y - 4);
+				beak.lineTo(x - 3, y + 4);
+				beak.lineTo(x - 8, y);
+				beak.lineTo(x + 3, y - 4);
+
+				//g.fillPolygon(new int[] {x - 3, x - 3, x - 8}, new int[] {y - 4, y + 4, y}, 3);
+				g.fill(beak);
+
 				//Eye
 				g.setColor(Color.BLACK);
-				g.fillOval(x - 2, y - 2, 2, 2);
-				
+				oval = new Ellipse2D.Double(x - 2, y - 2, 2, 2);
+				g.fill(oval);
+
 				//Feet
 				g.setStroke(new BasicStroke(1));
-				
+
 				//Make the walking animation
 				boolean rightStep = false;;
-				
+
 				if(Math.random() < 0.5) {
-				    rightStep = true;
+					rightStep = true;
 				}
-				
+
+				Line2D.Double lineF;
+
 				if (rightStep) {
-					
+
 					//Right foot
-					g.drawLine(x + 2, y + 1, x + 4, y + 4);
-					g.drawLine(x + 2, y + 1, x + 2, y + 5);
-					g.drawLine(x + 2, y + 1, x,     y + 4);
-					
+					lineF = new Line2D.Double(x + 2, y + 1, x + 4, y + 4);
+					g.draw(lineF);
+					lineF = new Line2D.Double(x + 2, y + 1, x + 2, y + 5);
+					g.draw(lineF);
+					lineF = new Line2D.Double(x + 2, y + 1, x,     y + 4);
+					g.draw(lineF);
+
 					//Left foot
-					g.drawLine(x - 3, y + 3, x - 1, y + 5);
-					g.drawLine(x - 3, y + 3, x - 3, y + 6);
-					g.drawLine(x - 3, y + 3, x - 6, y + 5);
-					
+					lineF = new Line2D.Double(x - 3, y + 3, x - 1, y + 5);
+					g.draw(lineF);
+					lineF = new Line2D.Double(x - 3, y + 3, x - 3, y + 6);
+					g.draw(lineF);
+					lineF = new Line2D.Double(x - 3, y + 3, x - 6, y + 5);
+					g.draw(lineF);
+
 				} else {
-					
+
 					//Right foot
-					g.drawLine(x + 2, y + 3, x + 4, y + 5);
-					g.drawLine(x + 2, y + 3, x + 2, y + 6);
-					g.drawLine(x + 2, y + 3, x,     y + 5);
-					
+					lineF = new Line2D.Double(x + 2, y + 3, x + 4, y + 5);
+					g.draw(lineF);
+					lineF = new Line2D.Double(x + 2, y + 3, x + 2, y + 6);
+					g.draw(lineF);
+					lineF = new Line2D.Double(x + 2, y + 3, x,     y + 5);
+					g.draw(lineF);
+
 					//Left foot
-					g.drawLine(x - 3, y + 2, x - 1, y + 6);
-					g.drawLine(x - 3, y + 2, x - 3, y + 5);
-					g.drawLine(x - 3, y + 2, x - 6, y + 4);
+					lineF = new Line2D.Double(x - 3, y + 2, x - 1, y + 6);
+					g.draw(lineF);
+					lineF = new Line2D.Double(x - 3, y + 2, x - 3, y + 5);
+					g.draw(lineF);
+					lineF = new Line2D.Double(x - 3, y + 2, x - 6, y + 4);
+					g.draw(lineF);
 				}
 			}			
 		}
 
 		public class Mobile {
-			
-			int x;
-			int y;
-			
-			String id;
 
-			public int getX() {
+			private double x;
+			private double y;
+
+			private String id;
+
+			public Mobile(double x, double y, String id) {
+				super();
+				this.setX(x);
+				this.setY(y);
+				this.setId(id);
+
+			}
+
+			public double getX() {
 				return x;
 			}
-			public void setX(int x) {
+
+			public void setX(double x) {
 				this.x = x;
 			}
-			public int getY() {
+
+			public double getY() {
 				return y;
 			}
-			public void setY(int y) {
+
+			public void setY(double y) {
 				this.y = y;
 			}
+
 			public String getId() {
 				return id;
 			}
 
-			public Mobile(int x, int y, String id) {
-				super();
-				this.x = x;
-				this.y = y;
+			public void setId(String id) {
 				this.id = id;
-
 			}
 		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
+
 		if (e.getSource() == this.timer) {
-			
+
 			repaint();
 		}
 	}

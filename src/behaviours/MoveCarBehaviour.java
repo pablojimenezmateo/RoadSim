@@ -40,9 +40,9 @@ public class MoveCarBehaviour extends Behaviour {
 			//Get the data
 			String cont = msg.getContent();
 			
-			final int x = Integer.parseInt(
+			final double x = Double.parseDouble(
 					cont.substring(cont.indexOf("x=")+2, cont.indexOf("y=")));
-			final int y = Integer.parseInt(
+			final double y = Double.parseDouble(
 					cont.substring(cont.indexOf("y=")+2));
 			
 			//Update the position in the canvas
