@@ -10,7 +10,7 @@ import jade.wrapper.StaleProxyException;
 
 public class Main {
 
-	private static final int numberOfCars = 20;
+	private static final int numberOfCars = 100;
 	private static final boolean drawGUI = true;
 
 
@@ -72,6 +72,18 @@ public class Main {
 
 			System.out.println("Error starting the interface");
 			e.printStackTrace();
+		}
+		
+		//TimeKeeper
+		try {
+			AgentController agent = mainContainer.createNewAgent("TimeKeeper", "agents.TimeKeeperAgent", new Object[0]);
+
+			agent.start();
+
+		} catch (StaleProxyException e1) {
+
+			System.out.println("Error starting the TimeKeeper agent");
+			e1.printStackTrace();
 		}
 
 		//Cars

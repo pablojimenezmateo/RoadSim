@@ -40,6 +40,20 @@ public class CarAgent extends Agent {
 
 	protected void setup() {
 
+		//Register the agent
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.setName(getAID());
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType("CarAgent");
+		sd.setName(getLocalName());
+
+		dfd.addServices(sd);
+		try {
+			DFService.register(this,  dfd);
+		} catch (FIPAException fe) { 
+			fe.printStackTrace(); 
+		}
+
 		//Get the map from an argument
 		this.map = (Map) this.getArguments()[0];
 
@@ -51,11 +65,11 @@ public class CarAgent extends Agent {
 		while(initialIntersection.equals(finalIntersection)){
 			finalIntersection = this.map.getRandomIntersection();
 		}
-		
+
 		//Get the method we want
 		AlgorithmFactory factory = new AlgorithmFactory();
 		Algorithm alg = factory.getAlgorithm(Method.SHORTEST);
-		
+
 		//Get the desired Path from the origin to the destination
 		this.path = alg.getPath(map, initialIntersection, finalIntersection);
 
@@ -67,8 +81,8 @@ public class CarAgent extends Agent {
 		this.curentSpeed = 120;
 
 		//Find the interface agent
-		DFAgentDescription dfd = new DFAgentDescription();
-		ServiceDescription sd = new ServiceDescription();
+		dfd = new DFAgentDescription();
+		sd = new ServiceDescription();
 		sd.setType("interface");
 		dfd.addServices(sd);
 
