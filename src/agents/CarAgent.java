@@ -103,8 +103,8 @@ public class CarAgent extends Agent {
 		msg.addReceiver(interfaceAgent.getName());
 		msg.setContent("x="+this.x+"y="+this.y+"id="+this.id);
 		msg.setConversationId("Car");
-		send(msg);	
-
+		send(msg);
+		
 		//Runs the agent
 		addBehaviour(new CarBehaviour(this, 50));	
 	}

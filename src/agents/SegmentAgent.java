@@ -1,9 +1,9 @@
 package agents;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
 
-import behaviours.CarControlBehaviour;
+import behaviours.SegmentListenToCarBehaviour;
+import behaviours.SegmentSendToDrawBehaviour;
 import environment.Segment;
 import jade.core.Agent;
 import jade.domain.DFService;
@@ -24,7 +24,7 @@ public class SegmentAgent extends Agent {
 	private Segment segment;
 	
 	//The cars that are currently on this segment
-	private Set<String> cars;
+	private HashMap<String, CarData> cars;
 	
 	protected void setup() {
 		
@@ -32,7 +32,7 @@ public class SegmentAgent extends Agent {
 		this.segment = (Segment) this.getArguments()[0];
 		this.segment.setSegmentAgent(this);
 		
-		this.cars = new HashSet<String>();
+		this.cars = new HashMap<String, CarData>();
 		
 		//Register the service
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -52,19 +52,57 @@ public class SegmentAgent extends Agent {
 		}
 		
 		//We add the logic to the segment		
-		addBehaviour(new CarControlBehaviour(this));		
+		addBehaviour(new SegmentListenToCarBehaviour(this));
+		addBehaviour(new SegmentSendToDrawBehaviour(this));		
 	}
 
 	//Add a car to this segment
-	public void addCar(String car) {
+	public void addCar(String id, float x, float y, int maxSpeed, int currSpeed) {
 		
-		this.cars.add(car);
+		this.cars.put(id, new CarData(id, x, y, maxSpeed, currSpeed));
 	}
 	
 	//Remove a car from this segment
-	public void removeCar(String car) {
+	public void removeCar(String id) {
 		
-		this.cars.remove(car);
+		this.cars.remove(id);
+	}
+	
+	//Check if the car is contained
+	public boolean containsCar(String id) {
+		
+		return this.cars.containsKey(id);
+	}
+
+	//Updates the information of a car
+	public void updateCar(String id, float x, float y, int maxSpeed, int currSpeed) {
+		
+		CarData aux = cars.get(id);
+		aux.setX(x);
+		aux.setY(y);
+		aux.setMaxSpeed(maxSpeed);
+		aux.setCurrentSpeed(currSpeed);
+	}
+	
+	//Creates the string that will be sent to the InterfaceAgent
+	public String getDrawingInformation() {
+		
+		StringBuilder ret = new StringBuilder();
+		
+		ret.append(cars.size() + "#");
+		
+		for(CarData car: cars.values()) {
+			
+			ret.append(car.getId() + "#" + Float.toString(car.getX()) + "#" + Float.toString(car.getY()) + "#");
+		}
+		
+		return ret.toString();
+	}
+	
+	//Size of the cars
+	public int carsSize() {
+		
+		return this.getCars().size();
 	}
 		
 	//Getters and setters
@@ -76,7 +114,64 @@ public class SegmentAgent extends Agent {
 		this.segment = segment;
 	}
 
-	public Set<String> getCars() {
+	public HashMap<String, CarData> getCars() {
 		return cars;
+	}
+	
+	@SuppressWarnings("unused")
+	private class CarData {
+
+		private String id;
+		private float x, y;
+		private int maxSpeed, currentSpeed;
+		
+		public CarData(String id, float x, float y, int maxSpeed, int currentSpeed) {
+			super();
+			this.id = id;
+			this.x = x;
+			this.y = y;
+			this.maxSpeed = maxSpeed;
+			this.currentSpeed = currentSpeed;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public float getX() {
+			return x;
+		}
+
+		public void setX(float x) {
+			this.x = x;
+		}
+
+		public float getY() {
+			return y;
+		}
+
+		public void setY(float y) {
+			this.y = y;
+		}
+
+		public int getMaxSpeed() {
+			return maxSpeed;
+		}
+
+		public void setMaxSpeed(int maxSpeed) {
+			this.maxSpeed = maxSpeed;
+		}
+
+		public int getCurrentSpeed() {
+			return currentSpeed;
+		}
+
+		public void setCurrentSpeed(int currentSpeed) {
+			this.currentSpeed = currentSpeed;
+		}
 	}
 }

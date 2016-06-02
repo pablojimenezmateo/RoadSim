@@ -7,7 +7,8 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import javax.swing.SwingUtilities;
 
-import behaviours.AddNewCarBehaviour;
+import behaviours.InterfaceAddCarBehaviour;
+import behaviours.InterfaceDrawBehaviour;
 import environment.Map;
 import view.CanvasWorld;
 
@@ -58,7 +59,10 @@ public class InterfaceAgent extends Agent{
 			});
 
 			//Launch the behaviour that will add cars
-			addBehaviour(new AddNewCarBehaviour(this));
+			addBehaviour(new InterfaceAddCarBehaviour(this));
+			
+			//This will listen for drawing instructions
+			addBehaviour(new InterfaceDrawBehaviour(this));
 		}
 	}
 

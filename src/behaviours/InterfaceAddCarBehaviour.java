@@ -12,7 +12,7 @@ import jade.lang.acl.MessageTemplate;
  * and executes a behaviour to update the speed of the car.
  *
  */
-public class AddNewCarBehaviour extends CyclicBehaviour {
+public class InterfaceAddCarBehaviour extends CyclicBehaviour {
 
 	private static final long serialVersionUID = 1L;
 
@@ -24,7 +24,7 @@ public class AddNewCarBehaviour extends CyclicBehaviour {
 	
 	private InterfaceAgent agent;
 	
-	public AddNewCarBehaviour(InterfaceAgent a) {
+	public InterfaceAddCarBehaviour(InterfaceAgent a) {
 		
 		this.agent = a;
 	}
@@ -35,7 +35,7 @@ public class AddNewCarBehaviour extends CyclicBehaviour {
 		ACLMessage msg = myAgent.receive(mtNewCar);
 		
 		if (msg != null) {
-
+			
 			//Get the data
 			String cont = msg.getContent();
 
@@ -53,10 +53,11 @@ public class AddNewCarBehaviour extends CyclicBehaviour {
 					agent.getMap().addCar(myAgent.getLocalName(), id, x, y);
 				}
 			});
-
-			//This behaviour will update the car position
-			this.agent.addBehaviour(new MoveCarBehaviour(agent, id));
 			
+			//TODO: Remove (?)
+			//This behaviour will update the car position
+			//this.agent.addBehaviour(new MoveCarBehaviour(agent, id));
+						
 		} else block();
 	}
 }

@@ -14,7 +14,7 @@ import jade.lang.acl.MessageTemplate;
  * the ID is already in the segment, I deregister it.
  *
  */
-public class CarControlBehaviour extends Behaviour {
+public class SegmentListenToCarBehaviour extends Behaviour {
 
 	private static final long serialVersionUID = -2533061568306629976L;
 
@@ -27,7 +27,7 @@ public class CarControlBehaviour extends Behaviour {
 	private SegmentAgent agent;
 
 	//Constructor
-	public CarControlBehaviour(SegmentAgent agent) {
+	public SegmentListenToCarBehaviour(SegmentAgent agent) {
 
 		this.agent = agent;
 	}
@@ -35,24 +35,31 @@ public class CarControlBehaviour extends Behaviour {
 	@Override
 	public void action() {
 
-		ACLMessage msg = myAgent.blockingReceive(mtCarControl);
+		ACLMessage msg = myAgent.receive(mtCarControl);
 
 		if (msg != null) { //There is an agent
 			
 			String car = msg.getContent();
-						
-			if (!this.agent.getCars().contains(car)) { //Register
+			String parts[] = car.split("#");
+			
+			//Register
+			if (msg.getConversationId().equals("register")) { 
 				
-				this.agent.addCar(car);
-				System.out.println("Car: " + car + " has just registered in me " + this.getAgent().getLocalName());
+				this.agent.addCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]));
 				
-			} else { //Deregister
+				System.out.println("I'm the car " + parts[0] + " and I'm registering in " + this.agent.getLocalName());
 				
-				this.agent.removeCar(car);
-				System.out.println("Car: " + car + " has just deregistered in me " + this.getAgent().getLocalName());
-
+			} else if (msg.getConversationId().equals("deregister")) { //Deregister
+				
+				this.agent.removeCar(parts[0]);
+				
+				System.out.println("I'm the car " + parts[0] + " and I'm deregistering from " + this.agent.getLocalName());
+				
+			} else if (msg.getConversationId().equals("update")) { //Deregister
+				
+				this.agent.updateCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]));
 			}
-		}
+		} else block();
 		
 		//TODO: Do real stuff
 		// -Change segment color according to capacity

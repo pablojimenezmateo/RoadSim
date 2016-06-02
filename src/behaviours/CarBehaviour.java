@@ -35,8 +35,9 @@ public class CarBehaviour extends CyclicBehaviour {
 
 		//Block until tick is received
 		ACLMessage msg = this.agent.blockingReceive(mtTick);
-
+		
 		if (msg != null) {
+			
 			//If I still have to move somewhere
 			if(this.agent.getPath().getGraphicalPath().size() > 0){
 
@@ -49,7 +50,7 @@ public class CarBehaviour extends CyclicBehaviour {
 					this.agent.setPreviousSegment(next.getSegment());
 
 					//Register
-					this.informSegment(next.getSegment());
+					this.informSegment(next.getSegment(), "register");
 				}
 
 				//The proportion of the map is 1px ~= 29m and one tick is one 1 s
@@ -96,21 +97,16 @@ public class CarBehaviour extends CyclicBehaviour {
 				if (!this.agent.getPreviousSegment().equals(next.getSegment())) {
 
 					//Deregister from previous segment
-					this.informSegment(this.agent.getPreviousSegment());
+					this.informSegment(this.agent.getPreviousSegment(), "deregister");
 
 					//Set the new previous segment
 					this.agent.setPreviousSegment(next.getSegment());
 
 					//Register in the new segment
-					this.informSegment(next.getSegment());
+					this.informSegment(next.getSegment(), "register");
 				}
 
-				//Send the new position to the interface
-				msg = new ACLMessage(ACLMessage.INFORM);
-				msg.addReceiver(this.agent.getInterfaceAgent().getName());
-				msg.setConversationId(this.agent.getId());
-				msg.setContent("x=" + this.agent.getX() + "y=" + this.agent.getY()); 
-				myAgent.send(msg);
+				this.informSegment(next.getSegment(), "update");
 
 			} else { //I have arrived to my destination
 
@@ -120,15 +116,14 @@ public class CarBehaviour extends CyclicBehaviour {
 		}
 	}
 
-
-	//This method will send a message to a given segment to register/deregister
-	//to/from it
-	private void informSegment(Segment segment) {
+	//This method will send a message to a given segment
+	private void informSegment(Segment segment, String type) {
 
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.setOntology("carToSegment");
+		msg.setConversationId(type);
 		msg.addReceiver(segment.getSegmentAgent().getAID());
-		msg.setContent(this.agent.getId());
+		msg.setContent(this.agent.getId() + "#" + Float.toString(this.agent.getX()) + "#" + Float.toString(this.agent.getY()) + "#" + this.agent.getCurrentSpeed() + "#" + this.agent.getMaxSpeed());
 
 		myAgent.send(msg);
 	}

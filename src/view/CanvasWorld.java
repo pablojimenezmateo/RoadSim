@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -73,13 +73,14 @@ public class CanvasWorld extends JFrame implements ActionListener {
 	public class PanelRadar extends JPanel{
 
 		private static final long serialVersionUID = 1L;
-		private ArrayList<Mobile> carPositions;
+		//private ArrayList<Mobile> carPositions;
+		private HashMap<String, Mobile> carPositions;
 
 		private Image backGround;
 		private ImageIcon mapImage = new ImageIcon(getClass().getResource("red.png"));
 
 		public PanelRadar() {
-			carPositions =  new ArrayList<Mobile>();
+			this.carPositions =  new HashMap<String, Mobile>();
 			backGround = mapImage.getImage();
 
 			this.setBorder(new EmptyBorder(1, 1, 1, 1));
@@ -88,20 +89,16 @@ public class CanvasWorld extends JFrame implements ActionListener {
 		}
 
 		public void addCar(String ag, String id, float x, float y) {
-			carPositions.add(new Mobile(x, y, id));
+			
+			carPositions.put(id, new Mobile(x, y, id));
 			repaint();
 		}
 
 		public void moveCar(String id, float x, float y) {
 
-			for(Mobile m: carPositions){
-
-				if (id.equals(m.getId())) {
-					m.setX(x);
-					m.setY(y);
-					break;
-				}
-			}
+			Mobile m = carPositions.get(id);
+			m.setX(x);
+			m.setY(y);
 		}
 
 		public void paint(Graphics gi) {
@@ -148,8 +145,8 @@ public class CanvasWorld extends JFrame implements ActionListener {
 			}
 
 			//Draw the cars
-			for (Mobile m : carPositions) {
-
+			for (Mobile m : carPositions.values()) {
+				
 				float x = m.getX();
 				float y = m.getY();
 

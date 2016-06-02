@@ -17,13 +17,14 @@ import jade.proto.SubscriptionInitiator;
 public class TimeKeeperAgent extends Agent {
 
 	private static final long serialVersionUID = 4546329963020795810L;
-	private static final long tickLength = 100;
-
-
-	private List<AID> carAgents = new ArrayList<AID>();
+	private long tickLength;
+	private List<AID> agents = new ArrayList<AID>();
 
 	protected void setup() {
 
+		//Get the ticklength
+		 this.tickLength = (long) this.getArguments()[0];
+		
 		//Subscribe in the DF to keep the cars list up to date
 		ServiceDescription sd = new ServiceDescription();
 		sd.setType("CarAgent");
@@ -50,14 +51,53 @@ public class TimeKeeperAgent extends Agent {
 						AID aid = dfds[i].getName();
 						if (dfds[i].getAllServices().hasNext()) {
 							// Registration/Modification
-							if (!getCarAgents().contains(aid)) {
-								getCarAgents().add(aid);
-								System.out.println("Car Agent "+aid.getLocalName()+" added to the list of searcher agents");
+							if (!getAgents().contains(aid)) {
+								getAgents().add(aid);
 							}
 						} else {
 							// Deregistration
-							getCarAgents().remove(aid);
-							System.out.println("Car Agent "+aid.getLocalName()+" removed from the list of searcher agents");
+							getAgents().remove(aid);
+						}
+					}
+				}
+				catch (FIPAException fe) {
+					fe.printStackTrace();
+				}
+			}
+		} );
+		
+		//Subscribe in the DF to keep the cars list up to date
+		sd = new ServiceDescription();
+		sd.setType("segment");
+		
+		dfTemplate = new DFAgentDescription();
+		dfTemplate.addServices(sd);
+		
+		sc = new SearchConstraints();
+		sc.setMaxResults(new Long(-1));
+		
+		subscribe = DFService.createSubscriptionMessage(this, getDefaultDF(), dfTemplate, sc);
+
+		/**
+		 * This behaviour will keep an eye on the SegmentAgents registered in the system
+		 */
+		addBehaviour(new SubscriptionInitiator(this, subscribe) {
+
+			private static final long serialVersionUID = 9142354628682006078L;
+
+			protected void handleInform(ACLMessage inform) {
+				try {
+					DFAgentDescription[] dfds = DFService.decodeNotification(inform.getContent());
+					for (int i = 0; i < dfds.length; ++i) {
+						AID aid = dfds[i].getName();
+						if (dfds[i].getAllServices().hasNext()) {
+							// Registration/Modification
+							if (!getAgents().contains(aid)) {
+								getAgents().add(aid);
+							}
+						} else {
+							// Deregistration
+							getAgents().remove(aid);
 						}
 					}
 				}
@@ -74,12 +114,12 @@ public class TimeKeeperAgent extends Agent {
 			@Override
 			protected void onTick() {
 				
-				List<AID> carAgents = ((TimeKeeperAgent)myAgent).getCarAgents();
+				List<AID> agents = ((TimeKeeperAgent)myAgent).getAgents();
 				
 				//Send a tick to all the cars
 				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 				
-				for (AID aid: carAgents) {
+				for (AID aid: agents) {
 					
 					msg.addReceiver(aid);
 				}
@@ -89,12 +129,10 @@ public class TimeKeeperAgent extends Agent {
 			}
 		});
 	}
+	
+	
 
-	public List<AID> getCarAgents() {
-		return carAgents;
-	}
-
-	public void setCarAgents(List<AID> carAgents) {
-		this.carAgents = carAgents;
+	public List<AID> getAgents() {
+		return agents;
 	}
 }

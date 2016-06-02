@@ -10,9 +10,9 @@ import jade.wrapper.StaleProxyException;
 
 public class Main {
 
+	private static final long tickLength = 100;
 	private static final int numberOfCars = 100;
 	private static final boolean drawGUI = true;
-
 
 	public static void main(String[] args) {
 
@@ -76,7 +76,7 @@ public class Main {
 		
 		//TimeKeeper
 		try {
-			AgentController agent = mainContainer.createNewAgent("TimeKeeper", "agents.TimeKeeperAgent", new Object[0]);
+			AgentController agent = mainContainer.createNewAgent("TimeKeeper", "agents.TimeKeeperAgent", new Object[]{tickLength});
 
 			agent.start();
 

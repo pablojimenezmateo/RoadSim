@@ -35,6 +35,8 @@ public class MoveCarBehaviour extends Behaviour {
 		
 		ACLMessage msg = myAgent.receive(mt);
 		
+		System.out.println("MSG: " + this.agent.getCurQueueSize());
+		
 		if (msg != null) {
 			
 			//Get the data
