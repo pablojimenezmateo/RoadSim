@@ -11,7 +11,7 @@ import jade.wrapper.StaleProxyException;
 public class Main {
 
 	private static final long tickLength = 100;
-	private static final int numberOfCars = 100;
+	private static final int numberOfCars = 500;
 	private static final boolean drawGUI = true;
 
 	public static void main(String[] args) {

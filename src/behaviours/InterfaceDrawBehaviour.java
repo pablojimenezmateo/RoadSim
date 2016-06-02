@@ -18,7 +18,6 @@ public class InterfaceDrawBehaviour extends Behaviour {
 			MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
 			MessageTemplate.MatchOntology("drawOntology"));
 
-
 	public InterfaceDrawBehaviour(InterfaceAgent agent) {
 
 		this.agent = agent;
@@ -27,7 +26,7 @@ public class InterfaceDrawBehaviour extends Behaviour {
 	@Override
 	public void action() {
 
-		//Block until tick is received
+		//Receive the drawing instructions
 		ACLMessage msg = myAgent.receive(mt);
 		
 		if (msg != null) {
@@ -44,7 +43,6 @@ public class InterfaceDrawBehaviour extends Behaviour {
 
 						agent.getMap().moveCar(parts[i], Float.parseFloat(parts[i+1]), Float.parseFloat(parts[i+2]));
 					}
-
 				}
 			});
 		} else block();

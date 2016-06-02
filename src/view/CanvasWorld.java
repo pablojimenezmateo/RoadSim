@@ -23,10 +23,13 @@ import environment.Map;
 import environment.Segment;
 import environment.Step;
 
+
+//TODO: Improve performance with a SwingWorker
+
 public class CanvasWorld extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private final int FPS = 40;
+	private final int FPS = 10;
 
 	private PanelRadar contentPane;
 	private Map map = null;
