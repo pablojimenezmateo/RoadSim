@@ -29,7 +29,7 @@ public class CarAgent extends Agent {
 	public static final int MAXWORLDX = 800;
 	public static final int MAXWORLDY = 695;
 
-	private double x, y;
+	private float x, y;
 	private int direction;
 	private int curentSpeed,maxSpeed;
 	private String id; 
@@ -100,19 +100,19 @@ public class CarAgent extends Agent {
 		return direction;
 	}
 
-	public double getX() {
+	public float getX() {
 		return x;
 	}
 
-	public void setX(double x) {
+	public void setX(float x) {
 		this.x = x;
 	}
 
-	public double getY() {
+	public float getY() {
 		return y;
 	}
 
-	public void setY(double y) {
+	public void setY(float y) {
 		this.y = y;
 	}
 

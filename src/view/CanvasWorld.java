@@ -60,13 +60,13 @@ public class CanvasWorld extends JFrame implements ActionListener {
 	}
 
 	//Adds a new car to the GUI
-	public void addCar(String ag, String id, double x, double y) {
+	public void addCar(String ag, String id, float x, float y) {
 
 		contentPane.addCar(ag, id, x, y);	
 	}
 
 	//Moves an existing car
-	public void moveCar(String id, double x, double y) {
+	public void moveCar(String id, float x, float y) {
 		contentPane.moveCar(id, x, y);
 	}
 
@@ -87,12 +87,12 @@ public class CanvasWorld extends JFrame implements ActionListener {
 			this.setLayout(null);
 		}
 
-		public void addCar(String ag, String id, double x, double y) {
+		public void addCar(String ag, String id, float x, float y) {
 			carPositions.add(new Mobile(x, y, id));
 			repaint();
 		}
 
-		public void moveCar(String id, double x, double y) {
+		public void moveCar(String id, float x, float y) {
 
 			for(Mobile m: carPositions){
 
@@ -123,7 +123,7 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 					for(Step st: s.getSteps()){
 
-						line = new Line2D.Double(st.getOriginX(), st.getOriginY(), st.getDestinationX(), st.getDestinationY());
+						line = new Line2D.Float(st.getOriginX(), st.getOriginY(), st.getDestinationX(), st.getDestinationY());
 						g.draw(line);
 					}
 				}
@@ -136,7 +136,7 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 				g.setColor(Color.RED);
 				
-				oval = new Ellipse2D.Double(in.getX()-2, in.getY()-2, 4, 4);
+				oval = new Ellipse2D.Float(in.getX()-2, in.getY()-2, 4, 4);
 				g.fill(oval);
 
 				//Draw the names of the intersections
@@ -150,8 +150,8 @@ public class CanvasWorld extends JFrame implements ActionListener {
 			//Draw the cars
 			for (Mobile m : carPositions) {
 
-				double x = m.getX();
-				double y = m.getY();
+				float x = m.getX();
+				float y = m.getY();
 
 				//				g.setColor(Color.WHITE);
 				//				g.fillRect(x - 4, y - 8, 8, 4); //Windows
@@ -171,18 +171,18 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 				//Body
 				g.setColor(Color.YELLOW);
-				oval = new Ellipse2D.Double(x - 4, y - 4, 8, 8);
+				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
 				g.fill(oval);
 				
 				g.setColor(Color.ORANGE);
-				oval = new Ellipse2D.Double(x - 4, y - 4, 8, 8);
+				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
 				g.draw(oval);
 
 				//Beak
 				g.setStroke(new BasicStroke(1));
 				g.setColor(Color.ORANGE);
 				
-				Path2D beak = new Path2D.Double();
+				Path2D beak = new Path2D.Float();
 				beak.moveTo(x + 3, y - 4);
 				beak.lineTo(x - 3, y + 4);
 				beak.lineTo(x - 8, y);
@@ -193,7 +193,7 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 				//Eye
 				g.setColor(Color.BLACK);
-				oval = new Ellipse2D.Double(x - 2, y - 2, 2, 2);
+				oval = new Ellipse2D.Float(x - 2, y - 2, 2, 2);
 				g.fill(oval);
 
 				//Feet
@@ -206,42 +206,42 @@ public class CanvasWorld extends JFrame implements ActionListener {
 					rightStep = true;
 				}
 
-				Line2D.Double lineF;
+				Line2D.Float lineF;
 
 				if (rightStep) {
 
 					//Right foot
-					lineF = new Line2D.Double(x + 2, y + 1, x + 4, y + 4);
+					lineF = new Line2D.Float(x + 2, y + 1, x + 4, y + 4);
 					g.draw(lineF);
-					lineF = new Line2D.Double(x + 2, y + 1, x + 2, y + 5);
+					lineF = new Line2D.Float(x + 2, y + 1, x + 2, y + 5);
 					g.draw(lineF);
-					lineF = new Line2D.Double(x + 2, y + 1, x,     y + 4);
+					lineF = new Line2D.Float(x + 2, y + 1, x,     y + 4);
 					g.draw(lineF);
 
 					//Left foot
-					lineF = new Line2D.Double(x - 3, y + 3, x - 1, y + 5);
+					lineF = new Line2D.Float(x - 3, y + 3, x - 1, y + 5);
 					g.draw(lineF);
-					lineF = new Line2D.Double(x - 3, y + 3, x - 3, y + 6);
+					lineF = new Line2D.Float(x - 3, y + 3, x - 3, y + 6);
 					g.draw(lineF);
-					lineF = new Line2D.Double(x - 3, y + 3, x - 6, y + 5);
+					lineF = new Line2D.Float(x - 3, y + 3, x - 6, y + 5);
 					g.draw(lineF);
 
 				} else {
 
 					//Right foot
-					lineF = new Line2D.Double(x + 2, y + 3, x + 4, y + 5);
+					lineF = new Line2D.Float(x + 2, y + 3, x + 4, y + 5);
 					g.draw(lineF);
-					lineF = new Line2D.Double(x + 2, y + 3, x + 2, y + 6);
+					lineF = new Line2D.Float(x + 2, y + 3, x + 2, y + 6);
 					g.draw(lineF);
-					lineF = new Line2D.Double(x + 2, y + 3, x,     y + 5);
+					lineF = new Line2D.Float(x + 2, y + 3, x,     y + 5);
 					g.draw(lineF);
 
 					//Left foot
-					lineF = new Line2D.Double(x - 3, y + 2, x - 1, y + 6);
+					lineF = new Line2D.Float(x - 3, y + 2, x - 1, y + 6);
 					g.draw(lineF);
-					lineF = new Line2D.Double(x - 3, y + 2, x - 3, y + 5);
+					lineF = new Line2D.Float(x - 3, y + 2, x - 3, y + 5);
 					g.draw(lineF);
-					lineF = new Line2D.Double(x - 3, y + 2, x - 6, y + 4);
+					lineF = new Line2D.Float(x - 3, y + 2, x - 6, y + 4);
 					g.draw(lineF);
 				}
 			}			
@@ -249,12 +249,12 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 		public class Mobile {
 
-			private double x;
-			private double y;
+			private float x;
+			private float y;
 
 			private String id;
 
-			public Mobile(double x, double y, String id) {
+			public Mobile(float x, float y, String id) {
 				super();
 				this.setX(x);
 				this.setY(y);
@@ -262,19 +262,19 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 			}
 
-			public double getX() {
+			public float getX() {
 				return x;
 			}
 
-			public void setX(double x) {
+			public void setX(float x) {
 				this.x = x;
 			}
 
-			public double getY() {
+			public float getY() {
 				return y;
 			}
 
-			public void setY(double y) {
+			public void setY(float y) {
 				this.y = y;
 			}
 

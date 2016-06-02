@@ -46,14 +46,14 @@ public class CarBehaviour extends TickerBehaviour {
 
 			//The proportion of the map is 1px ~= 29m and one tick is one 1 s
 			//Calculate the pixels per tick I have to move
-			double increment = ((this.agent.getCurrentSpeed() * 0.2778) * 0.035);
+			float increment = ((this.agent.getCurrentSpeed() * 0.2778f) * 0.035f);
 
 			//Virtual position
-			double currentX = this.agent.getX();
-			double currentY = this.agent.getY();
+			float currentX = this.agent.getX();
+			float currentY = this.agent.getY();
 
 			//The distance between my current position and my next desired position
-			double distNext = Math.sqrt(Math.pow(currentX - next.getDestinationX(), 2) + Math.pow(currentY - next.getDestinationY(), 2));
+			float distNext = (float) Math.sqrt(Math.pow(currentX - next.getDestinationX(), 2) + Math.pow(currentY - next.getDestinationY(), 2));
 
 			//Check if we need to go to the next step
 			while (increment > distNext) {
@@ -70,7 +70,7 @@ public class CarBehaviour extends TickerBehaviour {
 					currentX = next.getOriginX();
 					currentY = next.getOriginY();
 
-					distNext = Math.sqrt(Math.pow(currentX - next.getDestinationX(), 2) + Math.pow(currentY - next.getDestinationY(), 2));
+					distNext = (float) Math.sqrt(Math.pow(currentX - next.getDestinationX(), 2) + Math.pow(currentY - next.getDestinationY(), 2));
 				} else {
 					
 					this.stop();
@@ -79,7 +79,7 @@ public class CarBehaviour extends TickerBehaviour {
 			}
 
 			//Proportion inside the segment
-			double proportion = increment / distNext;
+			float proportion = increment / distNext;
 
 			this.agent.setX(((1 - proportion) * currentX + proportion * next.getDestinationX()));
 			this.agent.setY(((1 - proportion) * currentY + proportion * next.getDestinationY()));
