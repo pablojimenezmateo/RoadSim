@@ -1,7 +1,6 @@
-/main/
+/org/
 /searchAlgorithms/
-/agents/
-/environment/
-/map/
-/behaviours/
 /view/
+/agents/
+/behaviours/
+/main/

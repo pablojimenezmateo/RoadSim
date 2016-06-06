@@ -22,6 +22,7 @@ import environment.Intersection;
 import environment.Map;
 import environment.Segment;
 import environment.Step;
+import view.CanvasWorld.PanelRadar.Mobile;
 
 
 //TODO: Improve performance with a SwingWorker
@@ -29,7 +30,7 @@ import environment.Step;
 public class CanvasWorld extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
-	private final int FPS = 10;
+	private final int FPS = 40;
 
 	private PanelRadar contentPane;
 	private Map map = null;
@@ -72,6 +73,16 @@ public class CanvasWorld extends JFrame implements ActionListener {
 	public void moveCar(String id, float x, float y) {
 		contentPane.moveCar(id, x, y);
 	}
+	
+	public HashMap<String, Mobile> getCars() {
+		
+		return contentPane.getCars();
+	}
+	
+	public void setCars(HashMap<String, Mobile> cars) {
+		
+		contentPane.setCars(cars);
+	}
 
 	public class PanelRadar extends JPanel{
 
@@ -89,6 +100,17 @@ public class CanvasWorld extends JFrame implements ActionListener {
 			this.setBorder(new EmptyBorder(1, 1, 1, 1));
 			this.setDoubleBuffered(true);
 			this.setLayout(null);
+		}
+		
+		public void setCars(HashMap<String, Mobile> cars) {
+			
+			this.carPositions = cars;
+			
+		}
+
+		public HashMap<String, Mobile> getCars() {
+			
+			return carPositions;
 		}
 
 		public void addCar(String ag, String id, float x, float y) {

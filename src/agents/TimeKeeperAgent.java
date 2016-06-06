@@ -107,6 +107,22 @@ public class TimeKeeperAgent extends Agent {
 			}
 		} );
 		
+		//Add the EventManager to the subscribed agents
+		//Find the interface agent
+		DFAgentDescription dfd = new DFAgentDescription();
+		sd = new ServiceDescription();
+		sd.setType("EventManagerAgent");
+		dfd.addServices(sd);
+
+		DFAgentDescription[] result = null;
+
+		try {
+			result = DFService.searchUntilFound(
+					this, getDefaultDF(), dfd, null, 5000);
+		} catch (FIPAException e) { e.printStackTrace(); }
+
+		this.agents.add(result[0].getName());
+		
 		addBehaviour(new TickerBehaviour(this, tickLength) {
 			
 			private static final long serialVersionUID = 1L;
@@ -116,7 +132,7 @@ public class TimeKeeperAgent extends Agent {
 				
 				List<AID> agents = ((TimeKeeperAgent)myAgent).getAgents();
 				
-				//Send a tick to all the cars
+				//Send a tick to all the agents
 				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 				
 				for (AID aid: agents) {

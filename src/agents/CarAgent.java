@@ -56,15 +56,14 @@ public class CarAgent extends Agent {
 
 		//Get the map from an argument
 		this.map = (Map) this.getArguments()[0];
-
-		//It starts in a random intersection, and ends in a random intersection
-		String initialIntersection = this.map.getRandomIntersection();
-		String finalIntersection = this.map.getRandomIntersection();
-
-		//Origin an destination must be different
-		while(initialIntersection.equals(finalIntersection)){
-			finalIntersection = this.map.getRandomIntersection();
-		}
+		
+		//Get the starting and final points of my trip
+		String initialIntersection = (String) this.getArguments()[1];
+		String finalIntersection = (String) this.getArguments()[2];
+		
+		//Get the speeds
+		this.maxSpeed = (int) this.getArguments()[3];
+		this.curentSpeed = (int) this.getArguments()[4];
 
 		//Get the method we want
 		AlgorithmFactory factory = new AlgorithmFactory();
@@ -76,9 +75,6 @@ public class CarAgent extends Agent {
 		//Starting point
 		setX(map.getIntersectionByID(initialIntersection).getX());
 		setY(map.getIntersectionByID(initialIntersection).getY());
-
-		this.maxSpeed = 120;
-		this.curentSpeed = 120;
 
 		//Find the interface agent
 		dfd = new DFAgentDescription();
