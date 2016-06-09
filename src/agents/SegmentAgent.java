@@ -2,7 +2,7 @@ package agents;
 
 import java.util.HashMap;
 
-import behaviours.SegmentListenToCarBehaviour;
+import behaviours.SegmentListenBehaviour;
 import behaviours.SegmentSendToDrawBehaviour;
 import environment.Segment;
 import jade.core.Agent;
@@ -52,7 +52,7 @@ public class SegmentAgent extends Agent {
 		}
 		
 		//We add the logic to the segment		
-		addBehaviour(new SegmentListenToCarBehaviour(this));
+		addBehaviour(new SegmentListenBehaviour(this));
 		addBehaviour(new SegmentSendToDrawBehaviour(this));		
 	}
 

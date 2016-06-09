@@ -39,8 +39,8 @@ public class CarBehaviour extends CyclicBehaviour {
 		if (msg != null) {
 			
 			//If I still have to move somewhere
-			if(this.agent.getPath().getGraphicalPath().size() > 0){
-
+			if(this.agent.getPath().getGraphicalPath().size() > 1){
+				
 				//Get the path
 				Step next = this.agent.getPath().getGraphicalPath().get(0);
 
@@ -105,12 +105,26 @@ public class CarBehaviour extends CyclicBehaviour {
 					//Register in the new segment
 					this.informSegment(next.getSegment(), "register");
 				}
-
+				
 				this.informSegment(next.getSegment(), "update");
 
 			} else { //I have arrived to my destination
 
-				//TODO: Remove car from GUI
+				//Deregister from previous segment
+				this.informSegment(this.agent.getPreviousSegment(), "deregister");
+				
+				//Delete the car from the canvas
+				if (this.agent.getInterfaceAgent() != null) {
+					
+					msg = new ACLMessage(ACLMessage.INFORM);
+					msg.setOntology("deleteOntology");
+					msg.addReceiver(this.agent.getInterfaceAgent().getName());
+					msg.setContent(this.agent.getId());
+
+					myAgent.send(msg);
+				}
+				
+				this.agent.doDelete();
 				this.done();
 			}
 		}

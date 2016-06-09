@@ -19,7 +19,7 @@ public class AlgorithmFactory {
 			
 		} else if (method.equals(Method.FASTEST)) {
 			
-			
+			return new FastestPathAlgorithm();
 		} else if (method.equals(Method.FASTEST_TRAFFIC)) {
 			
 			

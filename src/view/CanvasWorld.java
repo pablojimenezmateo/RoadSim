@@ -74,6 +74,11 @@ public class CanvasWorld extends JFrame implements ActionListener {
 		contentPane.moveCar(id, x, y);
 	}
 	
+	public void deleteCar(String id) {
+		
+		contentPane.deleteCar(id);
+	}
+	
 	public HashMap<String, Mobile> getCars() {
 		
 		return contentPane.getCars();
@@ -105,7 +110,6 @@ public class CanvasWorld extends JFrame implements ActionListener {
 		public void setCars(HashMap<String, Mobile> cars) {
 			
 			this.carPositions = cars;
-			
 		}
 
 		public HashMap<String, Mobile> getCars() {
@@ -125,6 +129,11 @@ public class CanvasWorld extends JFrame implements ActionListener {
 			m.setX(x);
 			m.setY(y);
 		}
+		
+		public void deleteCar(String id) {
+			
+			this.carPositions.remove(id);
+		}
 
 		public void paint(Graphics gi) {
 
@@ -139,9 +148,20 @@ public class CanvasWorld extends JFrame implements ActionListener {
 			for (Intersection in : map.getIntersections()) {
 
 				g.setStroke(new BasicStroke(2));
-				g.setColor(Color.GREEN);
 
 				for (Segment s: in.getOutSegments()){
+					
+					if (s.getDensity() < 50) {
+						
+						g.setColor(Color.GREEN);
+					
+					} else if (s.getDensity() < 75) {
+						
+						g.setColor(Color.ORANGE);
+					} else {
+						
+						g.setColor(Color.RED);
+					}
 
 					for(Step st: s.getSteps()){
 
@@ -315,7 +335,7 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 		if (e.getSource() == this.timer) {
 
-			repaint();
+			contentPane.repaint();
 		}
 	}
 }

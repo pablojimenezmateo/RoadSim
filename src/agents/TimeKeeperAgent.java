@@ -23,18 +23,18 @@ public class TimeKeeperAgent extends Agent {
 	protected void setup() {
 
 		//Get the ticklength
-		 this.tickLength = (long) this.getArguments()[0];
-		
+		this.tickLength = (long) this.getArguments()[0];
+
 		//Subscribe in the DF to keep the cars list up to date
 		ServiceDescription sd = new ServiceDescription();
 		sd.setType("CarAgent");
-		
+
 		DFAgentDescription dfTemplate = new DFAgentDescription();
 		dfTemplate.addServices(sd);
-		
+
 		SearchConstraints sc = new SearchConstraints();
 		sc.setMaxResults(new Long(-1));
-		
+
 		ACLMessage subscribe = DFService.createSubscriptionMessage(this, getDefaultDF(), dfTemplate, sc);
 
 		/**
@@ -65,17 +65,17 @@ public class TimeKeeperAgent extends Agent {
 				}
 			}
 		} );
-		
+
 		//Subscribe in the DF to keep the cars list up to date
 		sd = new ServiceDescription();
 		sd.setType("segment");
-		
+
 		dfTemplate = new DFAgentDescription();
 		dfTemplate.addServices(sd);
-		
+
 		sc = new SearchConstraints();
 		sc.setMaxResults(new Long(-1));
-		
+
 		subscribe = DFService.createSubscriptionMessage(this, getDefaultDF(), dfTemplate, sc);
 
 		/**
@@ -106,7 +106,7 @@ public class TimeKeeperAgent extends Agent {
 				}
 			}
 		} );
-		
+
 		//Add the EventManager to the subscribed agents
 		//Find the interface agent
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -118,35 +118,35 @@ public class TimeKeeperAgent extends Agent {
 
 		try {
 			result = DFService.searchUntilFound(
-					this, getDefaultDF(), dfd, null, 5000);
+					this, getDefaultDF(), dfd, null, 10000);
 		} catch (FIPAException e) { e.printStackTrace(); }
 
 		this.agents.add(result[0].getName());
-		
+
 		addBehaviour(new TickerBehaviour(this, tickLength) {
-			
+
 			private static final long serialVersionUID = 1L;
-			
+
 			@Override
 			protected void onTick() {
-				
+
 				List<AID> agents = ((TimeKeeperAgent)myAgent).getAgents();
-				
+
 				//Send a tick to all the agents
 				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-				
+
 				for (AID aid: agents) {
-					
+
 					msg.addReceiver(aid);
 				}
-				
+
 				msg.setConversationId("tick"); 
 				myAgent.send(msg);
 			}
 		});
 	}
-	
-	
+
+
 
 	public List<AID> getAgents() {
 		return agents;

@@ -17,9 +17,12 @@ public class InterfaceDrawBehaviour extends Behaviour {
 	private InterfaceAgent agent;
 
 	//Template to listen for drawing instructions
-	private MessageTemplate mt = MessageTemplate.and(
+	private MessageTemplate mt = MessageTemplate.or(MessageTemplate.and(
 			MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
-			MessageTemplate.MatchOntology("drawOntology"));
+			MessageTemplate.MatchOntology("drawOntology")),
+			MessageTemplate.and(
+					MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
+					MessageTemplate.MatchOntology("deleteOntology")));
 
 	public InterfaceDrawBehaviour(InterfaceAgent agent) {
 
@@ -34,26 +37,38 @@ public class InterfaceDrawBehaviour extends Behaviour {
 
 		if (msg != null) {
 
-			//Update the position in the canvas
-			SwingUtilities.invokeLater(new Runnable() {
+			if (msg.getOntology().equals("drawOntology")) {
+				//Update the position in the canvas
+				SwingUtilities.invokeLater(new Runnable() {
 
-				@Override
-				public void run() {
+					@Override
+					public void run() {
 
-					String parts[] = msg.getContent().split("#");
-					HashMap<String, Mobile> cars = agent.getMap().getCars();
+						String parts[] = msg.getContent().split("#");
+						HashMap<String, Mobile> cars = agent.getMap().getCars();
 
-					for (int i=1; i < parts.length; i+=3) {
+						for (int i=1; i < parts.length; i+=3) {
 
-						//agent.getMap().moveCar(parts[i], Float.parseFloat(parts[i+1]), Float.parseFloat(parts[i+2]));
-						Mobile m = cars.get(parts[i]);
-						m.setX(Float.parseFloat(parts[i+1]));
-						m.setY(Float.parseFloat(parts[i+2]));
+							Mobile m = cars.get(parts[i]);
+							m.setX(Float.parseFloat(parts[i+1]));
+							m.setY(Float.parseFloat(parts[i+2]));
+						}
+
+						agent.getMap().setCars(cars);
 					}
-					
-					agent.getMap().setCars(cars);
-				}
-			});
+				});
+			} else if (msg.getOntology().equals("deleteOntology")) {
+
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						
+						agent.getMap().deleteCar(msg.getContent());	
+					}
+				});
+			}
+
 		} else block();
 	}
 

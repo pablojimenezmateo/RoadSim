@@ -5,5 +5,5 @@ import environment.Path;
 
 public interface Algorithm {
 
-	public Path getPath(Map map, String origin, String destination);
+	public Path getPath(Map map, String origin, String destination, int maxSpeed);
 }

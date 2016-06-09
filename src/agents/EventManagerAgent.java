@@ -55,14 +55,23 @@ public class EventManagerAgent extends Agent {
 		}
 		
 		//TODO: Populate events by reading a file
+		//New cars
 		String testEvent1 = "newCar#I-AP7-01#I-AP7-04#120#120";
 		String testEvent2 = "newCar#I-CV10-05#I-CS22-03#120#120";
+		
+		//Segments
+		String testEvent3 = "segment#S-AP7-03#90";
+		String testEvent4 = "segment#S-AP7-04#70";
+		String testEvent5 = "segment#S-AP7-01#20";
 		
 		this.getEvents().put(50, new LinkedList<String>());
 		this.getEvents().put(80, new LinkedList<String>());
 		
 		this.getEvents().get(50).add(testEvent1);
 		this.getEvents().get(80).add(testEvent2);
+		this.getEvents().get(80).add(testEvent3);
+		this.getEvents().get(80).add(testEvent4);
+		this.getEvents().get(80).add(testEvent5);
 		
 		addBehaviour(new EventManagerBehaviour(this));
 	}

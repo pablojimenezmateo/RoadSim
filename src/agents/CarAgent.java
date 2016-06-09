@@ -67,11 +67,11 @@ public class CarAgent extends Agent {
 
 		//Get the method we want
 		AlgorithmFactory factory = new AlgorithmFactory();
-		Algorithm alg = factory.getAlgorithm(Method.SHORTEST);
-
+		Algorithm alg = factory.getAlgorithm(Method.FASTEST);
+		
 		//Get the desired Path from the origin to the destination
-		this.path = alg.getPath(map, initialIntersection, finalIntersection);
-
+		this.path = alg.getPath(this.map, initialIntersection, finalIntersection, this.maxSpeed);
+		
 		//Starting point
 		setX(map.getIntersectionByID(initialIntersection).getX());
 		setY(map.getIntersectionByID(initialIntersection).getY());

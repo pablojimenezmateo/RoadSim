@@ -13,30 +13,32 @@ import environment.Path;
 import environment.Segment;
 import environment.Step;
 
-public class ShortestPathAlgorithm implements Algorithm {
-	
+public class FastestPathAlgorithm implements Algorithm {
+
+	public static int MAXSPEED = 120;
+
 	/**
 	 * Dijkstra https://en.wikipedia.org/?title=Dijkstra%27s_algorithm#Pseudocode.
 	 * 
 	 * @param origin
 	 * @return
 	 */
-	public HashMap<Intersection, Intersection> shortestPathsFrom(Map map, String originID){
+	public HashMap<Intersection, Intersection> shortestPathsFrom(Map map, String originID, int maxSpeed){
 
-		HashMap<Intersection, Double> dist = new HashMap<Intersection, Double>();
+		HashMap<Intersection, Double> time = new HashMap<Intersection, Double>();
 		HashMap<Intersection, Intersection> prev = new HashMap<Intersection, Intersection>();
 		Queue<Intersection> q = new LinkedList<Intersection>();
 
 		Intersection origin = map.getIntersectionByID(originID);
 
-		dist.put(origin, 0.0);
+		time.put(origin, 0.0);
 		prev.put(origin, null);
 
 		for(Intersection intersection: map.getIntersections()){
 
 			if(!intersection.equals(origin)){
 
-				dist.put(intersection, Double.MAX_VALUE);
+				time.put(intersection, Double.MAX_VALUE);
 				prev.put(intersection, null);
 			}
 
@@ -45,7 +47,7 @@ public class ShortestPathAlgorithm implements Algorithm {
 
 		while(!q.isEmpty()){
 
-			Intersection u = minDistance(dist, q);
+			Intersection u = minTime(time, q);
 
 			q.remove(u);
 
@@ -56,11 +58,11 @@ public class ShortestPathAlgorithm implements Algorithm {
 					break;
 				}
 
-				double alt = dist.get(u) + getLenghtToNeighbour(u, v);
+				double alt = time.get(u) + getTimeToNeighbour(u, v, maxSpeed);
 
-				if(alt < dist.get(v)){
+				if(alt < time.get(v)){
 
-					dist.put(v, alt);
+					time.put(v, alt);
 					prev.put(v, u);
 				}
 			}
@@ -258,7 +260,7 @@ public class ShortestPathAlgorithm implements Algorithm {
 	public Path getPath(Map map, String initialIntersection, String finalIntersection, int maxSpeed) {
 
 		//Calculate dijkstra
-		HashMap<Intersection, Intersection> dijks = this.shortestPathsFrom(map, initialIntersection);
+		HashMap<Intersection, Intersection> dijks = this.shortestPathsFrom(map, initialIntersection, maxSpeed);
 
 		//Calculate the intersection path
 		List<String> intersectionPath = this.getIntersectionPath(dijks, map.getIntersectionByID(finalIntersection));
@@ -272,18 +274,18 @@ public class ShortestPathAlgorithm implements Algorithm {
 		return new Path(intersectionPath, graphicalPath, segmentPath);
 	}
 
-	private Intersection minDistance(HashMap<Intersection, Double> dist, Queue<Intersection> queue){
+	private Intersection minTime(HashMap<Intersection, Double> speed, Queue<Intersection> queue){
 
 		double min = Double.MAX_VALUE;
 		Intersection ret = queue.peek();
 
-		Set<Intersection> keys = dist.keySet();
+		Set<Intersection> keys = speed.keySet();
 
 		for(Intersection intersection: keys){
 
-			if(queue.contains(intersection) && dist.get(intersection) < min){
+			if(queue.contains(intersection) && speed.get(intersection) < min){
 
-				min = dist.get(intersection);
+				min = speed.get(intersection);
 				ret = intersection;
 			}
 		}
@@ -312,6 +314,22 @@ public class ShortestPathAlgorithm implements Algorithm {
 			if(segment.getDestination().equals(destination)){
 
 				ret = segment.getLength();
+				break;
+			}
+		}
+
+		return ret;
+	}
+
+	private double getTimeToNeighbour(Intersection origin, Intersection destination, int maxSpeed){
+
+		double ret = Double.MAX_VALUE;
+
+		for(Segment segment: origin.getOutSegments()){
+
+			if(segment.getDestination().equals(destination)){
+
+				ret = Math.min(segment.getLength()/segment.getMaxVelocity(), segment.getLength()/maxSpeed);
 				break;
 			}
 		}

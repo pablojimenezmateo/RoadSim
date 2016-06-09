@@ -30,6 +30,9 @@ public class Segment implements Serializable{
 
 	//Capacity
 	private int capacity;
+	
+	//Density
+	private int density;
 
 	//Number of tracks
 	private int numberTracks;
@@ -37,8 +40,8 @@ public class Segment implements Serializable{
 	//The steps that form the segment
 	private List<Step> steps;
 
-	//Max velocity
-	private int maxVelocity;
+	//Max speed
+	private int maxSpeed;
 
 	//Kilometric points
 	private int pkMin, pkMax;
@@ -62,7 +65,7 @@ public class Segment implements Serializable{
 		this.capacity = 0;
 		this.numberTracks = 0;
 		this.steps = new LinkedList<Step>();
-		this.maxVelocity = 0;
+		this.maxSpeed = 0;
 		this.pkMin = 0;
 		this.pkMax = 0;
 		this.mainContainer = null;
@@ -75,18 +78,18 @@ public class Segment implements Serializable{
 	 * @param  destination {@link Intersection} where this {@link Segment} ends.
 	 * @param  length The length of this {@link Segment} in Km.
 	 */
-	public Segment(String id, Intersection origin, Intersection destination, double length, int capacity, int numberTracks, jade.wrapper.AgentContainer mainContainer){
+	public Segment(String id, Intersection origin, Intersection destination, double length, int maxSpeed, int capacity, int density, int numberTracks, jade.wrapper.AgentContainer mainContainer){
 
 		this.id = id;
 		this.origin = origin;
 		this.destination = destination;
 		this.length = length;
+		this.maxSpeed = maxSpeed;
 		this.capacity = capacity;
+		this.density = density;
 		this.numberTracks = numberTracks;
 		this.steps = new LinkedList<Step>();
 		this.mainContainer = mainContainer;
-
-		//Start the segment agent
 
 		//Create the agents
 		try {
@@ -140,7 +143,7 @@ public class Segment implements Serializable{
 	}
 
 	public int getMaxVelocity() {
-		return maxVelocity;
+		return maxSpeed;
 	}
 
 	public int getPkMin() {
@@ -158,5 +161,13 @@ public class Segment implements Serializable{
 	public void setSegmentAgent(SegmentAgent segmentAgent) {
 		this.segmentAgent = segmentAgent;
 		this.segmentAgent.setSegment(this);
+	}
+
+	public int getDensity() {
+		return density;
+	}
+
+	public void setDensity(int density) {
+		this.density = density;
 	}
 }

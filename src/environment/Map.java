@@ -125,7 +125,7 @@ public class Map implements Serializable {
 					}
 
 					//Populate the map
-					Segment segment = new Segment(seg.getString("id"), origin, destination, seg.getDouble("length"), seg.getInt("capacity"), seg.getInt("numberTracks"), this.mainContainer);
+					Segment segment = new Segment(seg.getString("id"), origin, destination, seg.getDouble("length"), seg.getInt("maxSpeed"), seg.getInt("capacity"), seg.getInt("density"), seg.getInt("numberTracks"), this.mainContainer);
 
 					if(origin != null){
 						origin.addOutSegment(segment);

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import agents.EventManagerAgent;
+import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -64,6 +65,16 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 							System.out.println("Error starting a car agent");
 							e.printStackTrace();
 						}
+					} else if (parts[0].equals("segment")) {
+						
+						msg = new ACLMessage(ACLMessage.INFORM);
+						msg.setOntology("eventManagerToSegment");
+						msg.addReceiver(new AID(parts[1], AID.ISLOCALNAME));
+						msg.setContent(parts[2]);
+
+						myAgent.send(msg);
+						
+						
 					}
 					
 					counter++;
