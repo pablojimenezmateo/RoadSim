@@ -38,6 +38,7 @@ public class InterfaceDrawBehaviour extends Behaviour {
 		if (msg != null) {
 
 			if (msg.getOntology().equals("drawOntology")) {
+
 				//Update the position in the canvas
 				SwingUtilities.invokeLater(new Runnable() {
 
@@ -50,8 +51,11 @@ public class InterfaceDrawBehaviour extends Behaviour {
 						for (int i=1; i < parts.length; i+=3) {
 
 							Mobile m = cars.get(parts[i]);
-							m.setX(Float.parseFloat(parts[i+1]));
-							m.setY(Float.parseFloat(parts[i+2]));
+
+							if (m != null) {
+								m.setX(Float.parseFloat(parts[i+1]));
+								m.setY(Float.parseFloat(parts[i+2]));
+							}
 						}
 
 						agent.getMap().setCars(cars);
@@ -63,7 +67,7 @@ public class InterfaceDrawBehaviour extends Behaviour {
 
 					@Override
 					public void run() {
-						
+
 						agent.getMap().deleteCar(msg.getContent());	
 					}
 				});

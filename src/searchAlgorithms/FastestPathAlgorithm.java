@@ -329,7 +329,7 @@ public class FastestPathAlgorithm implements Algorithm {
 
 			if(segment.getDestination().equals(destination)){
 
-				ret = Math.min(segment.getLength()/segment.getMaxVelocity(), segment.getLength()/maxSpeed);
+				ret = Math.min(segment.getLength()/segment.getMaxSpeed(), segment.getLength()/maxSpeed);
 				break;
 			}
 		}

@@ -11,7 +11,7 @@ import jade.wrapper.StaleProxyException;
 public class Main {
 
 	private static final long tickLength = 5;
-	private static final int numberOfCars = 0;
+	private static final int numberOfCars = 100;
 	private static final boolean drawGUI = true;
 
 	public static void main(String[] args) {
@@ -84,6 +84,13 @@ public class Main {
 
 			System.out.println("Error starting the TimeKeeper agent");
 			e1.printStackTrace();
+		}
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
 		}
 
 		//Cars

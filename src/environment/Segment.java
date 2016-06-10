@@ -142,7 +142,7 @@ public class Segment implements Serializable{
 		this.steps = steps;
 	}
 
-	public int getMaxVelocity() {
+	public int getMaxSpeed() {
 		return maxSpeed;
 	}
 

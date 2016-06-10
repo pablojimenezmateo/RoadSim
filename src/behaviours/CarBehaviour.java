@@ -35,12 +35,12 @@ public class CarBehaviour extends CyclicBehaviour {
 
 		//Block until tick is received
 		ACLMessage msg = this.agent.blockingReceive(mtTick);
-		
+
 		if (msg != null) {
-			
+
 			//If I still have to move somewhere
 			if(this.agent.getPath().getGraphicalPath().size() > 1){
-				
+
 				//Get the path
 				Step next = this.agent.getPath().getGraphicalPath().get(0);
 
@@ -51,6 +51,9 @@ public class CarBehaviour extends CyclicBehaviour {
 
 					//Register
 					this.informSegment(next.getSegment(), "register");
+
+					//Change my speed according to the maximum allowed speed
+					this.agent.setCurrentSpeed(Math.min(this.agent.getMaxSpeed(), this.agent.getPreviousSegment().getMaxSpeed()));
 				}
 
 				//The proportion of the map is 1px ~= 29m and one tick is one 1 s
@@ -96,26 +99,33 @@ public class CarBehaviour extends CyclicBehaviour {
 				//If we are in a new segment
 				if (!this.agent.getPreviousSegment().equals(next.getSegment())) {
 
-					//Deregister from previous segment
-					this.informSegment(this.agent.getPreviousSegment(), "deregister");
+					//TODO: Check when this happens
+					if (this.agent.getPreviousSegment() != null) {
+
+						//Deregister from previous segment
+						this.informSegment(this.agent.getPreviousSegment(), "deregister");
+					}
 
 					//Set the new previous segment
 					this.agent.setPreviousSegment(next.getSegment());
 
 					//Register in the new segment
 					this.informSegment(next.getSegment(), "register");
+
+					//Change my speed according to the maximum allowed speed
+					this.agent.setCurrentSpeed(Math.min(this.agent.getMaxSpeed(), this.agent.getPreviousSegment().getMaxSpeed()));
 				}
-				
+
 				this.informSegment(next.getSegment(), "update");
 
 			} else { //I have arrived to my destination
 
 				//Deregister from previous segment
 				this.informSegment(this.agent.getPreviousSegment(), "deregister");
-				
+
 				//Delete the car from the canvas
 				if (this.agent.getInterfaceAgent() != null) {
-					
+
 					msg = new ACLMessage(ACLMessage.INFORM);
 					msg.setOntology("deleteOntology");
 					msg.addReceiver(this.agent.getInterfaceAgent().getName());
@@ -123,7 +133,7 @@ public class CarBehaviour extends CyclicBehaviour {
 
 					myAgent.send(msg);
 				}
-				
+
 				this.agent.doDelete();
 				this.done();
 			}
