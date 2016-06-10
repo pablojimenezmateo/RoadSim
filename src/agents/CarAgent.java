@@ -38,6 +38,7 @@ public class CarAgent extends Agent {
 	private Path path;
 	private Segment previousSegment;
 	private String initialIntersection, finalIntersection;
+	private boolean specialColor = false;
 
 	protected void setup() {
 
@@ -177,5 +178,13 @@ public class CarAgent extends Agent {
 
 	public String getFinalIntersection() {
 		return finalIntersection;
+	}
+
+	public boolean getSpecialColor() {
+		return specialColor;
+	}
+
+	public void setSpecialColor(boolean specialColor) {
+		this.specialColor = specialColor;
 	}
 }

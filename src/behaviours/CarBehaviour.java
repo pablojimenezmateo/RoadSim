@@ -54,7 +54,16 @@ public class CarBehaviour extends CyclicBehaviour {
 					this.informSegment(next.getSegment(), "register");
 
 					//Change my speed according to the maximum allowed speed
-					this.agent.setCurrentSpeed(Math.min(this.agent.getMaxSpeed(), this.agent.getPreviousSegment().getMaxSpeed()));
+					this.agent.setCurrentSpeed(Math.min(this.agent.getMaxSpeed(), this.agent.getPreviousSegment().getCurrentAllowedSpeed()));
+					
+					//If we are going under the maximum speed I'm allowed to go, or I can go, I am in a congestion, draw me differently
+					if (this.agent.getCurrentSpeed() < Math.min(this.agent.getMaxSpeed(), this.agent.getPreviousSegment().getMaxSpeed())) {
+						
+						this.agent.setSpecialColor(true);
+					} else {
+						
+						this.agent.setSpecialColor(false);
+					}
 				}
 
 				//The proportion of the map is 1px ~= 29m and one tick is one 1 s
@@ -116,7 +125,16 @@ public class CarBehaviour extends CyclicBehaviour {
 						this.informSegment(next.getSegment(), "register");
 
 						//Change my speed according to the maximum allowed speed
-						this.agent.setCurrentSpeed(Math.min(this.agent.getMaxSpeed(), this.agent.getPreviousSegment().getMaxSpeed()));
+						this.agent.setCurrentSpeed(Math.min(this.agent.getMaxSpeed(), this.agent.getPreviousSegment().getCurrentAllowedSpeed()));
+						
+						//If we are going under the maximum speed I'm allowed to go, or I can go, I am in a congestion, draw me differently
+						if (this.agent.getCurrentSpeed() < Math.min(this.agent.getMaxSpeed(), this.agent.getPreviousSegment().getMaxSpeed())) {
+							
+							this.agent.setSpecialColor(true);
+						} else {
+							
+							this.agent.setSpecialColor(false);
+						}
 					}
 
 					this.informSegment(next.getSegment(), "update");

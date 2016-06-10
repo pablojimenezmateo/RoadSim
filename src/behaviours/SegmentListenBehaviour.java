@@ -54,7 +54,7 @@ public class SegmentListenBehaviour extends Behaviour {
 				//Register
 				if (msg.getConversationId().equals("register")) { 
 
-					this.agent.addCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]));
+					this.agent.addCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Boolean.getBoolean(parts[3]));
 
 					System.out.println("I'm the car " + parts[0] + " and I'm registering in " + this.agent.getLocalName());
 
@@ -66,7 +66,7 @@ public class SegmentListenBehaviour extends Behaviour {
 
 				} else if (msg.getConversationId().equals("update")) { //Update position
 
-					this.agent.updateCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]));
+					this.agent.updateCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Boolean.getBoolean(parts[3]));
 				}
 				
 			} else if (msg.getOntology().equals("eventManagerToSegment")) {

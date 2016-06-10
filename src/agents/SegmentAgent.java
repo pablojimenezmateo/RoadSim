@@ -57,9 +57,9 @@ public class SegmentAgent extends Agent {
 	}
 
 	//Add a car to this segment
-	public void addCar(String id, float x, float y, int maxSpeed, int currSpeed) {
+	public void addCar(String id, float x, float y, boolean specialColor) {
 		
-		this.cars.put(id, new CarData(id, x, y, maxSpeed, currSpeed));
+		this.cars.put(id, new CarData(id, x, y, specialColor));
 	}
 	
 	//Remove a car from this segment
@@ -75,13 +75,12 @@ public class SegmentAgent extends Agent {
 	}
 
 	//Updates the information of a car
-	public void updateCar(String id, float x, float y, int maxSpeed, int currSpeed) {
+	public void updateCar(String id, float x, float y, boolean specialColor) {
 		
 		CarData aux = cars.get(id);
 		aux.setX(x);
 		aux.setY(y);
-		aux.setMaxSpeed(maxSpeed);
-		aux.setCurrentSpeed(currSpeed);
+		aux.setSpecialColor(specialColor);
 	}
 	
 	//Creates the string that will be sent to the InterfaceAgent
@@ -93,7 +92,7 @@ public class SegmentAgent extends Agent {
 		
 		for(CarData car: cars.values()) {
 			
-			ret.append(car.getId() + "#" + Float.toString(car.getX()) + "#" + Float.toString(car.getY()) + "#");
+			ret.append(car.getId() + "#" + Float.toString(car.getX()) + "#" + Float.toString(car.getY()) + "#" + Boolean.toString(car.getSpecialColor()));
 		}
 		
 		return ret.toString();
@@ -123,15 +122,14 @@ public class SegmentAgent extends Agent {
 
 		private String id;
 		private float x, y;
-		private int maxSpeed, currentSpeed;
+		private boolean specialColor;
 		
-		public CarData(String id, float x, float y, int maxSpeed, int currentSpeed) {
-			super();
+		public CarData(String id, float x, float y, boolean specialColor) {
+			
 			this.id = id;
 			this.x = x;
 			this.y = y;
-			this.maxSpeed = maxSpeed;
-			this.currentSpeed = currentSpeed;
+			this.specialColor = specialColor;
 		}
 
 		public String getId() {
@@ -158,20 +156,12 @@ public class SegmentAgent extends Agent {
 			this.y = y;
 		}
 
-		public int getMaxSpeed() {
-			return maxSpeed;
+		public boolean getSpecialColor() {
+			return specialColor;
 		}
 
-		public void setMaxSpeed(int maxSpeed) {
-			this.maxSpeed = maxSpeed;
-		}
-
-		public int getCurrentSpeed() {
-			return currentSpeed;
-		}
-
-		public void setCurrentSpeed(int currentSpeed) {
-			this.currentSpeed = currentSpeed;
+		public void setSpecialColor(boolean specialColor) {
+			this.specialColor = specialColor;
 		}
 	}
 }

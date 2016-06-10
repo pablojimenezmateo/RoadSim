@@ -50,14 +50,10 @@ public class InterfaceAddCarBehaviour extends CyclicBehaviour {
 
 				@Override
 				public void run() {
-					agent.getMap().addCar(myAgent.getLocalName(), id, x, y);
+					agent.getMap().addCar(myAgent.getLocalName(), id, x, y, false);
 				}
 			});
 			
-			//TODO: Remove (?)
-			//This behaviour will update the car position
-			//this.agent.addBehaviour(new MoveCarBehaviour(agent, id));
-						
 		} else block();
 	}
 }

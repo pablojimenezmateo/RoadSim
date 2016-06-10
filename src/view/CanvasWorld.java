@@ -64,14 +64,14 @@ public class CanvasWorld extends JFrame implements ActionListener {
 	}
 
 	//Adds a new car to the GUI
-	public void addCar(String ag, String id, float x, float y) {
+	public void addCar(String ag, String id, float x, float y, boolean specialColor) {
 
-		contentPane.addCar(ag, id, x, y);	
+		contentPane.addCar(ag, id, x, y, specialColor);	
 	}
 
 	//Moves an existing car
-	public void moveCar(String id, float x, float y) {
-		contentPane.moveCar(id, x, y);
+	public void moveCar(String id, float x, float y, boolean specialColor) {
+		contentPane.moveCar(id, x, y, specialColor);
 	}
 	
 	public void deleteCar(String id) {
@@ -117,17 +117,18 @@ public class CanvasWorld extends JFrame implements ActionListener {
 			return carPositions;
 		}
 
-		public void addCar(String ag, String id, float x, float y) {
+		public void addCar(String ag, String id, float x, float y, boolean specialColor) {
 			
-			carPositions.put(id, new Mobile(x, y, id));
+			carPositions.put(id, new Mobile(x, y, id, specialColor));
 			repaint();
 		}
 
-		public void moveCar(String id, float x, float y) {
+		public void moveCar(String id, float x, float y, boolean specialColor) {
 
 			Mobile m = carPositions.get(id);
 			m.setX(x);
 			m.setY(y);
+			m.setSpecialColor(specialColor);
 		}
 		
 		public void deleteCar(String id) {
@@ -212,7 +213,14 @@ public class CanvasWorld extends JFrame implements ActionListener {
 				//Chicken
 
 				//Body
-				g.setColor(Color.YELLOW);
+				if (m.specialColor) {
+					
+					g.setColor(Color.GREEN);
+				} else {
+				
+					g.setColor(Color.YELLOW);
+				}
+				
 				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
 				g.fill(oval);
 				
@@ -286,21 +294,24 @@ public class CanvasWorld extends JFrame implements ActionListener {
 					lineF = new Line2D.Float(x - 3, y + 2, x - 6, y + 4);
 					g.draw(lineF);
 				}
-			}			
+			}
 		}
 
 		public class Mobile {
 
-			private float x;
-			private float y;
-
 			private String id;
 
-			public Mobile(float x, float y, String id) {
-				super();
+			private float x;
+			private float y;
+			
+			private boolean specialColor;
+
+			public Mobile(float x, float y, String id, boolean specialColor) {
+				
 				this.setX(x);
 				this.setY(y);
 				this.setId(id);
+				this.setSpecialColor(specialColor);
 
 			}
 
@@ -326,6 +337,14 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 			public void setId(String id) {
 				this.id = id;
+			}
+
+			public boolean isSpecialColor() {
+				return specialColor;
+			}
+
+			public void setSpecialColor(boolean specialColor) {
+				this.specialColor = specialColor;
 			}
 		}
 	}

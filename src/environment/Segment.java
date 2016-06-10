@@ -42,6 +42,9 @@ public class Segment implements Serializable{
 
 	//Max speed
 	private int maxSpeed;
+	
+	//Current allowed speed
+	private int currentAllowedSpeed;
 
 	//Kilometric points
 	private int pkMin, pkMax;
@@ -69,6 +72,7 @@ public class Segment implements Serializable{
 		this.pkMin = 0;
 		this.pkMax = 0;
 		this.mainContainer = null;
+		this.currentAllowedSpeed = this.maxSpeed;
 	}
 
 	/**
@@ -90,6 +94,7 @@ public class Segment implements Serializable{
 		this.numberTracks = numberTracks;
 		this.steps = new LinkedList<Step>();
 		this.mainContainer = mainContainer;
+		this.currentAllowedSpeed = this.maxSpeed;
 
 		//Create the agents
 		try {
@@ -169,5 +174,13 @@ public class Segment implements Serializable{
 
 	public void setDensity(int density) {
 		this.density = density;
+	}
+
+	public int getCurrentAllowedSpeed() {
+		return currentAllowedSpeed;
+	}
+
+	public void setCurrentAllowedSpeed(int currentAllowedSpeed) {
+		this.currentAllowedSpeed = currentAllowedSpeed;
 	}
 }

@@ -48,13 +48,15 @@ public class InterfaceDrawBehaviour extends Behaviour {
 						String parts[] = msg.getContent().split("#");
 						HashMap<String, Mobile> cars = agent.getMap().getCars();
 
-						for (int i=1; i < parts.length; i+=3) {
+						for (int i=1; i < parts.length; i+=4) {
 
 							Mobile m = cars.get(parts[i]);
 
 							if (m != null) {
+								
 								m.setX(Float.parseFloat(parts[i+1]));
 								m.setY(Float.parseFloat(parts[i+2]));
+								m.setSpecialColor(Boolean.getBoolean(parts[i+3]));
 							}
 						}
 
