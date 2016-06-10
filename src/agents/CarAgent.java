@@ -37,6 +37,7 @@ public class CarAgent extends Agent {
 	private Map map;
 	private Path path;
 	private Segment previousSegment;
+	private String initialIntersection, finalIntersection;
 
 	protected void setup() {
 
@@ -58,8 +59,8 @@ public class CarAgent extends Agent {
 		this.map = (Map) this.getArguments()[0];
 		
 		//Get the starting and final points of my trip
-		String initialIntersection = (String) this.getArguments()[1];
-		String finalIntersection = (String) this.getArguments()[2];
+		this.initialIntersection = (String) this.getArguments()[1];
+		this.finalIntersection = (String) this.getArguments()[2];
 		
 		//Get the speeds
 		this.maxSpeed = (int) this.getArguments()[3];
@@ -70,11 +71,11 @@ public class CarAgent extends Agent {
 		Algorithm alg = factory.getAlgorithm(Method.FASTEST);
 		
 		//Get the desired Path from the origin to the destination
-		this.path = alg.getPath(this.map, initialIntersection, finalIntersection, this.maxSpeed);
+		this.path = alg.getPath(this.map, getInitialIntersection(), getFinalIntersection(), this.maxSpeed);
 		
 		//Starting point
-		setX(map.getIntersectionByID(initialIntersection).getX());
-		setY(map.getIntersectionByID(initialIntersection).getY());
+		setX(map.getIntersectionByID(getInitialIntersection()).getX());
+		setY(map.getIntersectionByID(getInitialIntersection()).getY());
 
 		//Find the interface agent
 		dfd = new DFAgentDescription();
@@ -168,5 +169,13 @@ public class CarAgent extends Agent {
 
 	public void setPreviousSegment(Segment previousSegment) {
 		this.previousSegment = previousSegment;
+	}
+
+	public String getInitialIntersection() {
+		return initialIntersection;
+	}
+
+	public String getFinalIntersection() {
+		return finalIntersection;
 	}
 }
