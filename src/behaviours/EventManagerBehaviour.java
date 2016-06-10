@@ -34,6 +34,12 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 		ACLMessage msg = this.agent.blockingReceive(mtTick);
 
 		if (msg != null) {
+			
+			int totalMinutes = this.agent.getTimeElapsed() / 60;
+			int hours = (int)(totalMinutes / 60);
+			int minutes = (int)(totalMinutes % 60);
+			
+			System.out.println("The time is: " + String.format("%02d", hours) + ":" + String.format("%02d", minutes));
 
 			//Increment the elapsed time
 			this.agent.incrementeTimeElapsed();
@@ -56,7 +62,7 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 						
 						try {
 
-							AgentController agent = this.agent.getCarContainer().createNewAgent("car" + Integer.toString(currentTick) + Integer.toString(counter), "agents.CarAgent", new Object[]{this.agent.getMap(), parts[1], parts[2], Integer.parseInt(parts[3]), Integer.parseInt(parts[4])});
+							AgentController agent = this.agent.getCarContainer().createNewAgent("car" + Integer.toString(currentTick) + Integer.toString(counter), "agents.CarAgent", new Object[]{this.agent.getMap(), parts[2], parts[3], Integer.parseInt(parts[4]), Integer.parseInt(parts[5])});
 
 							agent.start();
 
@@ -69,8 +75,8 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 						
 						msg = new ACLMessage(ACLMessage.INFORM);
 						msg.setOntology("eventManagerToSegment");
-						msg.addReceiver(new AID(parts[1], AID.ISLOCALNAME));
-						msg.setContent(parts[2]);
+						msg.addReceiver(new AID(parts[2], AID.ISLOCALNAME));
+						msg.setContent(parts[3]);
 
 						myAgent.send(msg);
 						

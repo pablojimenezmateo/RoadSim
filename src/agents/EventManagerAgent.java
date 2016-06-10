@@ -1,8 +1,10 @@
 package agents;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import behaviours.EventManagerBehaviour;
 import environment.Map;
@@ -23,6 +25,8 @@ public class EventManagerAgent extends Agent {
 
 	private int timeElapsed;
 	
+	private Set<String> aux;
+	
 	private HashMap<Integer, List<String>> events;
 	
 	private jade.wrapper.AgentContainer carContainer, segmentContainer;
@@ -32,6 +36,7 @@ public class EventManagerAgent extends Agent {
 	protected void setup() {
 		
 		this.events = new HashMap<Integer, List<String>>();
+		this.aux = new HashSet<String>();
 		
 		//Get the map
 		this.map = (Map) this.getArguments()[0];
@@ -55,23 +60,44 @@ public class EventManagerAgent extends Agent {
 		}
 		
 		//TODO: Populate events by reading a file
+		//Start at 8:00
+		this.timeElapsed = 8*3600;
+		
 		//New cars
-		String testEvent1 = "newCar#I-AP7-01#I-AP7-04#120#120";
-		String testEvent2 = "newCar#I-CV10-05#I-CS22-03#120#120";
+		String testEvent1 = "newCar#09:00#I-AP7-01#I-AP7-04#120#120";
+		String testEvent2 = "newCar#09:30#I-CV10-05#I-CS22-03#120#120";
 		
 		//Segments
-		String testEvent3 = "segment#S-AP7-03#90";
-		String testEvent4 = "segment#S-AP7-04#70";
-		String testEvent5 = "segment#S-AP7-01#20";
+		String testEvent3 = "segment#10:00#S-AP7-03#90";
+		String testEvent4 = "segment#10:00#S-AP7-04#70";
+		String testEvent5 = "segment#10:15#S-AP7-01#20";
 		
-		this.getEvents().put(50, new LinkedList<String>());
-		this.getEvents().put(80, new LinkedList<String>());
+		//Add them to the set
+		aux.add(testEvent1);
+		aux.add(testEvent2);
+		aux.add(testEvent3);
+		aux.add(testEvent4);
+		aux.add(testEvent5);
 		
-		this.getEvents().get(50).add(testEvent1);
-		this.getEvents().get(80).add(testEvent2);
-		this.getEvents().get(80).add(testEvent3);
-		this.getEvents().get(80).add(testEvent4);
-		this.getEvents().get(80).add(testEvent5);
+		//Translate from hours to ticks
+		for (String event : aux) {
+			
+			String time = event.split("#")[1];
+			int hours = Integer.parseInt(time.split(":")[0]);
+			int minutes = Integer.parseInt(time.split(":")[1]);
+			
+			int tick = 3600 * hours + 60 * minutes;
+			
+			//Add it to the event queue
+			if (this.getEvents().containsKey(tick)) {
+				
+				this.getEvents().get(tick).add(event);
+			} else {
+			
+				this.getEvents().put(tick, new LinkedList<String>());
+				this.getEvents().get(tick).add(event);
+			}
+		}
 		
 		addBehaviour(new EventManagerBehaviour(this));
 	}

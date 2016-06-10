@@ -40,7 +40,7 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 	private Timer timer = new Timer(1000/this.FPS, this);
 
-	public CanvasWorld (String interfaceAgent, int maxX, int maxY, Map map) {
+	public CanvasWorld(String interfaceAgent, int maxX, int maxY, Map map) {
 		super();
 
 		MAXWORLDX = maxX;
