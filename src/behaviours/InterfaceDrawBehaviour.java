@@ -17,12 +17,15 @@ public class InterfaceDrawBehaviour extends Behaviour {
 	private InterfaceAgent agent;
 
 	//Template to listen for drawing instructions
-	private MessageTemplate mt = MessageTemplate.or(MessageTemplate.and(
+	private MessageTemplate mt = MessageTemplate.or(MessageTemplate.or(MessageTemplate.and(
 			MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
 			MessageTemplate.MatchOntology("drawOntology")),
 			MessageTemplate.and(
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
-					MessageTemplate.MatchOntology("deleteOntology")));
+					MessageTemplate.MatchOntology("deleteOntology"))),
+			MessageTemplate.and(
+					MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
+					MessageTemplate.MatchOntology("updateTimeOntology")));
 
 	public InterfaceDrawBehaviour(InterfaceAgent agent) {
 
@@ -71,6 +74,17 @@ public class InterfaceDrawBehaviour extends Behaviour {
 					public void run() {
 
 						agent.getMap().deleteCar(msg.getContent());	
+					}
+				});
+				
+			} else if (msg.getOntology().equals("updateTimeOntology")) {
+
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+
+						agent.getMap().setTime(msg.getContent());	
 					}
 				});
 			}

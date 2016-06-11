@@ -3,6 +3,7 @@ package behaviours;
 import java.util.HashMap;
 import java.util.List;
 
+
 import agents.EventManagerAgent;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
@@ -39,7 +40,18 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 			int hours = (int)(totalMinutes / 60);
 			int minutes = (int)(totalMinutes % 60);
 			
-			System.out.println("The time is: " + String.format("%02d", hours) + ":" + String.format("%02d", minutes));
+			//If the minute has changed, notify the interface
+			if (minutes != this.agent.getPreviousMinute()) {
+				
+				this.agent.setPreviousMinute(minutes);
+				
+				ACLMessage timeMsg = new ACLMessage(ACLMessage.INFORM);
+				timeMsg.setOntology("updateTimeOntology");
+				timeMsg.addReceiver(this.agent.getInterfaceAgent().getName());
+				timeMsg.setContent(String.format("%02d", hours) + ":" + String.format("%02d", minutes));
+
+				myAgent.send(timeMsg);
+			}
 
 			//Increment the elapsed time
 			this.agent.incrementeTimeElapsed();

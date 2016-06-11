@@ -4,6 +4,8 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +16,9 @@ import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 
@@ -24,9 +28,6 @@ import environment.Segment;
 import environment.Step;
 import view.CanvasWorld.PanelRadar.Mobile;
 
-
-//TODO: Improve performance with a SwingWorker
-
 public class CanvasWorld extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
@@ -34,6 +35,8 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 	private PanelRadar contentPane;
 	private Map map = null;
+	
+	private JLabel time;
 
 	private String interfaceAgent;
 	public static int MAXWORLDX, MAXWORLDY;
@@ -41,6 +44,7 @@ public class CanvasWorld extends JFrame implements ActionListener {
 	private Timer timer = new Timer(1000/this.FPS, this);
 
 	public CanvasWorld(String interfaceAgent, int maxX, int maxY, Map map) {
+		
 		super();
 
 		MAXWORLDX = maxX;
@@ -54,13 +58,61 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 		setTitle("Interface: " + this.interfaceAgent);
 		setBounds(10, 10, MAXWORLDX, MAXWORLDY);
+		
+		//Create a layout
+		this.getContentPane().setLayout(new GridBagLayout());
+		
+		//Fluid layout
+		GridBagConstraints canvasConstraints = new GridBagConstraints();
+		
+		//Relative sizes
+		canvasConstraints.fill = GridBagConstraints.BOTH;
+		canvasConstraints.weightx = 0.9; //Percentage of space this will take horizontally
+		canvasConstraints.weighty = 1; //Percentage of space this will take vertically
+		canvasConstraints.gridx = 0; //Select column 0
+		canvasConstraints.gridy = 0; //Select row 0
+		
 		contentPane = new PanelRadar();
-		setContentPane(contentPane);
+		this.add(contentPane, canvasConstraints);
+		
+		//TEST
+		GridBagConstraints toolbarConstraints = new GridBagConstraints();
+		toolbarConstraints.fill = GridBagConstraints.BOTH;
+		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
+		toolbarConstraints.weighty = 0.5; //Percentage of space this will take vertically
+		toolbarConstraints.gridx = 0; //Select column 0
+		toolbarConstraints.gridy = 0; //Select row 0
+		
+		this.time = new JLabel("08:00");
+		
+		this.add(this.time, toolbarConstraints);
+		
+		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
+		toolbarConstraints.weighty = 0.5; //Percentage of space this will take vertically
+		toolbarConstraints.gridx = 0; //Select column
+		toolbarConstraints.gridy = 1; //Select row
+		
+		JSlider framesPerSecond = new JSlider(JSlider.HORIZONTAL, 1, 3000, 500);
+		
+		this.add(framesPerSecond, toolbarConstraints);
+		
+		//MORE TEST
+		canvasConstraints.weightx = 0.1; //Percentage of space this will take horizontally
+		canvasConstraints.gridx = 1; //Select column 1
+		canvasConstraints.gridy = 0; //Select row 1
+		
+		this.add(toolbarConstraints, canvasConstraints);
 
 		//Show the frame
 		setVisible(true);
 
 		this.timer.start();
+	}
+	
+	//Changes the time label
+	public void setTime(String time) {
+		
+		this.time.setText(time);
 	}
 
 	//Adds a new car to the GUI
