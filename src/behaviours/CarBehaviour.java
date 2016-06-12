@@ -4,6 +4,10 @@ import agents.CarAgent;
 import environment.Segment;
 import environment.Step;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -172,6 +176,16 @@ public class CarBehaviour extends CyclicBehaviour {
 			msg.setContent(this.agent.getId());
 
 			myAgent.send(msg);
+		}
+		
+		//Deregister the agent
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.setName(this.agent.getAID());
+		
+		try {
+			DFService.deregister(this.agent,  dfd);
+		} catch (FIPAException fe) { 
+			fe.printStackTrace(); 
 		}
 
 		this.agent.doDelete();
