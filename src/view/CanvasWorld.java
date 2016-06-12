@@ -21,30 +21,33 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import agents.InterfaceAgent;
 import environment.Intersection;
 import environment.Map;
 import environment.Segment;
 import environment.Step;
 import view.CanvasWorld.PanelRadar.Mobile;
 
-public class CanvasWorld extends JFrame implements ActionListener {
+public class CanvasWorld extends JFrame implements ActionListener, ChangeListener {
 
 	private static final long serialVersionUID = 1L;
 	private final int FPS = 40;
 
 	private PanelRadar contentPane;
 	private Map map = null;
-	
+
 	private JLabel time;
 
-	private String interfaceAgent;
+	private InterfaceAgent interfaceAgent;
 	public static int MAXWORLDX, MAXWORLDY;
 
 	private Timer timer = new Timer(1000/this.FPS, this);
 
-	public CanvasWorld(String interfaceAgent, int maxX, int maxY, Map map) {
-		
+	public CanvasWorld(InterfaceAgent interfaceAgent, int maxX, int maxY, Map map) {
+
 		super();
 
 		MAXWORLDX = maxX;
@@ -56,63 +59,62 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		setTitle("Interface: " + this.interfaceAgent);
+		setTitle("Interface: " + this.interfaceAgent.getLocalName());
 		setBounds(10, 10, MAXWORLDX, MAXWORLDY);
-		
+
 		//Create a layout
 		this.getContentPane().setLayout(new GridBagLayout());
-		
+
 		//Fluid layout
 		GridBagConstraints canvasConstraints = new GridBagConstraints();
-		
+
 		//Relative sizes
 		canvasConstraints.fill = GridBagConstraints.BOTH;
+		canvasConstraints.gridwidth = 1; //How many columns to take
+		canvasConstraints.gridheight = 2; //How many rows to take
 		canvasConstraints.weightx = 0.9; //Percentage of space this will take horizontally
 		canvasConstraints.weighty = 1; //Percentage of space this will take vertically
-		canvasConstraints.gridx = 0; //Select column 0
-		canvasConstraints.gridy = 0; //Select row 0
-		
+		canvasConstraints.gridx = 0; //Select column
+		canvasConstraints.gridy = 0; //Select row
+
 		contentPane = new PanelRadar();
 		this.add(contentPane, canvasConstraints);
-		
-		//TEST
+
+		//Add a toolbar part, where 
 		GridBagConstraints toolbarConstraints = new GridBagConstraints();
+
 		toolbarConstraints.fill = GridBagConstraints.BOTH;
 		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
 		toolbarConstraints.weighty = 0.5; //Percentage of space this will take vertically
-		toolbarConstraints.gridx = 0; //Select column 0
-		toolbarConstraints.gridy = 0; //Select row 0
-		
-		this.time = new JLabel("08:00");
-		
+		toolbarConstraints.gridx = 1; //Select column
+		toolbarConstraints.gridy = 0; //Select row
+
+		this.time = new JLabel("Time: 08:00");
+
 		this.add(this.time, toolbarConstraints);
-		
+
 		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
 		toolbarConstraints.weighty = 0.5; //Percentage of space this will take vertically
-		toolbarConstraints.gridx = 0; //Select column
+		toolbarConstraints.gridx = 1; //Select column
 		toolbarConstraints.gridy = 1; //Select row
-		
-		JSlider framesPerSecond = new JSlider(JSlider.HORIZONTAL, 1, 3000, 500);
-		
-		this.add(framesPerSecond, toolbarConstraints);
-		
-		//MORE TEST
-		canvasConstraints.weightx = 0.1; //Percentage of space this will take horizontally
-		canvasConstraints.gridx = 1; //Select column 1
-		canvasConstraints.gridy = 0; //Select row 1
-		
-		this.add(toolbarConstraints, canvasConstraints);
+
+		JSlider speedSlider = new JSlider(JSlider.VERTICAL, 1, 600, 100);
+
+		this.add(speedSlider, toolbarConstraints);
+
+		//Listener
+		speedSlider.addChangeListener(this);
 
 		//Show the frame
 		setVisible(true);
 
 		this.timer.start();
 	}
-	
+
 	//Changes the time label
 	public void setTime(String time) {
-		
-		this.time.setText(time);
+
+		this.time.setText("Time: " + time);
 	}
 
 	//Adds a new car to the GUI
@@ -125,19 +127,19 @@ public class CanvasWorld extends JFrame implements ActionListener {
 	public void moveCar(String id, float x, float y, boolean specialColor) {
 		contentPane.moveCar(id, x, y, specialColor);
 	}
-	
+
 	public void deleteCar(String id) {
-		
+
 		contentPane.deleteCar(id);
 	}
-	
+
 	public HashMap<String, Mobile> getCars() {
-		
+
 		return contentPane.getCars();
 	}
-	
+
 	public void setCars(HashMap<String, Mobile> cars) {
-		
+
 		contentPane.setCars(cars);
 	}
 
@@ -158,19 +160,19 @@ public class CanvasWorld extends JFrame implements ActionListener {
 			this.setDoubleBuffered(true);
 			this.setLayout(null);
 		}
-		
+
 		public void setCars(HashMap<String, Mobile> cars) {
-			
+
 			this.carPositions = cars;
 		}
 
 		public HashMap<String, Mobile> getCars() {
-			
+
 			return carPositions;
 		}
 
 		public void addCar(String ag, String id, float x, float y, boolean specialColor) {
-			
+
 			carPositions.put(id, new Mobile(x, y, id, specialColor));
 			repaint();
 		}
@@ -182,9 +184,9 @@ public class CanvasWorld extends JFrame implements ActionListener {
 			m.setY(y);
 			m.setSpecialColor(specialColor);
 		}
-		
+
 		public void deleteCar(String id) {
-			
+
 			this.carPositions.remove(id);
 		}
 
@@ -203,16 +205,16 @@ public class CanvasWorld extends JFrame implements ActionListener {
 				g.setStroke(new BasicStroke(2));
 
 				for (Segment s: in.getOutSegments()){
-					
+
 					if (s.getDensity() < 50) {
-						
+
 						g.setColor(Color.GREEN);
-					
+
 					} else if (s.getDensity() < 75) {
-						
+
 						g.setColor(Color.ORANGE);
 					} else {
-						
+
 						g.setColor(Color.RED);
 					}
 
@@ -230,7 +232,7 @@ public class CanvasWorld extends JFrame implements ActionListener {
 			for (Intersection in : map.getIntersections()) {
 
 				g.setColor(Color.RED);
-				
+
 				oval = new Ellipse2D.Float(in.getX()-2, in.getY()-2, 4, 4);
 				g.fill(oval);
 
@@ -244,7 +246,7 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 			//Draw the cars
 			for (Mobile m : carPositions.values()) {
-				
+
 				float x = m.getX();
 				float y = m.getY();
 
@@ -266,16 +268,16 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 				//Body
 				if (m.specialColor) {
-					
+
 					g.setColor(Color.GREEN);
 				} else {
-				
+
 					g.setColor(Color.YELLOW);
 				}
-				
+
 				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
 				g.fill(oval);
-				
+
 				g.setColor(Color.ORANGE);
 				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
 				g.draw(oval);
@@ -283,7 +285,7 @@ public class CanvasWorld extends JFrame implements ActionListener {
 				//Beak
 				g.setStroke(new BasicStroke(1));
 				g.setColor(Color.ORANGE);
-				
+
 				Path2D beak = new Path2D.Float();
 				beak.moveTo(x + 3, y - 4);
 				beak.lineTo(x - 3, y + 4);
@@ -355,11 +357,11 @@ public class CanvasWorld extends JFrame implements ActionListener {
 
 			private float x;
 			private float y;
-			
+
 			private boolean specialColor;
 
 			public Mobile(float x, float y, String id, boolean specialColor) {
-				
+
 				this.setX(x);
 				this.setY(y);
 				this.setId(id);
@@ -407,6 +409,18 @@ public class CanvasWorld extends JFrame implements ActionListener {
 		if (e.getSource() == this.timer) {
 
 			contentPane.repaint();
+		}
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent e) {
+
+		JSlider source = (JSlider)e.getSource();
+
+		if (!source.getValueIsAdjusting()) {
+
+			int tickSpeed = (int)source.getValue();
+			this.interfaceAgent.setTick(tickSpeed);
 		}
 	}
 }

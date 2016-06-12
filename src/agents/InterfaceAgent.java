@@ -5,6 +5,8 @@ import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.lang.acl.ACLMessage;
+
 import javax.swing.SwingUtilities;
 
 import behaviours.InterfaceAddCarBehaviour;
@@ -25,6 +27,8 @@ public class InterfaceAgent extends Agent{
 	public static final int MAXWORLDY = 720;
 
 	private CanvasWorld map;
+	
+	private DFAgentDescription timeKeeperAgent;
 
 	protected void setup() {
 
@@ -42,28 +46,56 @@ public class InterfaceAgent extends Agent{
 			fe.printStackTrace(); 
 		}
 
+		//Find the TimeKeeperAgent agent
+		dfd = new DFAgentDescription();
+		sd = new ServiceDescription();
+		sd.setType("TimeKeeperAgent");
+		dfd.addServices(sd);
+
+		DFAgentDescription[] result = null;
+
+		try {
+			result = DFService.searchUntilFound(
+					this, getDefaultDF(), dfd, null, 5000);
+		} catch (FIPAException e) { e.printStackTrace(); }
+
+		this.timeKeeperAgent = result[0];
+
 		//Check if I need to create the GUI, for testing purposes
 		boolean drawGUI = (boolean) this.getArguments()[1];
 
 		if (drawGUI) {
-			
+
 			//Get the map from an argument
 			Map graphicalMap = (Map) this.getArguments()[0];
+			
+			InterfaceAgent me = this;
 
 			SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {
-					map = new CanvasWorld(getLocalName(), MAXWORLDX, MAXWORLDY, graphicalMap);	
+					map = new CanvasWorld(me, MAXWORLDX, MAXWORLDY, graphicalMap);	
 				}
 			});
 
 			//Launch the behaviour that will add cars
 			addBehaviour(new InterfaceAddCarBehaviour(this));
-			
+
 			//This will listen for drawing instructions
 			addBehaviour(new InterfaceDrawBehaviour(this));
 		}
+	}
+
+	//Send a message to the TimeKeeperAgent to change its tickLength
+	public void setTick(int newTick) {
+
+		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+		msg.setOntology("changeTickOntology");
+		msg.addReceiver(this.timeKeeperAgent.getName());
+		msg.setContent(Integer.toString(newTick));
+		
+		this.send(msg);
 	}
 
 	//Setters and getters

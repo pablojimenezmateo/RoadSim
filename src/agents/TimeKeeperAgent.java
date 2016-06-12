@@ -5,13 +5,14 @@ import java.util.List;
 
 import jade.core.AID;
 import jade.core.Agent;
-import jade.core.behaviours.TickerBehaviour;
+import jade.core.behaviours.Behaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.proto.SubscriptionInitiator;
 
 public class TimeKeeperAgent extends Agent {
@@ -21,12 +22,26 @@ public class TimeKeeperAgent extends Agent {
 	private List<AID> agents = new ArrayList<AID>();
 
 	protected void setup() {
+		
+		//Register the service
+		DFAgentDescription dfd = new DFAgentDescription();
+		dfd.setName(getAID());
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType("TimeKeeperAgent");
+		sd.setName(getLocalName());
+
+		dfd.addServices(sd);
+		try {
+			DFService.register(this,  dfd);
+		} catch (FIPAException fe) { 
+			fe.printStackTrace(); 
+		}
 
 		//Get the ticklength
 		this.tickLength = (long) this.getArguments()[0];
 
 		//Subscribe in the DF to keep the cars list up to date
-		ServiceDescription sd = new ServiceDescription();
+		sd = new ServiceDescription();
 		sd.setType("CarAgent");
 
 		DFAgentDescription dfTemplate = new DFAgentDescription();
@@ -108,8 +123,7 @@ public class TimeKeeperAgent extends Agent {
 		} );
 
 		//Add the EventManager to the subscribed agents
-		//Find the interface agent
-		DFAgentDescription dfd = new DFAgentDescription();
+		dfd = new DFAgentDescription();
 		sd = new ServiceDescription();
 		sd.setType("EventManagerAgent");
 		dfd.addServices(sd);
@@ -123,13 +137,21 @@ public class TimeKeeperAgent extends Agent {
 
 		this.agents.add(result[0].getName());
 
-		addBehaviour(new TickerBehaviour(this, tickLength) {
+		//This is the behaviour that sends a tick message to all the agents
+		addBehaviour(new Behaviour() {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void onTick() {
-
+			public void action() {
+				
+				//I was using a TickerBehaviour, but you cannot change the tick length
+				try {
+					Thread.sleep(((TimeKeeperAgent) myAgent).getTickLength());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
 				List<AID> agents = ((TimeKeeperAgent)myAgent).getAgents();
 
 				//Send a tick to all the agents
@@ -143,12 +165,51 @@ public class TimeKeeperAgent extends Agent {
 				msg.setConversationId("tick"); 
 				myAgent.send(msg);
 			}
+
+			@Override
+			public boolean done() {
+				return false;
+			}
+		});
+		
+		//Check for tickLeght changes
+		addBehaviour(new Behaviour() {
+
+			private static final long serialVersionUID = 8455875589611369392L;
+			
+			MessageTemplate mt = MessageTemplate.and(
+					MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
+					MessageTemplate.MatchOntology("changeTickOntology"));
+
+			@Override
+			public void action() {
+				
+				ACLMessage msg = myAgent.receive(mt);
+				
+				if (msg != null) {
+					
+					((TimeKeeperAgent)this.myAgent).setTickLength(Long.parseLong(msg.getContent()));
+				} else block();
+			}
+
+			@Override
+			public boolean done() {
+				return false;
+			}
 		});
 	}
 
-
-
 	public List<AID> getAgents() {
 		return agents;
+	}
+	
+	public long getTickLength() {
+		
+		return this.tickLength;
+	}
+	
+	public void setTickLength(long newTick) {
+		
+		this.tickLength = newTick;
 	}
 }
