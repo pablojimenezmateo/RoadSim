@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
@@ -98,7 +98,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		toolbarConstraints.gridx = 1; //Select column
 		toolbarConstraints.gridy = 1; //Select row
 
-		JSlider speedSlider = new JSlider(JSlider.VERTICAL, 1, 600, 100);
+		JSlider speedSlider = new JSlider(JSlider.VERTICAL, 1, 200, 100);
 
 		this.add(speedSlider, toolbarConstraints);
 
@@ -197,7 +197,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 			//Draw the background
 			g.drawImage(backGround, 0, 0, this);
 
-			Line2D line;
+			Line2D line = new Line2D.Float();
 
 			//Draw the segments
 			for (Intersection in : map.getIntersections()) {
@@ -220,20 +220,20 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 					for(Step st: s.getSteps()){
 
-						line = new Line2D.Float(st.getOriginX(), st.getOriginY(), st.getDestinationX(), st.getDestinationY());
+						line.setLine(st.getOriginX(), st.getOriginY(), st.getDestinationX(), st.getDestinationY());
 						g.draw(line);
 					}
 				}
 			}
 
-			Ellipse2D oval;
+			Ellipse2D oval = new Ellipse2D.Float();
 
 			//Draw the intersections
 			for (Intersection in : map.getIntersections()) {
 
 				g.setColor(Color.RED);
 
-				oval = new Ellipse2D.Float(in.getX()-2, in.getY()-2, 4, 4);
+				oval.setFrame(in.getX()-2, in.getY()-2, 4, 4);
 				g.fill(oval);
 
 				//Draw the names of the intersections
@@ -245,28 +245,13 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 			}
 
 			//Draw the cars
+			Rectangle2D rect = new Rectangle2D.Float();
+			
 			for (Mobile m : carPositions.values()) {
 
 				float x = m.getX();
 				float y = m.getY();
-
-				//				g.setColor(Color.WHITE);
-				//				g.fillRect(x - 4, y - 8, 8, 4); //Windows
-				//				g.fillRect(x - 9, y- 4, 18, 8); //Chasis
-				//
-				//				g.setColor(Color.BLACK); //Borders
-				//				g.setStroke(new BasicStroke(1));
-				//				g.drawRect(x - 4, y - 8, 8, 4); //Windows
-				//				g.drawRect(x - 9, y - 4, 18, 8); //Chasis
-				//
-				//				//Tires
-				//				g.setColor(Color.GRAY);
-				//				g.fillOval(x - 8, y, 6, 6);
-				//				g.fillOval(x + 2, y, 6, 6);
-
-				//Chicken
-
-				//Body
+				
 				if (m.specialColor) {
 
 					g.setColor(Color.GREEN);
@@ -275,79 +260,117 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 					g.setColor(Color.YELLOW);
 				}
 
-				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
-				g.fill(oval);
-
-				g.setColor(Color.ORANGE);
-				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
-				g.draw(oval);
-
-				//Beak
 				g.setStroke(new BasicStroke(1));
-				g.setColor(Color.ORANGE);
-
-				Path2D beak = new Path2D.Float();
-				beak.moveTo(x + 3, y - 4);
-				beak.lineTo(x - 3, y + 4);
-				beak.lineTo(x - 8, y);
-				beak.lineTo(x + 3, y - 4);
-
-				//g.fillPolygon(new int[] {x - 3, x - 3, x - 8}, new int[] {y - 4, y + 4, y}, 3);
-				g.fill(beak);
-
-				//Eye
+				
+				//Windows
+				rect.setFrame(x - 4, y - 8, 8, 4); 
+				
+				g.setColor(Color.WHITE);
+				g.fill(rect);
+				
 				g.setColor(Color.BLACK);
-				oval = new Ellipse2D.Float(x - 2, y - 2, 2, 2);
+				g.draw(rect);
+				
+				//Chasis
+				rect.setFrame(x - 9, y- 4, 18, 8);
+
+				g.setColor(Color.WHITE);
+				g.fill(rect);
+				
+				g.setColor(Color.BLACK);
+				g.draw(rect);
+
+				//Tires
+				g.setColor(Color.GRAY);
+				oval.setFrame(x - 8, y, 6, 6);
+				g.fill(oval);
+				
+				oval.setFrame(x + 2, y, 6, 6);
 				g.fill(oval);
 
-				//Feet
-				g.setStroke(new BasicStroke(1));
-
-				//Make the walking animation
-				boolean rightStep = false;;
-
-				if(Math.random() < 0.5) {
-					rightStep = true;
-				}
-
-				Line2D.Float lineF;
-
-				if (rightStep) {
-
-					//Right foot
-					lineF = new Line2D.Float(x + 2, y + 1, x + 4, y + 4);
-					g.draw(lineF);
-					lineF = new Line2D.Float(x + 2, y + 1, x + 2, y + 5);
-					g.draw(lineF);
-					lineF = new Line2D.Float(x + 2, y + 1, x,     y + 4);
-					g.draw(lineF);
-
-					//Left foot
-					lineF = new Line2D.Float(x - 3, y + 3, x - 1, y + 5);
-					g.draw(lineF);
-					lineF = new Line2D.Float(x - 3, y + 3, x - 3, y + 6);
-					g.draw(lineF);
-					lineF = new Line2D.Float(x - 3, y + 3, x - 6, y + 5);
-					g.draw(lineF);
-
-				} else {
-
-					//Right foot
-					lineF = new Line2D.Float(x + 2, y + 3, x + 4, y + 5);
-					g.draw(lineF);
-					lineF = new Line2D.Float(x + 2, y + 3, x + 2, y + 6);
-					g.draw(lineF);
-					lineF = new Line2D.Float(x + 2, y + 3, x,     y + 5);
-					g.draw(lineF);
-
-					//Left foot
-					lineF = new Line2D.Float(x - 3, y + 2, x - 1, y + 6);
-					g.draw(lineF);
-					lineF = new Line2D.Float(x - 3, y + 2, x - 3, y + 5);
-					g.draw(lineF);
-					lineF = new Line2D.Float(x - 3, y + 2, x - 6, y + 4);
-					g.draw(lineF);
-				}
+//				//Chicken
+//				//Body
+//				if (m.specialColor) {
+//
+//					g.setColor(Color.GREEN);
+//				} else {
+//
+//					g.setColor(Color.YELLOW);
+//				}
+//
+//				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
+//				g.fill(oval);
+//
+//				g.setColor(Color.ORANGE);
+//				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
+//				g.draw(oval);
+//
+//				//Beak
+//				g.setStroke(new BasicStroke(1));
+//				g.setColor(Color.ORANGE);
+//
+//				Path2D beak = new Path2D.Float();
+//				beak.moveTo(x + 3, y - 4);
+//				beak.lineTo(x - 3, y + 4);
+//				beak.lineTo(x - 8, y);
+//				beak.lineTo(x + 3, y - 4);
+//
+//				//g.fillPolygon(new int[] {x - 3, x - 3, x - 8}, new int[] {y - 4, y + 4, y}, 3);
+//				g.fill(beak);
+//
+//				//Eye
+//				g.setColor(Color.BLACK);
+//				oval = new Ellipse2D.Float(x - 2, y - 2, 2, 2);
+//				g.fill(oval);
+//
+//				//Feet
+//				g.setStroke(new BasicStroke(1));
+//
+//				//Make the walking animation
+//				boolean rightStep = false;;
+//
+//				if(Math.random() < 0.5) {
+//					rightStep = true;
+//				}
+//
+//				Line2D.Float lineF;
+//
+//				if (rightStep) {
+//
+//					//Right foot
+//					lineF = new Line2D.Float(x + 2, y + 1, x + 4, y + 4);
+//					g.draw(lineF);
+//					lineF = new Line2D.Float(x + 2, y + 1, x + 2, y + 5);
+//					g.draw(lineF);
+//					lineF = new Line2D.Float(x + 2, y + 1, x,     y + 4);
+//					g.draw(lineF);
+//
+//					//Left foot
+//					lineF = new Line2D.Float(x - 3, y + 3, x - 1, y + 5);
+//					g.draw(lineF);
+//					lineF = new Line2D.Float(x - 3, y + 3, x - 3, y + 6);
+//					g.draw(lineF);
+//					lineF = new Line2D.Float(x - 3, y + 3, x - 6, y + 5);
+//					g.draw(lineF);
+//
+//				} else {
+//
+//					//Right foot
+//					lineF = new Line2D.Float(x + 2, y + 3, x + 4, y + 5);
+//					g.draw(lineF);
+//					lineF = new Line2D.Float(x + 2, y + 3, x + 2, y + 6);
+//					g.draw(lineF);
+//					lineF = new Line2D.Float(x + 2, y + 3, x,     y + 5);
+//					g.draw(lineF);
+//
+//					//Left foot
+//					lineF = new Line2D.Float(x - 3, y + 2, x - 1, y + 6);
+//					g.draw(lineF);
+//					lineF = new Line2D.Float(x - 3, y + 2, x - 3, y + 5);
+//					g.draw(lineF);
+//					lineF = new Line2D.Float(x - 3, y + 2, x - 6, y + 4);
+//					g.draw(lineF);
+//				}
 			}
 		}
 

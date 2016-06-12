@@ -1,5 +1,10 @@
 package agents;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -47,6 +52,9 @@ public class EventManagerAgent extends Agent {
 		this.carContainer = (jade.wrapper.AgentContainer) this.getArguments()[1];
 		this.segmentContainer = (jade.wrapper.AgentContainer) this.getArguments()[2];
 
+		//Get the folder
+		String folder = (String) this.getArguments()[3];
+
 		//Previous minute will be used to know when to send a msg to the interface, when the minute changes
 		this.previousMinute = 0;
 
@@ -83,26 +91,62 @@ public class EventManagerAgent extends Agent {
 		//Start at 8:00
 		this.timeElapsed = 8*3600;
 
-		//New cars
-		String testEvent1 = "newCar#09:00#I-AP7-01#I-AP7-04#120#120";
-		String testEvent2 = "newCar#09:30#I-CV10-05#I-CS22-03#120#120";
+		//Read from file
+		//Get all files from the given folder
+		String url = Map.class.getClassLoader().getResource(folder).getPath();
 
-		//Segments
-		String testEvent3 = "segment#10:00#S-AP7-03#90";
-		String testEvent4 = "segment#10:00#S-AP7-04#70";
-		String testEvent5 = "segment#10:15#S-AP7-01#20";
+		File[] files = new File(url).listFiles();
 
-		//Add them to the set
-		aux.add(testEvent1);
-		aux.add(testEvent2);
-		aux.add(testEvent3);
-		aux.add(testEvent4);
-		aux.add(testEvent5);
+		//Check correct files
+		BufferedReader eventsReader = null;
+
+		for(int i=0; i<files.length; i++){
+
+			if(files[i].getName().equals("events.csv")){
+
+				try {
+					eventsReader = new BufferedReader(new FileReader(files[i].getAbsolutePath()));
+				} catch (FileNotFoundException e) {
+
+					System.out.println("Error reading the events file.");
+					e.printStackTrace();
+				}
+			}
+		}
+
+		//Add the events
+		try {
+			if (eventsReader != null) {
+
+				String line = null;
+
+				line = eventsReader.readLine();
+
+				//Read  all the Intersections
+				while(line != null){
+
+					aux.add(line);
+					line = eventsReader.readLine();
+				}
+			}
+
+		} catch (IOException e) {
+
+			System.out.println("Error reading the line from the events file.");
+			e.printStackTrace();
+		} finally {
+			
+			try {
+				eventsReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 		//Translate from hours to ticks
 		for (String event : aux) {
 
-			String time = event.split("#")[1];
+			String time = event.split(",")[1];
 			int hours = Integer.parseInt(time.split(":")[0]);
 			int minutes = Integer.parseInt(time.split(":")[1]);
 

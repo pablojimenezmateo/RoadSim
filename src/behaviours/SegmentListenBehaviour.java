@@ -56,13 +56,9 @@ public class SegmentListenBehaviour extends Behaviour {
 
 					this.agent.addCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Boolean.getBoolean(parts[3]));
 
-					System.out.println("I'm the car " + parts[0] + " and I'm registering in " + this.agent.getLocalName());
-
 				} else if (msg.getConversationId().equals("deregister")) { //Deregister
 
 					this.agent.removeCar(parts[0]);
-
-					System.out.println("I'm the car " + parts[0] + " and I'm deregistering from " + this.agent.getLocalName());
 
 				} else if (msg.getConversationId().equals("update")) { //Update position
 

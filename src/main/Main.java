@@ -13,6 +13,7 @@ public class Main {
 	private static final long tickLength = 1;
 	private static final int numberOfCars = 0;
 	private static final boolean drawGUI = true;
+	private static final boolean startRMA = false;
 
 	public static void main(String[] args) {
 
@@ -30,26 +31,28 @@ public class Main {
 
 		//Container that will hold the agents
 		jade.wrapper.AgentContainer mainContainer = rt.createMainContainer(profile);
-		
+
 		//Start RMA
-		try {
-			AgentController agent = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", new Object[0]);
+		if (startRMA) {
+			try {
+				AgentController agent = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", new Object[0]);
 
-			agent.start();
+				agent.start();
 
-		} catch (StaleProxyException e1) {
+			} catch (StaleProxyException e1) {
 
-			System.out.println("Error starting the rma agent");
-			e1.printStackTrace();
+				System.out.println("Error starting the rma agent");
+				e1.printStackTrace();
+			}
 		}
-		
+
 		//We will use a container only for the segments
 		profile = new ProfileImpl(null, 1099, null);
 		profile.setParameter(Profile.CONTAINER_NAME, "Segment container");
 
 		//Container that will hold the agents
 		jade.wrapper.AgentContainer segmentContainer = rt.createAgentContainer(profile);
-		
+
 		//Load the map
 		try {
 
@@ -59,7 +62,7 @@ public class Main {
 			System.out.println("Error reading the maps file.");
 			e.printStackTrace();
 		}
-		
+
 		//Create the agents
 		//Interface
 		try {
@@ -73,7 +76,7 @@ public class Main {
 			System.out.println("Error starting the interface");
 			e.printStackTrace();
 		}
-		
+
 		//TimeKeeper
 		try {
 			AgentController agent = mainContainer.createNewAgent("TimeKeeper", "agents.TimeKeeperAgent", new Object[]{tickLength});
@@ -85,7 +88,7 @@ public class Main {
 			System.out.println("Error starting the TimeKeeper agent");
 			e1.printStackTrace();
 		}
-		
+
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e2) {
@@ -100,9 +103,9 @@ public class Main {
 
 		//Container that will hold the agents
 		jade.wrapper.AgentContainer carContainer = rt.createAgentContainer(profile);
-		
+
 		for (int i=0; i<numberOfCars; i++){
-			
+
 			try {
 
 				AgentController agent = carContainer.createNewAgent("car" + Integer.toString(i), "agents.CarAgent", new Object[]{map, map.getRandomIntersection(), map.getRandomIntersection(), 120, 120});
@@ -115,10 +118,10 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
-		
+
 		//EventManager
 		try {
-			AgentController agent = mainContainer.createNewAgent("EventManager", "agents.EventManagerAgent", new Object[]{map, carContainer, segmentContainer});
+			AgentController agent = mainContainer.createNewAgent("EventManager", "agents.EventManagerAgent", new Object[]{map, carContainer, segmentContainer, "events"});
 
 			agent.start();
 
@@ -127,6 +130,5 @@ public class Main {
 			System.out.println("Error starting the EventManager agent");
 			e1.printStackTrace();
 		}
-		
 	}
 }

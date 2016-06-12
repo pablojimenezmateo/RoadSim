@@ -68,7 +68,7 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 				
 				for (String string : actions) {
 					
-					String parts[] = string.split("#");
+					String parts[] = string.split(",");
 					
 					if (parts[0].equals("newCar")) {
 						
@@ -91,7 +91,6 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 						msg.setContent(parts[3]);
 
 						myAgent.send(msg);
-						
 						
 					}
 					
