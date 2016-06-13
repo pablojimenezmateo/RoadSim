@@ -10,10 +10,10 @@ import jade.wrapper.StaleProxyException;
 
 public class Main {
 
-	private static final long tickLength = 1;
+	private static final long tickLength = 100;
 	private static final int numberOfCars = 0;
 	private static final boolean drawGUI = true;
-	private static final boolean startRMA = true;
+	private static final boolean startRMA = false;
 
 	public static void main(String[] args) {
 

@@ -146,7 +146,6 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 	public class PanelRadar extends JPanel{
 
 		private static final long serialVersionUID = 1L;
-		//private ArrayList<Mobile> carPositions;
 		private HashMap<String, Mobile> carPositions;
 
 		private Image backGround;
@@ -246,6 +245,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 			//Draw the cars
 			Rectangle2D rect = new Rectangle2D.Float();
+			Color c;
 			
 			for (Mobile m : carPositions.values()) {
 
@@ -254,40 +254,32 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 				
 				if (m.specialColor) {
 
-					g.setColor(Color.GREEN);
+					c = Color.RED;
 				} else {
 
-					g.setColor(Color.YELLOW);
+					c = Color.WHITE;
 				}
 
 				g.setStroke(new BasicStroke(1));
 				
 				//Windows
-				rect.setFrame(x - 4, y - 8, 8, 4); 
+				rect.setFrame(x - 2, y - 2, 4, 2); 
 				
-				g.setColor(Color.WHITE);
+				g.setColor(c);
 				g.fill(rect);
 				
 				g.setColor(Color.BLACK);
 				g.draw(rect);
 				
 				//Chasis
-				rect.setFrame(x - 9, y- 4, 18, 8);
+				rect.setFrame(x - 4, y, 8, 3);
 
-				g.setColor(Color.WHITE);
+				g.setColor(c);
 				g.fill(rect);
 				
 				g.setColor(Color.BLACK);
 				g.draw(rect);
-
-				//Tires
-				g.setColor(Color.GRAY);
-				oval.setFrame(x - 8, y, 6, 6);
-				g.fill(oval);
 				
-				oval.setFrame(x + 2, y, 6, 6);
-				g.fill(oval);
-
 //				//Chicken
 //				//Body
 //				if (m.specialColor) {

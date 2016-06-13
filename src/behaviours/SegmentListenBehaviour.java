@@ -29,7 +29,6 @@ public class SegmentListenBehaviour extends Behaviour {
 
 	private MessageTemplate mt = MessageTemplate.or(mtCarControl, mtEventManagerControl);
 
-
 	private SegmentAgent agent;
 
 	//Constructor
@@ -44,7 +43,6 @@ public class SegmentListenBehaviour extends Behaviour {
 		ACLMessage msg = myAgent.receive(mt);
 
 		if (msg != null) { //There is a message
-
 
 			if (msg.getOntology().equals("carToSegment")) {
 

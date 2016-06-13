@@ -92,7 +92,7 @@ public class SegmentAgent extends Agent {
 		
 		for(CarData car: cars.values()) {
 			
-			ret.append(car.getId() + "#" + Float.toString(car.getX()) + "#" + Float.toString(car.getY()) + "#" + Boolean.toString(car.getSpecialColor()));
+			ret.append(car.getId() + "#" + Float.toString(car.getX()) + "#" + Float.toString(car.getY()) + "#" + Boolean.toString(car.getSpecialColor()) + "#");
 		}
 		
 		return ret.toString();
