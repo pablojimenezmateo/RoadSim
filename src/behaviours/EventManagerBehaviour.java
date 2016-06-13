@@ -74,7 +74,7 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 						
 						try {
 
-							AgentController agent = this.agent.getCarContainer().createNewAgent("car" + Integer.toString(currentTick) + Integer.toString(counter), "agents.CarAgent", new Object[]{this.agent.getMap(), parts[2], parts[3], Integer.parseInt(parts[4]), Integer.parseInt(parts[5])});
+							AgentController agent = this.agent.getCarContainer().createNewAgent("car" + Integer.toString(currentTick) + Integer.toString(counter), "agents.CarAgent", new Object[]{this.agent.getMap(), parts[2], parts[3], Integer.parseInt(parts[4]), parts[5]});
 
 							agent.start();
 

@@ -65,11 +65,26 @@ public class CarAgent extends Agent {
 		
 		//Get the speeds
 		this.maxSpeed = (int) this.getArguments()[3];
-		this.curentSpeed = (int) this.getArguments()[4];
+		this.curentSpeed = 0; //(int) this.getArguments()[4];
 
 		//Get the method we want
 		AlgorithmFactory factory = new AlgorithmFactory();
-		Algorithm alg = factory.getAlgorithm(Method.FASTEST);
+		Algorithm alg;
+		
+		String routeType = (String) this.getArguments()[4];
+		
+		if (routeType.equals("fastest")) {
+			
+			alg = factory.getAlgorithm(Method.FASTEST);
+			
+		} else if (routeType.equals("shortest")) {
+			 
+			alg = factory.getAlgorithm(Method.SHORTEST);
+		} else {
+			
+			//TODO: Implement last
+			alg = factory.getAlgorithm(Method.SHORTEST);
+		}
 		
 		//Get the desired Path from the origin to the destination
 		this.path = alg.getPath(this.map, getInitialIntersection(), getFinalIntersection(), this.maxSpeed);

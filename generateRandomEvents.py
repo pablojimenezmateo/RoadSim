@@ -6,6 +6,8 @@ intersections = ['I-CV10-01', 'I-CV10-02', 'I-CV10-03', 'I-CV10-04', 'I-CV10-05'
 'I-N340-06', 'I-N340-07', 'I-N340-08', 'I-N340-09', 'I-CS22-01', 'I-CS22-02', 'I-CS22-03', 'I-CS22-04',
 'I-AP7-01', 'I-AP7-03', 'I-AP7-04']
 
+algorithms = ['shortest', 'fastest']
+
 eventsFile = open("events.csv", 'a')
 
 def generateRandomSample(startinHour, finalHour, num):
@@ -23,19 +25,20 @@ def generateRandomSample(startinHour, finalHour, num):
 
 		speed = randint(80, 120)
 
-		eventsFile.write("newCar," + str(hour).zfill(2) + ":" + str(minute).zfill(2) + "," + start + "," + end + "," + str(speed) + ",120\n")
+		eventsFile.write("newCar," + str(hour).zfill(2) + ":" + str(minute).zfill(2) + "," + start + "," + end +
+			"," + str(speed) + "," + random.choice(algorithms) + "\n")
 
 #All day
-generateRandomSample(8, 23, 300)
+generateRandomSample(8, 23, 1000)
 
 #Morning
-generateRandomSample(8, 9, 300)
+generateRandomSample(8, 9, 700)
 
 #Lunch time
-generateRandomSample(13, 15, 300)
+generateRandomSample(13, 15, 700)
 
 #Evening
-generateRandomSample(16, 19, 300)
+generateRandomSample(16, 19, 700)
 
 #Night
-generateRandomSample(20, 22, 300)
+generateRandomSample(20, 22, 700)

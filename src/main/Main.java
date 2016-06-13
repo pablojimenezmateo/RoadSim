@@ -108,7 +108,7 @@ public class Main {
 
 			try {
 
-				AgentController agent = carContainer.createNewAgent("car" + Integer.toString(i), "agents.CarAgent", new Object[]{map, map.getRandomIntersection(), map.getRandomIntersection(), 120, 120});
+				AgentController agent = carContainer.createNewAgent("car" + Integer.toString(i), "agents.CarAgent", new Object[]{map, map.getRandomIntersection(), map.getRandomIntersection(), 120, "fastest"});
 
 				agent.start();
 
