@@ -12,17 +12,24 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
+import javax.swing.JTextArea;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.text.DefaultCaret;
 
 import agents.InterfaceAgent;
 import environment.Intersection;
@@ -40,7 +47,8 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 	private PanelRadar contentPane;
 	private Map map = null;
 
-	private JLabel time;
+	private JLabel time, numberOfCars;
+	private JTextArea logPanel;
 
 	private InterfaceAgent interfaceAgent;
 	public static int MAXWORLDX, MAXWORLDY;
@@ -72,7 +80,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		//Relative sizes
 		canvasConstraints.fill = GridBagConstraints.BOTH;
 		canvasConstraints.gridwidth = 1; //How many columns to take
-		canvasConstraints.gridheight = 2; //How many rows to take
+		canvasConstraints.gridheight = 5; //How many rows to take
 		canvasConstraints.weightx = 0.9; //Percentage of space this will take horizontally
 		canvasConstraints.weighty = 1; //Percentage of space this will take vertically
 		canvasConstraints.gridx = 0; //Select column
@@ -84,28 +92,73 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		//Add a toolbar part, where 
 		GridBagConstraints toolbarConstraints = new GridBagConstraints();
 
+		//The time
 		toolbarConstraints.fill = GridBagConstraints.BOTH;
 		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
-		toolbarConstraints.weighty = 0.5; //Percentage of space this will take vertically
+		toolbarConstraints.weighty = 0.1; //Percentage of space this will take vertically
 		toolbarConstraints.gridx = 1; //Select column
 		toolbarConstraints.gridy = 0; //Select row
 
-		this.time = new JLabel("Time: 08:00");
+		this.time = new JLabel("Time: Not available");
 
 		this.add(this.time, toolbarConstraints);
-
+		
+		//Agents count
+		toolbarConstraints.fill = GridBagConstraints.BOTH;
 		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
-		toolbarConstraints.weighty = 0.5; //Percentage of space this will take vertically
+		toolbarConstraints.weighty = 0.1; //Percentage of space this will take vertically
 		toolbarConstraints.gridx = 1; //Select column
 		toolbarConstraints.gridy = 1; //Select row
 
-		JSlider speedSlider = new JSlider(JSlider.VERTICAL, 1, 200, 100);
+		this.numberOfCars = new JLabel("There are no cars");
+
+		this.add(numberOfCars, toolbarConstraints);
+		
+		//Log panel
+		this.logPanel = new JTextArea(2, 20);
+		this.logPanel.setEditable(false);
+		
+		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
+		toolbarConstraints.weighty = 0.4; //Percentage of space this will take vertically
+		toolbarConstraints.gridx = 1; //Select column
+		toolbarConstraints.gridy = 2; //Select row
+		
+		//This will make the scroll not move
+		DefaultCaret caret = (DefaultCaret) logPanel.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
+		
+		this.add(new JScrollPane(logPanel), toolbarConstraints);
+		
+		//Legend
+		BufferedImage legend = null;
+		try {
+			legend = ImageIO.read(new File(getClass().getResource("legend.png").getPath()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		JLabel legendLabel = new JLabel(new ImageIcon(legend), JLabel.LEFT);
+		
+		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
+		toolbarConstraints.weighty = 0.3; //Percentage of space this will take vertically
+		toolbarConstraints.gridx = 1; //Select column
+		toolbarConstraints.gridy = 3; //Select row
+		
+		this.add(legendLabel, toolbarConstraints);
+
+		//Time slider
+		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
+		toolbarConstraints.weighty = 0.1; //Percentage of space this will take vertically
+		toolbarConstraints.gridx = 1; //Select column
+		toolbarConstraints.gridy = 4; //Select row
+
+		JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 1, 200, 100);
+
 
 		this.add(speedSlider, toolbarConstraints);
 
 		//Listener
 		speedSlider.addChangeListener(this);
-
+		
 		//Show the frame
 		setVisible(true);
 
@@ -116,6 +169,26 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 	public void setTime(String time) {
 
 		this.time.setText("Time: " + time);
+	}
+	
+	//Changes the number of cars
+	public void setNumberOfCars(int cars) {
+
+		this.numberOfCars.setText("There are " + cars + " cars");
+	}
+	
+	//Adds text to the log area
+	public void appendText(String text) {
+		
+		String aux = this.logPanel.getText();
+		
+		//Just so it doesn't grow too big
+		if (aux.length() > 5000) {
+			
+			aux = "";
+		}
+		
+		this.logPanel.setText(text + aux);
 	}
 
 	//Adds a new car to the GUI
@@ -248,13 +321,6 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 				oval.setFrame(in.getX()-2, in.getY()-2, 4, 4);
 				g.fill(oval);
-
-				//Draw the names of the intersections
-				//				g.setColor(Color.black);	
-				//				g.fillRect(in.coordinates[0]-40, in.coordinates[1]+10, 100, 20);
-				//				g.setColor(Color.white);
-				//				g.drawString(in.id, in.coordinates[0]-35, in.coordinates[1]+25);
-				//				g.setColor(Color.black);	
 			}
 
 			//Draw the cars
@@ -304,90 +370,6 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 				g.setColor(Color.BLACK);
 				g.draw(rect);
-
-				//				//Chicken
-				//				//Body
-				//				if (m.specialColor) {
-				//
-				//					g.setColor(Color.GREEN);
-				//				} else {
-				//
-				//					g.setColor(Color.YELLOW);
-				//				}
-				//
-				//				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
-				//				g.fill(oval);
-				//
-				//				g.setColor(Color.ORANGE);
-				//				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
-				//				g.draw(oval);
-				//
-				//				//Beak
-				//				g.setStroke(new BasicStroke(1));
-				//				g.setColor(Color.ORANGE);
-				//
-				//				Path2D beak = new Path2D.Float();
-				//				beak.moveTo(x + 3, y - 4);
-				//				beak.lineTo(x - 3, y + 4);
-				//				beak.lineTo(x - 8, y);
-				//				beak.lineTo(x + 3, y - 4);
-				//
-				//				//g.fillPolygon(new int[] {x - 3, x - 3, x - 8}, new int[] {y - 4, y + 4, y}, 3);
-				//				g.fill(beak);
-				//
-				//				//Eye
-				//				g.setColor(Color.BLACK);
-				//				oval = new Ellipse2D.Float(x - 2, y - 2, 2, 2);
-				//				g.fill(oval);
-				//
-				//				//Feet
-				//				g.setStroke(new BasicStroke(1));
-				//
-				//				//Make the walking animation
-				//				boolean rightStep = false;;
-				//
-				//				if(Math.random() < 0.5) {
-				//					rightStep = true;
-				//				}
-				//
-				//				Line2D.Float lineF;
-				//
-				//				if (rightStep) {
-				//
-				//					//Right foot
-				//					lineF = new Line2D.Float(x + 2, y + 1, x + 4, y + 4);
-				//					g.draw(lineF);
-				//					lineF = new Line2D.Float(x + 2, y + 1, x + 2, y + 5);
-				//					g.draw(lineF);
-				//					lineF = new Line2D.Float(x + 2, y + 1, x,     y + 4);
-				//					g.draw(lineF);
-				//
-				//					//Left foot
-				//					lineF = new Line2D.Float(x - 3, y + 3, x - 1, y + 5);
-				//					g.draw(lineF);
-				//					lineF = new Line2D.Float(x - 3, y + 3, x - 3, y + 6);
-				//					g.draw(lineF);
-				//					lineF = new Line2D.Float(x - 3, y + 3, x - 6, y + 5);
-				//					g.draw(lineF);
-				//
-				//				} else {
-				//
-				//					//Right foot
-				//					lineF = new Line2D.Float(x + 2, y + 3, x + 4, y + 5);
-				//					g.draw(lineF);
-				//					lineF = new Line2D.Float(x + 2, y + 3, x + 2, y + 6);
-				//					g.draw(lineF);
-				//					lineF = new Line2D.Float(x + 2, y + 3, x,     y + 5);
-				//					g.draw(lineF);
-				//
-				//					//Left foot
-				//					lineF = new Line2D.Float(x - 3, y + 2, x - 1, y + 6);
-				//					g.draw(lineF);
-				//					lineF = new Line2D.Float(x - 3, y + 2, x - 3, y + 5);
-				//					g.draw(lineF);
-				//					lineF = new Line2D.Float(x - 3, y + 2, x - 6, y + 4);
-				//					g.draw(lineF);
-				//				}
 			}
 		}
 

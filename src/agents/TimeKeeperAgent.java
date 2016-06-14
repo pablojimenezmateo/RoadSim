@@ -20,9 +20,11 @@ public class TimeKeeperAgent extends Agent {
 	private static final long serialVersionUID = 4546329963020795810L;
 	private long tickLength;
 	private List<AID> agents = new ArrayList<AID>();
+	private int numberOfCars = 0;
+	private DFAgentDescription interfaceAgent;
 
 	protected void setup() {
-		
+
 		//Register the service
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
@@ -36,6 +38,21 @@ public class TimeKeeperAgent extends Agent {
 		} catch (FIPAException fe) { 
 			fe.printStackTrace(); 
 		}
+
+		//Find the interface agent
+		dfd = new DFAgentDescription();
+		sd = new ServiceDescription();
+		sd.setType("interface");
+		dfd.addServices(sd);
+
+		DFAgentDescription[] result = null;
+
+		try {
+			result = DFService.searchUntilFound(
+					this, getDefaultDF(), dfd, null, 5000);
+		} catch (FIPAException e) { e.printStackTrace(); }
+
+		this.interfaceAgent = result[0];
 
 		//Get the ticklength
 		this.tickLength = (long) this.getArguments()[0];
@@ -68,10 +85,12 @@ public class TimeKeeperAgent extends Agent {
 							// Registration/Modification
 							if (!getAgents().contains(aid)) {
 								getAgents().add(aid);
+								numberOfCars++;
 							}
 						} else {
 							// Deregistration
 							getAgents().remove(aid);
+							numberOfCars--;
 						}
 					}
 				}
@@ -128,7 +147,7 @@ public class TimeKeeperAgent extends Agent {
 		sd.setType("EventManagerAgent");
 		dfd.addServices(sd);
 
-		DFAgentDescription[] result = null;
+		result = null;
 
 		try {
 			result = DFService.searchUntilFound(
@@ -144,14 +163,14 @@ public class TimeKeeperAgent extends Agent {
 
 			@Override
 			public void action() {
-				
+
 				//I was using a TickerBehaviour, but you cannot change the tick length
 				try {
 					Thread.sleep(((TimeKeeperAgent) myAgent).getTickLength());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				
+
 				List<AID> agents = ((TimeKeeperAgent)myAgent).getAgents();
 
 				//Send a tick to all the agents
@@ -164,6 +183,13 @@ public class TimeKeeperAgent extends Agent {
 
 				msg.setConversationId("tick"); 
 				myAgent.send(msg);
+
+				//Send the number of cars to the interface agent
+				msg = new ACLMessage(ACLMessage.INFORM);
+				msg.addReceiver(interfaceAgent.getName());
+				msg.setOntology("numberOfCarsOntology");
+				msg.setContent(Integer.toString(numberOfCars));
+				myAgent.send(msg);
 			}
 
 			@Override
@@ -171,23 +197,23 @@ public class TimeKeeperAgent extends Agent {
 				return false;
 			}
 		});
-		
+
 		//Check for tickLeght changes
 		addBehaviour(new Behaviour() {
 
 			private static final long serialVersionUID = 8455875589611369392L;
-			
+
 			MessageTemplate mt = MessageTemplate.and(
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
 					MessageTemplate.MatchOntology("changeTickOntology"));
 
 			@Override
 			public void action() {
-				
+
 				ACLMessage msg = myAgent.receive(mt);
-				
+
 				if (msg != null) {
-					
+
 					((TimeKeeperAgent)this.myAgent).setTickLength(Long.parseLong(msg.getContent()));
 				} else block();
 			}
@@ -202,14 +228,14 @@ public class TimeKeeperAgent extends Agent {
 	public List<AID> getAgents() {
 		return agents;
 	}
-	
+
 	public long getTickLength() {
-		
+
 		return this.tickLength;
 	}
-	
+
 	public void setTickLength(long newTick) {
-		
+
 		this.tickLength = newTick;
 	}
 }

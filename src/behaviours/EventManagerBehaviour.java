@@ -65,6 +65,8 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 				
 				//Execute all the actions
 				List<String> actions = events.get(currentTick);
+				
+				StringBuilder str = new StringBuilder();
 								
 				for (String string : actions) {
 					
@@ -77,6 +79,9 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 							AgentController agent = this.agent.getCarContainer().createNewAgent("car" + Integer.toString(currentTick) + Integer.toString(counter), "agents.CarAgent", new Object[]{this.agent.getMap(), parts[2], parts[3], Integer.parseInt(parts[4]), parts[5]});
 
 							agent.start();
+							
+							//For the logs
+							str.append(parts[1] + ": Car from " + parts[2]  + " to " + parts[3] +"\n");
 
 						} catch (StaleProxyException e) {
 
@@ -91,10 +96,20 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 						msg.setContent(parts[3]);
 						
 						myAgent.send(msg);
+						
+						//For the logs
+						str.append(parts[1] + ": Segment " + parts[2]  + "service changed to " + parts[3] +"\n");
 					}
 					
 					counter++;
 				}
+				
+				msg = new ACLMessage(ACLMessage.INFORM);
+				msg.setOntology("logOntology");
+				msg.addReceiver(this.agent.getInterfaceAgent().getName());
+				msg.setContent(str.toString());
+
+				myAgent.send(msg);
 			}
 		}
 	}

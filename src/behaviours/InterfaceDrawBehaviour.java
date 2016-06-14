@@ -17,15 +17,13 @@ public class InterfaceDrawBehaviour extends Behaviour {
 	private InterfaceAgent agent;
 
 	//Template to listen for drawing instructions
-	private MessageTemplate mt = MessageTemplate.or(MessageTemplate.or(MessageTemplate.and(
-			MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
-			MessageTemplate.MatchOntology("drawOntology")),
-			MessageTemplate.and(
-					MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
-					MessageTemplate.MatchOntology("deleteOntology"))),
-			MessageTemplate.and(
-					MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
-					MessageTemplate.MatchOntology("updateTimeOntology")));
+	private MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
+			MessageTemplate.or(MessageTemplate.or(MessageTemplate.or(MessageTemplate.or(
+					MessageTemplate.MatchOntology("drawOntology"),
+					MessageTemplate.MatchOntology("logOntology")),
+					MessageTemplate.MatchOntology("deleteOntology")),
+					MessageTemplate.MatchOntology("updateTimeOntology")),
+					MessageTemplate.MatchOntology("numberOfCarsOntology")));
 
 	public InterfaceDrawBehaviour(InterfaceAgent agent) {
 
@@ -56,7 +54,7 @@ public class InterfaceDrawBehaviour extends Behaviour {
 							Mobile m = cars.get(parts[i]);
 
 							if (m != null) {
-								
+
 								m.setX(Float.parseFloat(parts[i+1]));
 								m.setY(Float.parseFloat(parts[i+2]));
 								m.setSpecialColor(Boolean.valueOf(parts[i+3]));
@@ -76,7 +74,7 @@ public class InterfaceDrawBehaviour extends Behaviour {
 						agent.getMap().deleteCar(msg.getContent());	
 					}
 				});
-				
+
 			} else if (msg.getOntology().equals("updateTimeOntology")) {
 
 				SwingUtilities.invokeLater(new Runnable() {
@@ -87,8 +85,29 @@ public class InterfaceDrawBehaviour extends Behaviour {
 						agent.getMap().setTime(msg.getContent());	
 					}
 				});
-			}
+			} else if (msg.getOntology().equals("logOntology")) {
 
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+
+						agent.getMap().appendText(msg.getContent());	
+					}
+				});
+
+			} else if (msg.getOntology().equals("numberOfCarsOntology")) {
+				
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+
+						agent.getMap().setNumberOfCars(Integer.parseInt(msg.getContent()));	
+					}
+				}); 
+			}
+			
 		} else block();
 	}
 
