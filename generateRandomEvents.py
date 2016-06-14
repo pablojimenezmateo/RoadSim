@@ -10,7 +10,7 @@ algorithms = ['shortest', 'fastest', 'smartest']
 
 eventsFile = open("events.csv", 'a')
 
-def generateRandomSample(startinHour, finalHour, num):
+def generateRandomSample(startinHour, finalHour, num, algorithmType=None):
 
 	for x in xrange(num):
 
@@ -25,8 +25,14 @@ def generateRandomSample(startinHour, finalHour, num):
 
 		speed = randint(80, 120)
 
+		if algorithmType == None:
+
+			algorithm = random.choice(algorithms)
+		else:
+			algorithm = algorithmType
+
 		eventsFile.write("newCar," + str(hour).zfill(2) + ":" + str(minute).zfill(2) + "," + start + "," + end +
-			"," + str(speed) + "," + random.choice(algorithms) + "\n")
+			"," + str(speed) + "," + algorithm + "\n")
 
 def generateStress(hour, minute, num):
 
@@ -47,13 +53,16 @@ def generateStress(hour, minute, num):
 generateRandomSample(8, 23, 1000)
 
 #Morning
-generateRandomSample(8, 9, 700)
+#generateRandomSample(8, 9, 700)
 
 #Lunch time
-generateRandomSample(13, 15, 700)
+#generateRandomSample(13, 15, 700)
 
 #Evening
-generateRandomSample(16, 19, 700)
+#generateRandomSample(16, 19, 700)
 
 #Night
-generateRandomSample(20, 22, 700)
+#generateRandomSample(20, 22, 700)
+
+#Smart cars
+generateRandomSample(8, 23, 1000, 'smartest')

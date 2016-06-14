@@ -2,6 +2,7 @@ package view;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -16,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -58,6 +60,9 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 	public CanvasWorld(InterfaceAgent interfaceAgent, int maxX, int maxY, Map map) {
 
 		super();
+		
+		//Make it white
+		this.getContentPane().setBackground(Color.WHITE);
 
 		MAXWORLDX = maxX;
 		MAXWORLDY = maxY;
@@ -68,7 +73,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		setTitle("Interface: " + this.interfaceAgent.getLocalName());
+		setTitle("Car enviroment");
 		setBounds(10, 10, MAXWORLDX, MAXWORLDY);
 
 		//Create a layout
@@ -80,7 +85,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		//Relative sizes
 		canvasConstraints.fill = GridBagConstraints.BOTH;
 		canvasConstraints.gridwidth = 1; //How many columns to take
-		canvasConstraints.gridheight = 5; //How many rows to take
+		canvasConstraints.gridheight = 6; //How many rows to take
 		canvasConstraints.weightx = 0.9; //Percentage of space this will take horizontally
 		canvasConstraints.weighty = 1; //Percentage of space this will take vertically
 		canvasConstraints.gridx = 0; //Select column
@@ -139,7 +144,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		JLabel legendLabel = new JLabel(new ImageIcon(legend), JLabel.LEFT);
 		
 		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
-		toolbarConstraints.weighty = 0.3; //Percentage of space this will take vertically
+		toolbarConstraints.weighty = 0.2; //Percentage of space this will take vertically
 		toolbarConstraints.gridx = 1; //Select column
 		toolbarConstraints.gridy = 3; //Select row
 		
@@ -150,9 +155,27 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		toolbarConstraints.weighty = 0.1; //Percentage of space this will take vertically
 		toolbarConstraints.gridx = 1; //Select column
 		toolbarConstraints.gridy = 4; //Select row
+		
+		//Its label
+        JLabel sliderLabel = new JLabel("Simulation speed", JLabel.CENTER);
+        sliderLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        this.add(sliderLabel, toolbarConstraints);
+        
+		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
+		toolbarConstraints.weighty = 0.1; //Percentage of space this will take vertically
+		toolbarConstraints.gridx = 1; //Select column
+		toolbarConstraints.gridy = 5; //Select row
 
 		JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 1, 200, 100);
-
+		speedSlider.setBackground(Color.WHITE);
+		
+		//Labels
+        Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
+        labels.put(1, new JLabel("Faster"));
+        labels.put(200, new JLabel("Slower"));
+        speedSlider.setLabelTable(labels);
+        speedSlider.setPaintLabels(true);
 
 		this.add(speedSlider, toolbarConstraints);
 
