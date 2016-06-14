@@ -52,7 +52,7 @@ public class SegmentListenBehaviour extends Behaviour {
 				//Register
 				if (msg.getConversationId().equals("register")) { 
 
-					this.agent.addCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Boolean.getBoolean(parts[3]));
+					this.agent.addCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Boolean.valueOf(parts[3]));
 
 				} else if (msg.getConversationId().equals("deregister")) { //Deregister
 
@@ -60,16 +60,16 @@ public class SegmentListenBehaviour extends Behaviour {
 
 				} else if (msg.getConversationId().equals("update")) { //Update position
 
-					this.agent.updateCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Boolean.getBoolean(parts[3]));
+					this.agent.updateCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Boolean.valueOf(parts[3]));
 				}
 				
 			} else if (msg.getOntology().equals("eventManagerToSegment")) {
 				
 				Segment segment = this.agent.getSegment();
 				
-				int density = Integer.parseInt(msg.getContent());
+				char serviceLevel = msg.getContent().charAt(0);
 				
-				segment.setDensity(density);
+				segment.setCurrentServiceLevel(serviceLevel);
 			}
 			
 		} else block();

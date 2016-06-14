@@ -59,7 +59,7 @@ public class InterfaceDrawBehaviour extends Behaviour {
 								
 								m.setX(Float.parseFloat(parts[i+1]));
 								m.setY(Float.parseFloat(parts[i+2]));
-								m.setSpecialColor(Boolean.getBoolean(parts[i+3]));
+								m.setSpecialColor(Boolean.valueOf(parts[i+3]));
 							}
 						}
 

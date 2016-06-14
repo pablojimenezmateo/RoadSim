@@ -13,7 +13,7 @@ import environment.Path;
 import environment.Segment;
 import environment.Step;
 
-public class FastestPathAlgorithm implements Algorithm {
+public class SmartestPathAlgorithm implements Algorithm {
 
 	public static int MAXSPEED = 120;
 
@@ -23,7 +23,7 @@ public class FastestPathAlgorithm implements Algorithm {
 	 * @param origin
 	 * @return
 	 */
-	public HashMap<Intersection, Intersection> shortestPathsFrom(Map map, String originID, int maxSpeed){
+	public HashMap<Intersection, Intersection> smartestPathsFrom(Map map, String originID, int maxSpeed){
 
 		HashMap<Intersection, Double> time = new HashMap<Intersection, Double>();
 		HashMap<Intersection, Intersection> prev = new HashMap<Intersection, Intersection>();
@@ -260,7 +260,7 @@ public class FastestPathAlgorithm implements Algorithm {
 	public Path getPath(Map map, String initialIntersection, String finalIntersection, int maxSpeed) {
 
 		//Calculate dijkstra
-		HashMap<Intersection, Intersection> dijks = this.shortestPathsFrom(map, initialIntersection, maxSpeed);
+		HashMap<Intersection, Intersection> dijks = this.smartestPathsFrom(map, initialIntersection, maxSpeed);
 
 		//Calculate the intersection path
 		List<String> intersectionPath = this.getIntersectionPath(dijks, map.getIntersectionByID(finalIntersection));
@@ -329,7 +329,7 @@ public class FastestPathAlgorithm implements Algorithm {
 
 			if(segment.getDestination().equals(destination)){
 
-				ret = segment.getLength()/Math.min(segment.getMaxSpeed(), maxSpeed);
+				ret = segment.getLength()/Math.min(segment.getCurrentAllowedSpeed(), maxSpeed);
 				
 				break;
 			}

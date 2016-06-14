@@ -7,7 +7,6 @@ public class AlgorithmFactory {
 		return this.getAlgorithm(Method.SHORTEST);
 	}
 
-	//TODO: Complete methods
 	public Algorithm getAlgorithm(Method method) {
 
 		Algorithm ret = null;
@@ -20,9 +19,10 @@ public class AlgorithmFactory {
 		} else if (method.equals(Method.FASTEST)) {
 			
 			return new FastestPathAlgorithm();
-		} else if (method.equals(Method.FASTEST_TRAFFIC)) {
 			
+		} else if (method.equals(Method.SMARTEST)) {
 			
+			return new SmartestPathAlgorithm();
 		}
 		
 		return ret;

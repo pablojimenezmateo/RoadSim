@@ -126,18 +126,24 @@ public class CarBehaviour extends CyclicBehaviour {
 
 						//Register in the new segment
 						this.informSegment(next.getSegment(), "register");
-
-						//Change my speed according to the maximum allowed speed
-						this.agent.setCurrentSpeed(Math.min(this.agent.getMaxSpeed(), this.agent.getPreviousSegment().getCurrentAllowedSpeed()));
 						
-						//If we are going under the maximum speed I'm allowed to go, or I can go, I am in a congestion, draw me differently
-						if (this.agent.getCurrentSpeed() < Math.min(this.agent.getMaxSpeed(), this.agent.getPreviousSegment().getMaxSpeed())) {
+						//If we are using the smart algorithm, recalculate
+						if (this.agent.isSmart()) {
 							
-							this.agent.setSpecialColor(true);
-						} else {
-							
-							this.agent.setSpecialColor(false);
+							this.agent.recalculate(this.agent.getPreviousSegment().getOrigin().getId());
 						}
+					}
+					
+					//Change my speed according to the maximum allowed speed
+					this.agent.setCurrentSpeed(Math.min(this.agent.getMaxSpeed(), this.agent.getPreviousSegment().getCurrentAllowedSpeed()));
+					
+					//If we are going under the maximum speed I'm allowed to go, or I can go, I am in a congestion, draw me differently
+					if (this.agent.getCurrentSpeed() < Math.min(this.agent.getMaxSpeed(), this.agent.getPreviousSegment().getMaxSpeed())) {
+						
+						this.agent.setSpecialColor(true);
+					} else {
+						
+						this.agent.setSpecialColor(false);
 					}
 
 					this.informSegment(next.getSegment(), "update");
@@ -153,7 +159,7 @@ public class CarBehaviour extends CyclicBehaviour {
 		msg.setOntology("carToSegment");
 		msg.setConversationId(type);
 		msg.addReceiver(segment.getSegmentAgent().getAID());
-		msg.setContent(this.agent.getId() + "#" + Float.toString(this.agent.getX()) + "#" + Float.toString(this.agent.getY()) + "#" + this.agent.getCurrentSpeed() + "#" + this.agent.getMaxSpeed());
+		msg.setContent(this.agent.getId() + "#" + Float.toString(this.agent.getX()) + "#" + Float.toString(this.agent.getY()) + "#" + this.agent.getSpecialColor() + "#");
 
 		myAgent.send(msg);
 	}

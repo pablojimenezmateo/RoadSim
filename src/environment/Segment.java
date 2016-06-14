@@ -1,6 +1,7 @@
 package environment;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -55,7 +56,13 @@ public class Segment implements Serializable{
 	//The container where the agents will be created
 	@SuppressWarnings("unused")
 	private transient jade.wrapper.AgentContainer mainContainer;
-
+	
+	//This dictionary contains the different service levels
+	private HashMap<Character, Float> serviceLevels;
+	
+	//The current service level
+	private Character currentServiceLevel;
+	
 	/**
 	 * Default constructor. 
 	 */
@@ -73,6 +80,8 @@ public class Segment implements Serializable{
 		this.pkMax = 0;
 		this.mainContainer = null;
 		this.currentAllowedSpeed = this.maxSpeed;
+		this.serviceLevels = new HashMap<Character, Float>();
+		this.currentServiceLevel = 'A';
 	}
 
 	/**
@@ -95,6 +104,16 @@ public class Segment implements Serializable{
 		this.steps = new LinkedList<Step>();
 		this.mainContainer = mainContainer;
 		this.currentAllowedSpeed = this.maxSpeed;
+		this.serviceLevels = new HashMap<Character, Float>();
+		this.currentServiceLevel = 'A';
+		
+		//Put the service levels
+		this.serviceLevels.put('A', 1.00f);
+		this.serviceLevels.put('B', 0.95f);
+		this.serviceLevels.put('C', 0.80f);
+		this.serviceLevels.put('D', 0.65f);
+		this.serviceLevels.put('E', 0.50f);
+		this.serviceLevels.put('F', 0.10f);
 
 		//Create the agents
 		try {
@@ -182,5 +201,14 @@ public class Segment implements Serializable{
 
 	public void setCurrentAllowedSpeed(int currentAllowedSpeed) {
 		this.currentAllowedSpeed = currentAllowedSpeed;
+	}
+
+	public Character getCurrentServiceLevel() {
+		return currentServiceLevel;
+	}
+
+	public void setCurrentServiceLevel(Character currentServiceLevel) {
+		this.currentServiceLevel = currentServiceLevel;
+		this.currentAllowedSpeed = (int) (this.maxSpeed * this.serviceLevels.get(currentServiceLevel));
 	}
 }

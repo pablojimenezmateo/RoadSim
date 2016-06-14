@@ -2,5 +2,11 @@ package searchAlgorithms;
 
 public enum Method {
 
-	SHORTEST, FASTEST, FASTEST_TRAFFIC;
+	SHORTEST(0), FASTEST(1), SMARTEST(2);
+	
+    public final int value;
+
+    private Method(int value) {
+        this.value = value;
+    }
 }

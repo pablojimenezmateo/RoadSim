@@ -39,18 +39,21 @@ public class InterfaceAddCarBehaviour extends CyclicBehaviour {
 			//Get the data
 			String cont = msg.getContent();
 
+			final String id = cont.substring(cont.indexOf("id=")+3, cont.indexOf("algorithmType="));
 			final float x = Float.parseFloat(cont.substring(
 					cont.indexOf("x=")+2, cont.indexOf("y=")));
 			final float y = Float.parseFloat(cont.substring(
 					cont.indexOf("y=")+2, cont.indexOf("id=")));
-			final String id = cont.substring(cont.indexOf("id=")+3);
+			final int algorithmType = Integer.parseInt(cont.substring(
+					cont.indexOf("algorithmType=")+14));
+			
 
 			//Add the car to the scene
 			SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
 				public void run() {
-					agent.getMap().addCar(myAgent.getLocalName(), id, x, y, false);
+					agent.getMap().addCar(myAgent.getLocalName(), id, algorithmType, x, y, false);
 				}
 			});
 			

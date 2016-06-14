@@ -39,6 +39,9 @@ public class CarAgent extends Agent {
 	private Segment previousSegment;
 	private String initialIntersection, finalIntersection;
 	private boolean specialColor = false;
+	private boolean smart = false;
+	private Algorithm alg;
+	private int algorithmType;
 
 	protected void setup() {
 
@@ -69,21 +72,25 @@ public class CarAgent extends Agent {
 
 		//Get the method we want
 		AlgorithmFactory factory = new AlgorithmFactory();
-		Algorithm alg;
+		this.alg = null;
 		
 		String routeType = (String) this.getArguments()[4];
 		
 		if (routeType.equals("fastest")) {
 			
-			alg = factory.getAlgorithm(Method.FASTEST);
+			this.algorithmType = Method.FASTEST.value;
+			this.alg = factory.getAlgorithm(Method.FASTEST);
 			
 		} else if (routeType.equals("shortest")) {
 			 
-			alg = factory.getAlgorithm(Method.SHORTEST);
-		} else {
+			this.algorithmType = Method.SHORTEST.value;
+			this.alg = factory.getAlgorithm(Method.SHORTEST);
 			
-			//TODO: Implement last
-			alg = factory.getAlgorithm(Method.SHORTEST);
+		} else if (routeType.equals("smartest")) {
+			
+			this.algorithmType = Method.SMARTEST.value;
+			this.alg = factory.getAlgorithm(Method.SMARTEST);
+			this.smart = true;
 		}
 		
 		//Get the desired Path from the origin to the destination
@@ -114,12 +121,18 @@ public class CarAgent extends Agent {
 		//We notify the interface about the new car
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.addReceiver(interfaceAgent.getName());
-		msg.setContent("x="+this.x+"y="+this.y+"id="+this.id);
+		msg.setContent("x="+this.x+"y="+this.y+"id="+this.id+"algorithmType="+this.algorithmType);
 		msg.setConversationId("Car");
 		send(msg);
 		
 		//Runs the agent
 		addBehaviour(new CarBehaviour(this, 50));	
+	}
+	
+	//Recalculate the route
+	public void recalculate(String origin) {
+		
+		this.path = this.alg.getPath(this.map, origin, getFinalIntersection(), this.maxSpeed);
 	}
 
 	//Setters and getters
@@ -201,5 +214,14 @@ public class CarAgent extends Agent {
 
 	public void setSpecialColor(boolean specialColor) {
 		this.specialColor = specialColor;
+	}
+	
+	public boolean isSmart() {
+		
+		return this.smart;
+	}
+
+	public int getAlgorithmType() {
+		return algorithmType;
 	}
 }

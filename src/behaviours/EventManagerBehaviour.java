@@ -65,7 +65,7 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 				
 				//Execute all the actions
 				List<String> actions = events.get(currentTick);
-				
+								
 				for (String string : actions) {
 					
 					String parts[] = string.split(",");
@@ -89,9 +89,8 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 						msg.setOntology("eventManagerToSegment");
 						msg.addReceiver(new AID(parts[2], AID.ISLOCALNAME));
 						msg.setContent(parts[3]);
-
-						myAgent.send(msg);
 						
+						myAgent.send(msg);
 					}
 					
 					counter++;

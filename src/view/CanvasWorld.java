@@ -29,6 +29,7 @@ import environment.Intersection;
 import environment.Map;
 import environment.Segment;
 import environment.Step;
+import searchAlgorithms.Method;
 import view.CanvasWorld.PanelRadar.Mobile;
 
 public class CanvasWorld extends JFrame implements ActionListener, ChangeListener {
@@ -118,9 +119,9 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 	}
 
 	//Adds a new car to the GUI
-	public void addCar(String ag, String id, float x, float y, boolean specialColor) {
+	public void addCar(String ag, String id, int algorithmColor, float x, float y, boolean specialColor) {
 
-		contentPane.addCar(ag, id, x, y, specialColor);	
+		contentPane.addCar(ag, id, algorithmColor, x, y, specialColor);	
 	}
 
 	//Moves an existing car
@@ -170,9 +171,9 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 			return carPositions;
 		}
 
-		public void addCar(String ag, String id, float x, float y, boolean specialColor) {
+		public void addCar(String ag, String id, int algorithmType, float x, float y, boolean specialColor) {
 
-			carPositions.put(id, new Mobile(x, y, id, specialColor));
+			carPositions.put(id, new Mobile(id, algorithmType, x, y, specialColor));
 			repaint();
 		}
 
@@ -205,16 +206,29 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 				for (Segment s: in.getOutSegments()){
 
-					if (s.getDensity() < 50) {
+					if (s.getCurrentServiceLevel().equals('A')) {
 
 						g.setColor(Color.GREEN);
 
-					} else if (s.getDensity() < 75) {
+					} else if (s.getCurrentServiceLevel().equals('B')) {
+
+						g.setColor(Color.YELLOW);
+
+					} else if (s.getCurrentServiceLevel().equals('C')) {
 
 						g.setColor(Color.ORANGE);
-					} else {
+
+					} else if (s.getCurrentServiceLevel().equals('D')) {
 
 						g.setColor(Color.RED);
+
+					} else if (s.getCurrentServiceLevel().equals('E')) {
+
+						g.setColor(Color.RED);
+
+					} else if (s.getCurrentServiceLevel().equals('F')) {
+
+						g.setColor(Color.BLACK);
 					}
 
 					for(Step st: s.getSteps()){
@@ -245,124 +259,135 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 			//Draw the cars
 			Rectangle2D rect = new Rectangle2D.Float();
-			Color c;
-			
+			Color c = null;
+
 			for (Mobile m : carPositions.values()) {
 
 				float x = m.getX();
 				float y = m.getY();
-				
+
 				if (m.specialColor) {
 
 					c = Color.RED;
 				} else {
 
-					c = Color.WHITE;
+					if (m.getAlgorithmType() == Method.SHORTEST.value) {
+						
+						c = Color.WHITE;
+						
+					} else if (m.getAlgorithmType() == Method.FASTEST.value) {
+						
+						c = Color.CYAN;
+
+					}else if (m.getAlgorithmType() == Method.SMARTEST.value) {
+
+						c = Color.PINK;
+					}
 				}
 
 				g.setStroke(new BasicStroke(1));
-				
+
 				//Windows
 				rect.setFrame(x - 2, y - 2, 4, 2); 
-				
+
 				g.setColor(c);
 				g.fill(rect);
-				
+
 				g.setColor(Color.BLACK);
 				g.draw(rect);
-				
+
 				//Chasis
 				rect.setFrame(x - 4, y, 8, 3);
 
 				g.setColor(c);
 				g.fill(rect);
-				
+
 				g.setColor(Color.BLACK);
 				g.draw(rect);
-				
-//				//Chicken
-//				//Body
-//				if (m.specialColor) {
-//
-//					g.setColor(Color.GREEN);
-//				} else {
-//
-//					g.setColor(Color.YELLOW);
-//				}
-//
-//				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
-//				g.fill(oval);
-//
-//				g.setColor(Color.ORANGE);
-//				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
-//				g.draw(oval);
-//
-//				//Beak
-//				g.setStroke(new BasicStroke(1));
-//				g.setColor(Color.ORANGE);
-//
-//				Path2D beak = new Path2D.Float();
-//				beak.moveTo(x + 3, y - 4);
-//				beak.lineTo(x - 3, y + 4);
-//				beak.lineTo(x - 8, y);
-//				beak.lineTo(x + 3, y - 4);
-//
-//				//g.fillPolygon(new int[] {x - 3, x - 3, x - 8}, new int[] {y - 4, y + 4, y}, 3);
-//				g.fill(beak);
-//
-//				//Eye
-//				g.setColor(Color.BLACK);
-//				oval = new Ellipse2D.Float(x - 2, y - 2, 2, 2);
-//				g.fill(oval);
-//
-//				//Feet
-//				g.setStroke(new BasicStroke(1));
-//
-//				//Make the walking animation
-//				boolean rightStep = false;;
-//
-//				if(Math.random() < 0.5) {
-//					rightStep = true;
-//				}
-//
-//				Line2D.Float lineF;
-//
-//				if (rightStep) {
-//
-//					//Right foot
-//					lineF = new Line2D.Float(x + 2, y + 1, x + 4, y + 4);
-//					g.draw(lineF);
-//					lineF = new Line2D.Float(x + 2, y + 1, x + 2, y + 5);
-//					g.draw(lineF);
-//					lineF = new Line2D.Float(x + 2, y + 1, x,     y + 4);
-//					g.draw(lineF);
-//
-//					//Left foot
-//					lineF = new Line2D.Float(x - 3, y + 3, x - 1, y + 5);
-//					g.draw(lineF);
-//					lineF = new Line2D.Float(x - 3, y + 3, x - 3, y + 6);
-//					g.draw(lineF);
-//					lineF = new Line2D.Float(x - 3, y + 3, x - 6, y + 5);
-//					g.draw(lineF);
-//
-//				} else {
-//
-//					//Right foot
-//					lineF = new Line2D.Float(x + 2, y + 3, x + 4, y + 5);
-//					g.draw(lineF);
-//					lineF = new Line2D.Float(x + 2, y + 3, x + 2, y + 6);
-//					g.draw(lineF);
-//					lineF = new Line2D.Float(x + 2, y + 3, x,     y + 5);
-//					g.draw(lineF);
-//
-//					//Left foot
-//					lineF = new Line2D.Float(x - 3, y + 2, x - 1, y + 6);
-//					g.draw(lineF);
-//					lineF = new Line2D.Float(x - 3, y + 2, x - 3, y + 5);
-//					g.draw(lineF);
-//					lineF = new Line2D.Float(x - 3, y + 2, x - 6, y + 4);
-//					g.draw(lineF);
-//				}
+
+				//				//Chicken
+				//				//Body
+				//				if (m.specialColor) {
+				//
+				//					g.setColor(Color.GREEN);
+				//				} else {
+				//
+				//					g.setColor(Color.YELLOW);
+				//				}
+				//
+				//				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
+				//				g.fill(oval);
+				//
+				//				g.setColor(Color.ORANGE);
+				//				oval = new Ellipse2D.Float(x - 4, y - 4, 8, 8);
+				//				g.draw(oval);
+				//
+				//				//Beak
+				//				g.setStroke(new BasicStroke(1));
+				//				g.setColor(Color.ORANGE);
+				//
+				//				Path2D beak = new Path2D.Float();
+				//				beak.moveTo(x + 3, y - 4);
+				//				beak.lineTo(x - 3, y + 4);
+				//				beak.lineTo(x - 8, y);
+				//				beak.lineTo(x + 3, y - 4);
+				//
+				//				//g.fillPolygon(new int[] {x - 3, x - 3, x - 8}, new int[] {y - 4, y + 4, y}, 3);
+				//				g.fill(beak);
+				//
+				//				//Eye
+				//				g.setColor(Color.BLACK);
+				//				oval = new Ellipse2D.Float(x - 2, y - 2, 2, 2);
+				//				g.fill(oval);
+				//
+				//				//Feet
+				//				g.setStroke(new BasicStroke(1));
+				//
+				//				//Make the walking animation
+				//				boolean rightStep = false;;
+				//
+				//				if(Math.random() < 0.5) {
+				//					rightStep = true;
+				//				}
+				//
+				//				Line2D.Float lineF;
+				//
+				//				if (rightStep) {
+				//
+				//					//Right foot
+				//					lineF = new Line2D.Float(x + 2, y + 1, x + 4, y + 4);
+				//					g.draw(lineF);
+				//					lineF = new Line2D.Float(x + 2, y + 1, x + 2, y + 5);
+				//					g.draw(lineF);
+				//					lineF = new Line2D.Float(x + 2, y + 1, x,     y + 4);
+				//					g.draw(lineF);
+				//
+				//					//Left foot
+				//					lineF = new Line2D.Float(x - 3, y + 3, x - 1, y + 5);
+				//					g.draw(lineF);
+				//					lineF = new Line2D.Float(x - 3, y + 3, x - 3, y + 6);
+				//					g.draw(lineF);
+				//					lineF = new Line2D.Float(x - 3, y + 3, x - 6, y + 5);
+				//					g.draw(lineF);
+				//
+				//				} else {
+				//
+				//					//Right foot
+				//					lineF = new Line2D.Float(x + 2, y + 3, x + 4, y + 5);
+				//					g.draw(lineF);
+				//					lineF = new Line2D.Float(x + 2, y + 3, x + 2, y + 6);
+				//					g.draw(lineF);
+				//					lineF = new Line2D.Float(x + 2, y + 3, x,     y + 5);
+				//					g.draw(lineF);
+				//
+				//					//Left foot
+				//					lineF = new Line2D.Float(x - 3, y + 2, x - 1, y + 6);
+				//					g.draw(lineF);
+				//					lineF = new Line2D.Float(x - 3, y + 2, x - 3, y + 5);
+				//					g.draw(lineF);
+				//					lineF = new Line2D.Float(x - 3, y + 2, x - 6, y + 4);
+				//					g.draw(lineF);
+				//				}
 			}
 		}
 
@@ -370,16 +395,19 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 			private String id;
 
+			private int algorithmType;
+
 			private float x;
 			private float y;
 
 			private boolean specialColor;
 
-			public Mobile(float x, float y, String id, boolean specialColor) {
+			public Mobile(String id, int algorithmType, float x, float y, boolean specialColor) {
 
+				this.setId(id);
+				this.setAlgorithmType(algorithmType);
 				this.setX(x);
 				this.setY(y);
-				this.setId(id);
 				this.setSpecialColor(specialColor);
 
 			}
@@ -414,6 +442,14 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 			public void setSpecialColor(boolean specialColor) {
 				this.specialColor = specialColor;
+			}
+
+			public int getAlgorithmType() {
+				return algorithmType;
+			}
+
+			public void setAlgorithmType(int algorithmType) {
+				this.algorithmType = algorithmType;
 			}
 		}
 	}
