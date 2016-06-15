@@ -37,7 +37,7 @@ public class InterfaceDrawBehaviour extends Behaviour {
 		ACLMessage msg = myAgent.receive(mt);
 
 		if (msg != null) {
-
+			
 			if (msg.getOntology().equals("drawOntology")) {
 
 				//Update the position in the canvas

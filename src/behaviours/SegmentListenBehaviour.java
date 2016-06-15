@@ -43,7 +43,7 @@ public class SegmentListenBehaviour extends Behaviour {
 		ACLMessage msg = myAgent.receive(mt);
 
 		if (msg != null) { //There is a message
-
+			
 			if (msg.getOntology().equals("carToSegment")) {
 
 				String car = msg.getContent();

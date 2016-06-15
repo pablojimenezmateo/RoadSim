@@ -9,11 +9,9 @@ import jade.core.behaviours.Behaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.SearchConstraints;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import jade.proto.SubscriptionInitiator;
 
 public class TimeKeeperAgent extends Agent {
 
@@ -57,105 +55,39 @@ public class TimeKeeperAgent extends Agent {
 		//Get the ticklength
 		this.tickLength = (long) this.getArguments()[0];
 
-		//Subscribe in the DF to keep the cars list up to date
-		sd = new ServiceDescription();
-		sd.setType("CarAgent");
+		//A reference to myself
+		TimeKeeperAgent timeKeeperAgent = this;
 
-		DFAgentDescription dfTemplate = new DFAgentDescription();
-		dfTemplate.addServices(sd);
-
-		SearchConstraints sc = new SearchConstraints();
-		sc.setMaxResults(new Long(-1));
-
-		ACLMessage subscribe = DFService.createSubscriptionMessage(this, getDefaultDF(), dfTemplate, sc);
-
-		/**
-		 * This behaviour will keep an eye on the CarAgents registered in the system
-		 */
-		addBehaviour(new SubscriptionInitiator(this, subscribe) {
-
-			private static final long serialVersionUID = 9142354628682006078L;
-
-			protected void handleInform(ACLMessage inform) {
-				try {
-					DFAgentDescription[] dfds = DFService.decodeNotification(inform.getContent());
-					for (int i = 0; i < dfds.length; ++i) {
-						AID aid = dfds[i].getName();
-						if (dfds[i].getAllServices().hasNext()) {
-							// Registration/Modification
-							if (!getAgents().contains(aid)) {
-								getAgents().add(aid);
-								numberOfCars++;
-							}
-						} else {
-							// Deregistration
-							getAgents().remove(aid);
-							numberOfCars--;
-						}
-					}
-				}
-				catch (FIPAException fe) {
-					fe.printStackTrace();
-				}
-			}
-		} );
-
-		//Subscribe in the DF to keep the cars list up to date
-		sd = new ServiceDescription();
-		sd.setType("segment");
-
-		dfTemplate = new DFAgentDescription();
-		dfTemplate.addServices(sd);
-
-		sc = new SearchConstraints();
-		sc.setMaxResults(new Long(-1));
-
-		subscribe = DFService.createSubscriptionMessage(this, getDefaultDF(), dfTemplate, sc);
-
-		/**
-		 * This behaviour will keep an eye on the SegmentAgents registered in the system
-		 */
-		addBehaviour(new SubscriptionInitiator(this, subscribe) {
-
-			private static final long serialVersionUID = 9142354628682006078L;
-
-			protected void handleInform(ACLMessage inform) {
-				try {
-					DFAgentDescription[] dfds = DFService.decodeNotification(inform.getContent());
-					for (int i = 0; i < dfds.length; ++i) {
-						AID aid = dfds[i].getName();
-						if (dfds[i].getAllServices().hasNext()) {
-							// Registration/Modification
-							if (!getAgents().contains(aid)) {
-								getAgents().add(aid);
-							}
-						} else {
-							// Deregistration
-							getAgents().remove(aid);
-						}
-					}
-				}
-				catch (FIPAException fe) {
-					fe.printStackTrace();
-				}
-			}
-		} );
-
-		//Add the EventManager to the subscribed agents
+		//Because the segments and the manager don't change,
+		//I'll do the search just once
+		DFAgentDescription[] segmentsaux = null;
+		DFAgentDescription[] manageraux = null;
+		
 		dfd = new DFAgentDescription();
-		sd = new ServiceDescription();
+		sd  = new ServiceDescription();
+		sd.setType("segment");
+		dfd.addServices(sd);
+
+		try {
+			segmentsaux = DFService.searchUntilFound(
+					timeKeeperAgent, getDefaultDF(), dfd, null, 5000);
+		} catch (FIPAException e) { e.printStackTrace(); }
+
+		dfd = new DFAgentDescription();
+		sd  = new ServiceDescription();
 		sd.setType("EventManagerAgent");
 		dfd.addServices(sd);
 
-		result = null;
-
 		try {
-			result = DFService.searchUntilFound(
-					this, getDefaultDF(), dfd, null, 10000);
+			manageraux = DFService.searchUntilFound(
+					timeKeeperAgent, getDefaultDF(), dfd, null, 5000);
 		} catch (FIPAException e) { e.printStackTrace(); }
-
-		this.agents.add(result[0].getName());
-
+		
+		//We need this auxiliar variables so that the variables are readable
+		//from the runnable
+		DFAgentDescription[] segments = segmentsaux;
+		DFAgentDescription[] manager = manageraux;
+		
 		//This is the behaviour that sends a tick message to all the agents
 		addBehaviour(new Behaviour() {
 
@@ -171,16 +103,42 @@ public class TimeKeeperAgent extends Agent {
 					e.printStackTrace();
 				}
 
-				List<AID> agents = ((TimeKeeperAgent)myAgent).getAgents();
+				//Search for the current cars
+				DFAgentDescription[] cars = null;
+
+				DFAgentDescription dfd = new DFAgentDescription();
+				ServiceDescription sd  = new ServiceDescription();
+				sd.setType("CarAgent");
+				dfd.addServices(sd);
+
+				try {
+					cars = DFService.search(
+							timeKeeperAgent, getDefaultDF(), dfd, null);
+				} catch (FIPAException e) { e.printStackTrace(); }
 
 				//Send a tick to all the agents
 				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 
-				for (AID aid: agents) {
-
-					msg.addReceiver(aid);
+				if (cars != null){
+					
+					numberOfCars = 0;
+					
+					for (DFAgentDescription dfAgentDescription : cars) {
+						
+						msg.addReceiver(dfAgentDescription.getName());
+						numberOfCars++;
+					}
 				}
 
+				for (DFAgentDescription dfAgentDescription : segments) {
+					msg.addReceiver(dfAgentDescription.getName());
+				}
+
+				msg.addReceiver(manager[0].getName());
+				
+				//It can happen that the car has already finished its execution
+				//before the message arrives
+				msg.addUserDefinedParameter(ACLMessage.IGNORE_FAILURE, "true");
 				msg.setConversationId("tick"); 
 				myAgent.send(msg);
 

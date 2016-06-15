@@ -115,11 +115,11 @@ public class CarBehaviour extends CyclicBehaviour {
 					if (!this.agent.getPreviousSegment().equals(next.getSegment())) {
 
 						//TODO: Check when this happens
-						if (this.agent.getPreviousSegment() != null) {
+						//if (this.agent.getPreviousSegment() != null) {
 
 							//Deregister from previous segment
 							this.informSegment(this.agent.getPreviousSegment(), "deregister");
-						}
+						//}
 
 						//Set the new previous segment
 						this.agent.setPreviousSegment(next.getSegment());
