@@ -13,6 +13,14 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
+/**
+ * This agent is in charge of sending a Tick message to the rest of the
+ * agents.
+ * 
+ * EvenManagerAgent, CarAgents and SegmentAgents need a tick to start
+ * its behaviour, otherwise they won't do anything.
+ *
+ */
 public class TimeKeeperAgent extends Agent {
 
 	private static final long serialVersionUID = 4546329963020795810L;
@@ -27,7 +35,7 @@ public class TimeKeeperAgent extends Agent {
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("TimeKeeperAgent");
+		sd.setType("timeKeeperAgent");
 		sd.setName(getLocalName());
 
 		dfd.addServices(sd);
@@ -40,7 +48,7 @@ public class TimeKeeperAgent extends Agent {
 		//Find the interface agent
 		dfd = new DFAgentDescription();
 		sd = new ServiceDescription();
-		sd.setType("interface");
+		sd.setType("interfaceAgent");
 		dfd.addServices(sd);
 
 		DFAgentDescription[] result = null;
@@ -65,7 +73,7 @@ public class TimeKeeperAgent extends Agent {
 		
 		dfd = new DFAgentDescription();
 		sd  = new ServiceDescription();
-		sd.setType("segment");
+		sd.setType("segmentAgent");
 		dfd.addServices(sd);
 
 		try {
@@ -75,7 +83,7 @@ public class TimeKeeperAgent extends Agent {
 
 		dfd = new DFAgentDescription();
 		sd  = new ServiceDescription();
-		sd.setType("EventManagerAgent");
+		sd.setType("eventManagerAgent");
 		dfd.addServices(sd);
 
 		try {
@@ -83,7 +91,7 @@ public class TimeKeeperAgent extends Agent {
 					timeKeeperAgent, getDefaultDF(), dfd, null, 5000);
 		} catch (FIPAException e) { e.printStackTrace(); }
 		
-		//We need this auxiliar variables so that the variables are readable
+		//We need this auxiliary variables so that the variables are readable
 		//from the runnable
 		DFAgentDescription[] segments = segmentsaux;
 		DFAgentDescription[] manager = manageraux;
@@ -103,12 +111,12 @@ public class TimeKeeperAgent extends Agent {
 					e.printStackTrace();
 				}
 
-				//Search for the current cars
+				//Search for cars that are currently in the DF
 				DFAgentDescription[] cars = null;
 
 				DFAgentDescription dfd = new DFAgentDescription();
 				ServiceDescription sd  = new ServiceDescription();
-				sd.setType("CarAgent");
+				sd.setType("carAgent");
 				dfd.addServices(sd);
 
 				try {
@@ -137,9 +145,9 @@ public class TimeKeeperAgent extends Agent {
 				msg.addReceiver(manager[0].getName());
 				
 				//It can happen that the car has already finished its execution
-				//before the message arrives
+				//before the message arrives, so we ignore the failure
 				msg.addUserDefinedParameter(ACLMessage.IGNORE_FAILURE, "true");
-				msg.setConversationId("tick"); 
+				msg.setOntology("tickOntology"); 
 				myAgent.send(msg);
 
 				//Send the number of cars to the interface agent
@@ -163,7 +171,7 @@ public class TimeKeeperAgent extends Agent {
 
 			MessageTemplate mt = MessageTemplate.and(
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM), 
-					MessageTemplate.MatchOntology("changeTickOntology"));
+					MessageTemplate.MatchOntology("changeTickLengthOntology"));
 
 			@Override
 			public void action() {
@@ -183,6 +191,7 @@ public class TimeKeeperAgent extends Agent {
 		});
 	}
 
+	//Setters and getters
 	public List<AID> getAgents() {
 		return agents;
 	}

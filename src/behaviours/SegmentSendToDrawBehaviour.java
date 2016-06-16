@@ -19,7 +19,7 @@ public class SegmentSendToDrawBehaviour extends CyclicBehaviour {
 	private MessageTemplate mtTick = 
 			MessageTemplate.and(
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-					MessageTemplate.MatchConversationId("tick"));
+					MessageTemplate.MatchOntology("tickOntology"));
 
 	public SegmentSendToDrawBehaviour(SegmentAgent agent) {
 
@@ -28,7 +28,7 @@ public class SegmentSendToDrawBehaviour extends CyclicBehaviour {
 		//Find the interface agent
 		DFAgentDescription dfd = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("interface");
+		sd.setType("interfaceAgent");
 		dfd.addServices(sd);
 
 		DFAgentDescription[] result = null;
@@ -39,7 +39,6 @@ public class SegmentSendToDrawBehaviour extends CyclicBehaviour {
 		} catch (FIPAException e) { e.printStackTrace(); }
 
 		this.interfaceAgent = result[0];
-
 	}
 
 	@Override

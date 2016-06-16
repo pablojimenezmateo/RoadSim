@@ -21,7 +21,7 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 	private MessageTemplate mtTick = 
 			MessageTemplate.and(
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-					MessageTemplate.MatchConversationId("tick"));
+					MessageTemplate.MatchOntology("tickOntology"));
 
 	public EventManagerBehaviour(EventManagerAgent agent) {
 
@@ -91,14 +91,14 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 					} else if (parts[0].equals("segment")) {
 						
 						msg = new ACLMessage(ACLMessage.INFORM);
-						msg.setOntology("eventManagerToSegment");
+						msg.setOntology("eventManagerToSegmentOntology");
 						msg.addReceiver(new AID(parts[2], AID.ISLOCALNAME));
 						msg.setContent(parts[3]);
 						
 						myAgent.send(msg);
 						
 						//For the logs
-						str.append(parts[1] + ": Segment " + parts[2]  + "service changed to " + parts[3] +"\n");
+						str.append(parts[1] + ": Segment " + parts[2]  + " service changed to " + parts[3] +"\n");
 					}
 					
 					counter++;

@@ -39,14 +39,19 @@ import environment.Map;
 import environment.Segment;
 import environment.Step;
 import searchAlgorithms.Method;
-import view.CanvasWorld.PanelRadar.Mobile;
+import view.CanvasWorld.MapPanel.Mobile;
 
+/**
+ * This is the graphical part of the application, it draws
+ * all the elements, keeps a log and the time slider.
+ *
+ */
 public class CanvasWorld extends JFrame implements ActionListener, ChangeListener {
 
 	private static final long serialVersionUID = 1L;
 	private final int FPS = 40;
 
-	private PanelRadar contentPane;
+	private MapPanel contentPane;
 	private Map map = null;
 
 	private JLabel time, numberOfCars;
@@ -57,10 +62,18 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 	private Timer timer = new Timer(1000/this.FPS, this);
 
+	/**
+	 * Constructor
+	 * 
+	 * @param interfaceAgent
+	 * @param maxX
+	 * @param maxY
+	 * @param map
+	 */
 	public CanvasWorld(InterfaceAgent interfaceAgent, int maxX, int maxY, Map map) {
 
 		super();
-		
+
 		//Make it white
 		this.getContentPane().setBackground(Color.WHITE);
 
@@ -91,7 +104,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		canvasConstraints.gridx = 0; //Select column
 		canvasConstraints.gridy = 0; //Select row
 
-		contentPane = new PanelRadar();
+		contentPane = new MapPanel();
 		this.add(contentPane, canvasConstraints);
 
 		//Add a toolbar part, where 
@@ -107,7 +120,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		this.time = new JLabel("Time: Not available");
 
 		this.add(this.time, toolbarConstraints);
-		
+
 		//Agents count
 		toolbarConstraints.fill = GridBagConstraints.BOTH;
 		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
@@ -118,22 +131,22 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		this.numberOfCars = new JLabel("There are no cars");
 
 		this.add(numberOfCars, toolbarConstraints);
-		
+
 		//Log panel
 		this.logPanel = new JTextArea(2, 20);
 		this.logPanel.setEditable(false);
-		
+
 		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
 		toolbarConstraints.weighty = 0.4; //Percentage of space this will take vertically
 		toolbarConstraints.gridx = 1; //Select column
 		toolbarConstraints.gridy = 2; //Select row
-		
+
 		//This will make the scroll not move
 		DefaultCaret caret = (DefaultCaret) logPanel.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
-		
+
 		this.add(new JScrollPane(logPanel), toolbarConstraints);
-		
+
 		//Legend
 		BufferedImage legend = null;
 		try {
@@ -142,12 +155,12 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 			e.printStackTrace();
 		}
 		JLabel legendLabel = new JLabel(new ImageIcon(legend), JLabel.LEFT);
-		
+
 		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
 		toolbarConstraints.weighty = 0.2; //Percentage of space this will take vertically
 		toolbarConstraints.gridx = 1; //Select column
 		toolbarConstraints.gridy = 3; //Select row
-		
+
 		this.add(legendLabel, toolbarConstraints);
 
 		//Time slider
@@ -155,13 +168,13 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		toolbarConstraints.weighty = 0.1; //Percentage of space this will take vertically
 		toolbarConstraints.gridx = 1; //Select column
 		toolbarConstraints.gridy = 4; //Select row
-		
+
 		//Its label
-        JLabel sliderLabel = new JLabel("Simulation speed", JLabel.CENTER);
-        sliderLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        this.add(sliderLabel, toolbarConstraints);
-        
+		JLabel sliderLabel = new JLabel("Simulation speed", JLabel.CENTER);
+		sliderLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		this.add(sliderLabel, toolbarConstraints);
+
 		toolbarConstraints.weightx = 0.1; //Percentage of space this will take horizontally
 		toolbarConstraints.weighty = 0.1; //Percentage of space this will take vertically
 		toolbarConstraints.gridx = 1; //Select column
@@ -169,67 +182,101 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 		JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 1, 200, 100);
 		speedSlider.setBackground(Color.WHITE);
-		
+
 		//Labels
-        Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
-        labels.put(1, new JLabel("Faster"));
-        labels.put(200, new JLabel("Slower"));
-        speedSlider.setLabelTable(labels);
-        speedSlider.setPaintLabels(true);
+		Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
+		labels.put(1, new JLabel("Faster"));
+		labels.put(200, new JLabel("Slower"));
+		speedSlider.setLabelTable(labels);
+		speedSlider.setPaintLabels(true);
 
 		this.add(speedSlider, toolbarConstraints);
 
 		//Listener
 		speedSlider.addChangeListener(this);
-		
+
 		//Show the frame
 		setVisible(true);
 
 		this.timer.start();
 	}
 
-	//Changes the time label
+	/**
+	 * Changes the time label
+	 * 
+	 * @param time New time
+	 */
 	public void setTime(String time) {
 
 		this.time.setText("Time: " + time);
 	}
-	
-	//Changes the number of cars
+
+	/**
+	 * Changes the number of cars in the GUI
+	 * 
+	 * @param cars Number of cars
+	 */
 	public void setNumberOfCars(int cars) {
 
 		this.numberOfCars.setText("There are " + cars + " cars");
 	}
-	
-	//Adds text to the log area
+
+	/**
+	 * Adds text to the log area
+	 * 
+	 * @param text Text to append
+	 */
 	public void appendText(String text) {
-		
+
 		String aux = this.logPanel.getText();
-		
+
 		//Just so it doesn't grow too big
 		if (aux.length() > 5000) {
-			
+
 			aux = "";
 		}
-		
+
 		this.logPanel.setText(text + aux);
 	}
 
-	//Adds a new car to the GUI
+	/**
+	 * Adds a new car to the GUI
+	 * 
+	 * @param ag
+	 * @param id
+	 * @param algorithmColor
+	 * @param x
+	 * @param y
+	 * @param specialColor
+	 */
 	public void addCar(String ag, String id, int algorithmColor, float x, float y, boolean specialColor) {
 
 		contentPane.addCar(ag, id, algorithmColor, x, y, specialColor);	
 	}
 
-	//Moves an existing car
+	/**
+	 * Moves an existing car
+	 * 
+	 * @param id
+	 * @param x
+	 * @param y
+	 * @param specialColor
+	 */
 	public void moveCar(String id, float x, float y, boolean specialColor) {
 		contentPane.moveCar(id, x, y, specialColor);
 	}
 
+	/**
+	 * Deletes a car from the GUI
+	 * 
+	 * @param id
+	 */
 	public void deleteCar(String id) {
 
 		contentPane.deleteCar(id);
 	}
 
+	//Setters and getters
 	public HashMap<String, Mobile> getCars() {
 
 		return contentPane.getCars();
@@ -240,7 +287,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		contentPane.setCars(cars);
 	}
 
-	public class PanelRadar extends JPanel{
+	public class MapPanel extends JPanel{
 
 		private static final long serialVersionUID = 1L;
 		private HashMap<String, Mobile> carPositions;
@@ -248,7 +295,10 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		private Image backGround;
 		private ImageIcon mapImage = new ImageIcon(getClass().getResource("red.png"));
 
-		public PanelRadar() {
+		/**
+		 * Default constructor.
+		 */
+		public MapPanel() {
 			this.carPositions =  new HashMap<String, Mobile>();
 			backGround = mapImage.getImage();
 
@@ -257,35 +307,54 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 			this.setLayout(null);
 		}
 
-		public void setCars(HashMap<String, Mobile> cars) {
-
-			this.carPositions = cars;
-		}
-
-		public HashMap<String, Mobile> getCars() {
-
-			return carPositions;
-		}
-
+		/**
+		 * Adds a car to the panel
+		 * 
+		 * @param ag
+		 * @param id
+		 * @param algorithmType
+		 * @param x
+		 * @param y
+		 * @param specialColor
+		 */
 		public void addCar(String ag, String id, int algorithmType, float x, float y, boolean specialColor) {
 
 			carPositions.put(id, new Mobile(id, algorithmType, x, y, specialColor));
 			repaint();
 		}
 
+		/**
+		 * Moves a car on the panel
+		 * 
+		 * @param id
+		 * @param x
+		 * @param y
+		 * @param specialColor
+		 */
 		public void moveCar(String id, float x, float y, boolean specialColor) {
 
 			Mobile m = carPositions.get(id);
-			m.setX(x);
-			m.setY(y);
-			m.setSpecialColor(specialColor);
+
+			if (m != null) {
+				m.setX(x);
+				m.setY(y);
+				m.setSpecialColor(specialColor);
+			}
 		}
 
+		/**
+		 * Deletes a car from the panel
+		 * 
+		 * @param id
+		 */
 		public void deleteCar(String id) {
 
 			this.carPositions.remove(id);
 		}
 
+		/**
+		 * This is the function that paints it all
+		 */
 		public void paint(Graphics gi) {
 
 			Graphics2D g = (Graphics2D) gi;
@@ -293,12 +362,16 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 			//Draw the background
 			g.drawImage(backGround, 0, 0, this);
 
+			//Classes that will be used to paint
 			Line2D line = new Line2D.Float();
+			Ellipse2D oval = new Ellipse2D.Float();
+			Rectangle2D rect = new Rectangle2D.Float();
 
-			//Draw the segments
+			//Set the stroke width
+			g.setStroke(new BasicStroke(2));
+			
+			//Draw the intersections and segments
 			for (Intersection in : map.getIntersections()) {
-
-				g.setStroke(new BasicStroke(2));
 
 				for (Segment s: in.getOutSegments()){
 
@@ -335,8 +408,6 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 				}
 			}
 
-			Ellipse2D oval = new Ellipse2D.Float();
-
 			//Draw the intersections
 			for (Intersection in : map.getIntersections()) {
 
@@ -347,7 +418,6 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 			}
 
 			//Draw the cars
-			Rectangle2D rect = new Rectangle2D.Float();
 			Color c = null;
 
 			for (Mobile m : carPositions.values()) {
@@ -361,11 +431,11 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 				} else {
 
 					if (m.getAlgorithmType() == Method.SHORTEST.value) {
-						
+
 						c = Color.WHITE;
-						
+
 					} else if (m.getAlgorithmType() == Method.FASTEST.value) {
-						
+
 						c = Color.CYAN;
 
 					}else if (m.getAlgorithmType() == Method.SMARTEST.value) {
@@ -396,6 +466,10 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 			}
 		}
 
+		/**
+		 * Auxiliary class
+		 *
+		 */
 		public class Mobile {
 
 			private String id;
@@ -457,8 +531,23 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 				this.algorithmType = algorithmType;
 			}
 		}
+
+		//Setters and getters
+		public void setCars(HashMap<String, Mobile> cars) {
+
+			this.carPositions = cars;
+		}
+
+		public HashMap<String, Mobile> getCars() {
+
+			return carPositions;
+		}
 	}
 
+	/**
+	 * This is the event for the timer, when called 
+	 * it repaints the window.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
@@ -468,6 +557,10 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		}
 	}
 
+	/**
+	 * This is the event for the slider, to change the speed of the
+	 * simulation.
+	 */
 	@Override
 	public void stateChanged(ChangeEvent e) {
 

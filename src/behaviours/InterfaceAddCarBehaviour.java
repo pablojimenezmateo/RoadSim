@@ -20,7 +20,7 @@ public class InterfaceAddCarBehaviour extends CyclicBehaviour {
 	private MessageTemplate mtNewCar = 
 			MessageTemplate.and(
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-					MessageTemplate.MatchConversationId("Car"));
+					MessageTemplate.MatchOntology("newCarOntology"));
 	
 	private InterfaceAgent agent;
 	

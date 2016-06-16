@@ -12,7 +12,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
 /**
- * This agent will keep track of the cars that are inside an intersection
+ * This agent will keep track of the cars that are inside between two intersections
  * and will update the data accordingly.
  *
  */
@@ -39,7 +39,7 @@ public class SegmentAgent extends Agent {
 		dfd.setName(getAID());
 		
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("segment");
+		sd.setType("segmentAgent");
 		
 		sd.setName(this.getSegment().getId());
 
@@ -51,30 +51,55 @@ public class SegmentAgent extends Agent {
 			fe.printStackTrace(); 
 		}
 		
-		//We add the logic to the segment		
+		//This behaviour will keep the cars updated	
 		addBehaviour(new SegmentListenBehaviour(this));
+		
+		//This behaviour will send the data to the GUI
 		addBehaviour(new SegmentSendToDrawBehaviour(this));		
 	}
 
-	//Add a car to this segment
+	/**
+	 * Add a car to this segment
+	 * 
+	 * @param id ID of the car
+	 * @param x X coordinate of the car
+	 * @param y Y coordinate of the car
+	 * @param specialColor If we have to paint it specially
+	 */
 	public void addCar(String id, float x, float y, boolean specialColor) {
 		
 		this.cars.put(id, new CarData(id, x, y, specialColor));
 	}
 	
-	//Remove a car from this segment
+	/**
+	 * Remove a car from this segment
+	 * 
+	 * @param id ID of the car to remove
+	 */
 	public void removeCar(String id) {
 		
 		this.cars.remove(id);
 	}
 	
-	//Check if the car is contained
+	/**
+	 * Check if the car is contained in this segment
+	 * 
+	 * @param id ID of the car to check
+	 * @return True if found, false otherwise
+	 */
 	public boolean containsCar(String id) {
 		
 		return this.cars.containsKey(id);
 	}
 
-	//Updates the information of a car
+	/**
+	 * Updates the information of a car
+	 * 
+	 * @param id ID of the car to update
+	 * @param x New x coordinate
+	 * @param y New y coordinate
+	 * @param specialColor New specialcolor
+	 */
 	public void updateCar(String id, float x, float y, boolean specialColor) {
 		
 		CarData aux = cars.get(id);
@@ -83,9 +108,15 @@ public class SegmentAgent extends Agent {
 		aux.setSpecialColor(specialColor);
 	}
 	
-	//Creates the string that will be sent to the InterfaceAgent
+	/**
+	 * Creates the string with the information about this segment to
+	 * notify the InterfaceAgent
+	 * 
+	 * @return String with the information of this segment
+	 */
 	public String getDrawingInformation() {
 		
+		//It is far more efficient to use this rather than a simple String
 		StringBuilder ret = new StringBuilder();
 		
 		ret.append(cars.size() + "#");
@@ -98,7 +129,11 @@ public class SegmentAgent extends Agent {
 		return ret.toString();
 	}
 	
-	//Size of the cars
+	/**
+	 * Number of cars in this segment
+	 * 
+	 * @return Number of cars in this segment
+	 */
 	public int carsSize() {
 		
 		return this.getCars().size();
@@ -117,7 +152,10 @@ public class SegmentAgent extends Agent {
 		return cars;
 	}
 	
-	@SuppressWarnings("unused")
+	/**
+	 * Auxiliary structure to keep track of the cars
+	 *
+	 */
 	private class CarData {
 
 		private String id;
@@ -134,10 +172,6 @@ public class SegmentAgent extends Agent {
 
 		public String getId() {
 			return id;
-		}
-
-		public void setId(String id) {
-			this.id = id;
 		}
 
 		public float getX() {

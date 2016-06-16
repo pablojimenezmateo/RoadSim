@@ -20,8 +20,8 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
 /**
- * This agent will be the one that launches cars at specific moments
- * of the day as well as change the segments density.
+ * This agent is in charge of launching cars at specific times
+ * as well as change segment service.
  *
  */
 public class EventManagerAgent extends Agent {
@@ -62,7 +62,7 @@ public class EventManagerAgent extends Agent {
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("EventManagerAgent");
+		sd.setType("eventManagerAgent");
 		sd.setName(getLocalName());
 
 		dfd.addServices(sd);
@@ -75,7 +75,7 @@ public class EventManagerAgent extends Agent {
 		//Find the interface agent
 		dfd = new DFAgentDescription();
 		sd = new ServiceDescription();
-		sd.setType("interface");
+		sd.setType("interfaceAgent");
 		dfd.addServices(sd);
 
 		DFAgentDescription[] result = null;
@@ -87,7 +87,6 @@ public class EventManagerAgent extends Agent {
 
 		this.interfaceAgent = result[0];
 
-		//TODO: Populate events by reading a file
 		//Start at 8:00
 		this.timeElapsed = 8*3600;
 
@@ -143,7 +142,7 @@ public class EventManagerAgent extends Agent {
 			}
 		}
 
-		//Translate from hours to ticks
+		//Translate from hours to ticks, we will use that as the key to our dictionary
 		for (String event : aux) {
 
 			String time = event.split(",")[1];
@@ -163,6 +162,7 @@ public class EventManagerAgent extends Agent {
 			}
 		}
 
+		//Start the behaviour
 		addBehaviour(new EventManagerBehaviour(this));
 	}
 

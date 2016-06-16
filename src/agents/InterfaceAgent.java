@@ -16,7 +16,7 @@ import view.CanvasWorld;
 
 
 /**
- * This agent receives all the messages related to the GUI.
+ * This agent has the GUI and receives all the mesages to draw to it
  *
  */
 public class InterfaceAgent extends Agent{
@@ -36,7 +36,7 @@ public class InterfaceAgent extends Agent{
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("interface");
+		sd.setType("interfaceAgent");
 		sd.setName(getLocalName());
 
 		dfd.addServices(sd);
@@ -49,7 +49,7 @@ public class InterfaceAgent extends Agent{
 		//Find the TimeKeeperAgent agent
 		dfd = new DFAgentDescription();
 		sd = new ServiceDescription();
-		sd.setType("TimeKeeperAgent");
+		sd.setType("timeKeeperAgent");
 		dfd.addServices(sd);
 
 		DFAgentDescription[] result = null;
@@ -87,11 +87,15 @@ public class InterfaceAgent extends Agent{
 		}
 	}
 
-	//Send a message to the TimeKeeperAgent to change its tickLength
+	/**
+	 * Send a message to the TimeKeeperAgent to change its tickLength
+	 * 
+	 * @param newTick New value of the tick
+	 */
 	public void setTick(int newTick) {
 
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setOntology("changeTickOntology");
+		msg.setOntology("changeTickLengthOntology");
 		msg.addReceiver(this.timeKeeperAgent.getName());
 		msg.setContent(Integer.toString(newTick));
 		

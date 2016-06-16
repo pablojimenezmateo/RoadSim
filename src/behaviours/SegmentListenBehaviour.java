@@ -20,12 +20,12 @@ public class SegmentListenBehaviour extends Behaviour {
 	private MessageTemplate mtCarControl = 
 			MessageTemplate.and(
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-					MessageTemplate.MatchOntology("carToSegment"));
+					MessageTemplate.MatchOntology("carToSegmentOntology"));
 
 	private MessageTemplate mtEventManagerControl = 
 			MessageTemplate.and(
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-					MessageTemplate.MatchOntology("eventManagerToSegment"));
+					MessageTemplate.MatchOntology("eventManagerToSegmentOntology"));
 
 	private MessageTemplate mt = MessageTemplate.or(mtCarControl, mtEventManagerControl);
 
@@ -44,7 +44,7 @@ public class SegmentListenBehaviour extends Behaviour {
 
 		if (msg != null) { //There is a message
 			
-			if (msg.getOntology().equals("carToSegment")) {
+			if (msg.getOntology().equals("carToSegmentOntology")) {
 
 				String car = msg.getContent();
 				String parts[] = car.split("#");
@@ -63,7 +63,7 @@ public class SegmentListenBehaviour extends Behaviour {
 					this.agent.updateCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Boolean.valueOf(parts[3]));
 				}
 				
-			} else if (msg.getOntology().equals("eventManagerToSegment")) {
+			} else if (msg.getOntology().equals("eventManagerToSegmentOntology")) {
 				
 				Segment segment = this.agent.getSegment();
 				

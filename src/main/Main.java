@@ -8,6 +8,10 @@ import jade.core.ProfileImpl;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 
+/**
+ * Main program, it creates everything.
+ *
+ */
 public class Main {
 
 	private static final long tickLength = 100;
@@ -67,7 +71,7 @@ public class Main {
 		//Interface
 		try {
 
-			AgentController agent = mainContainer.createNewAgent("Interface", "agents.InterfaceAgent", new Object[]{map, drawGUI});
+			AgentController agent = mainContainer.createNewAgent("interfaceAgent", "agents.InterfaceAgent", new Object[]{map, drawGUI});
 
 			agent.start();
 
@@ -79,7 +83,7 @@ public class Main {
 
 		//TimeKeeper
 		try {
-			AgentController agent = mainContainer.createNewAgent("TimeKeeper", "agents.TimeKeeperAgent", new Object[]{tickLength});
+			AgentController agent = mainContainer.createNewAgent("timeKeeperAgent", "agents.TimeKeeperAgent", new Object[]{tickLength});
 
 			agent.start();
 
@@ -108,7 +112,7 @@ public class Main {
 
 			try {
 
-				AgentController agent = carContainer.createNewAgent("car" + Integer.toString(i), "agents.CarAgent", new Object[]{map, map.getRandomIntersection(), map.getRandomIntersection(), 120, "fastest"});
+				AgentController agent = carContainer.createNewAgent("car" + Integer.toString(i) + "Agent", "agents.CarAgent", new Object[]{map, map.getRandomIntersection(), map.getRandomIntersection(), 120, "fastest"});
 
 				agent.start();
 
@@ -121,7 +125,7 @@ public class Main {
 
 		//EventManager
 		try {
-			AgentController agent = mainContainer.createNewAgent("EventManager", "agents.EventManagerAgent", new Object[]{map, carContainer, segmentContainer, "events"});
+			AgentController agent = mainContainer.createNewAgent("eventManagerAgent", "agents.EventManagerAgent", new Object[]{map, carContainer, segmentContainer, "events"});
 
 			agent.start();
 

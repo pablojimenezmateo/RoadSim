@@ -8,7 +8,7 @@ import agents.InterfaceAgent;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import view.CanvasWorld.PanelRadar.Mobile;
+import view.CanvasWorld.MapPanel.Mobile;
 
 public class InterfaceDrawBehaviour extends Behaviour {
 
@@ -21,7 +21,7 @@ public class InterfaceDrawBehaviour extends Behaviour {
 			MessageTemplate.or(MessageTemplate.or(MessageTemplate.or(MessageTemplate.or(
 					MessageTemplate.MatchOntology("drawOntology"),
 					MessageTemplate.MatchOntology("logOntology")),
-					MessageTemplate.MatchOntology("deleteOntology")),
+					MessageTemplate.MatchOntology("deleteCarOntology")),
 					MessageTemplate.MatchOntology("updateTimeOntology")),
 					MessageTemplate.MatchOntology("numberOfCarsOntology")));
 
@@ -64,7 +64,7 @@ public class InterfaceDrawBehaviour extends Behaviour {
 						agent.getMap().setCars(cars);
 					}
 				});
-			} else if (msg.getOntology().equals("deleteOntology")) {
+			} else if (msg.getOntology().equals("deleteCarOntology")) {
 
 				SwingUtilities.invokeLater(new Runnable() {
 

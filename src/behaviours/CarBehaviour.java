@@ -25,7 +25,7 @@ public class CarBehaviour extends CyclicBehaviour {
 	private MessageTemplate mtTick = 
 			MessageTemplate.and(
 					MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-					MessageTemplate.MatchConversationId("tick"));
+					MessageTemplate.MatchOntology("tickOntology"));
 	private boolean done = false;
 
 	public CarBehaviour(CarAgent a, long timeout) {
@@ -114,12 +114,8 @@ public class CarBehaviour extends CyclicBehaviour {
 					//If we are in a new segment
 					if (!this.agent.getPreviousSegment().equals(next.getSegment())) {
 
-						//TODO: Check when this happens
-						//if (this.agent.getPreviousSegment() != null) {
-
-							//Deregister from previous segment
-							this.informSegment(this.agent.getPreviousSegment(), "deregister");
-						//}
+						//Deregister from previous segment
+						this.informSegment(this.agent.getPreviousSegment(), "deregister");
 
 						//Set the new previous segment
 						this.agent.setPreviousSegment(next.getSegment());
@@ -156,7 +152,7 @@ public class CarBehaviour extends CyclicBehaviour {
 	private void informSegment(Segment segment, String type) {
 
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-		msg.setOntology("carToSegment");
+		msg.setOntology("carToSegmentOntology");
 		msg.setConversationId(type);
 		msg.addReceiver(segment.getSegmentAgent().getAID());
 		msg.setContent(this.agent.getId() + "#" + Float.toString(this.agent.getX()) + "#" + Float.toString(this.agent.getY()) + "#" + this.agent.getSpecialColor() + "#");
@@ -176,7 +172,7 @@ public class CarBehaviour extends CyclicBehaviour {
 		if (this.agent.getInterfaceAgent() != null) {
 
 			ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-			msg.setOntology("deleteOntology");
+			msg.setOntology("deleteCarOntology");
 			msg.addReceiver(this.agent.getInterfaceAgent().getName());
 			msg.setContent(this.agent.getId());
 

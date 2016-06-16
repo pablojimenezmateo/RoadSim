@@ -19,7 +19,7 @@ import environment.Segment;
 
 /**
  * This code represents a mobile car, it will have an origin an a destination
- * and will get there using either the shortest or fastest paths.
+ * and will get there using either the shortest, fastest or smartest path.
  *
  */
 public class CarAgent extends Agent {
@@ -49,7 +49,7 @@ public class CarAgent extends Agent {
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("CarAgent");
+		sd.setType("carAgent");
 		sd.setName(getLocalName());
 
 		dfd.addServices(sd);
@@ -103,7 +103,7 @@ public class CarAgent extends Agent {
 		//Find the interface agent
 		dfd = new DFAgentDescription();
 		sd = new ServiceDescription();
-		sd.setType("interface");
+		sd.setType("interfaceAgent");
 		dfd.addServices(sd);
 
 		DFAgentDescription[] result = null;
@@ -122,14 +122,18 @@ public class CarAgent extends Agent {
 		ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 		msg.addReceiver(interfaceAgent.getName());
 		msg.setContent("x="+this.x+"y="+this.y+"id="+this.id+"algorithmType="+this.algorithmType);
-		msg.setConversationId("Car");
+		msg.setOntology("newCarOntology");
 		send(msg);
 		
 		//Runs the agent
 		addBehaviour(new CarBehaviour(this, 50));	
 	}
 	
-	//Recalculate the route
+	/**
+	 * Recalculate the route, this will be called from the behaviour if we are smart.
+	 * 
+	 * @param origin ID of the intersection where the car is
+	 */
 	public void recalculate(String origin) {
 		
 		this.path = this.alg.getPath(this.map, origin, getFinalIntersection(), this.maxSpeed);
