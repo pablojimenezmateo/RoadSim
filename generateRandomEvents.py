@@ -50,19 +50,19 @@ def generateStress(hour, minute, num):
 				"," + str(speed) + "," + random.choice(algorithms) + "\n")
 
 #All day
-generateRandomSample(8, 23, 2000)
+generateRandomSample(8, 23, 5000)
 
 #Morning
-generateRandomSample(8, 9, 700)
+generateRandomSample(8, 9, 1000)
 
 #Lunch time
-generateRandomSample(13, 15, 700)
+generateRandomSample(13, 15, 1000)
 
 #Evening
-generateRandomSample(16, 19, 700)
+generateRandomSample(16, 19, 1000)
 
 #Night
-generateRandomSample(20, 22, 700)
+generateRandomSample(20, 22, 1000)
 
 #Smart cars
-generateRandomSample(8, 23, 300, 'smartest')
+generateRandomSample(8, 23, 1000, 'smartest')

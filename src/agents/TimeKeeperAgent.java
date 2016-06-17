@@ -30,7 +30,7 @@ public class TimeKeeperAgent extends Agent {
 	private DFAgentDescription interfaceAgent;
 
 	protected void setup() {
-
+		
 		//Register the service
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
@@ -84,7 +84,7 @@ public class TimeKeeperAgent extends Agent {
 
 		try {
 			segmentsaux = DFService.searchUntilFound(
-					timeKeeperAgent, getDefaultDF(), dfd, null, 5000);
+					timeKeeperAgent, getDefaultDF(), dfd, null, 10000);
 		} catch (FIPAException e) { e.printStackTrace(); }
 
 		dfd = new DFAgentDescription();
