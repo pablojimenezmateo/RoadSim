@@ -28,11 +28,13 @@ public class EventManagerAgent extends Agent {
 
 	private static final long serialVersionUID = 8650883603283102448L;
 
-	private int timeElapsed, previousMinute;
+	private int previousMinute;
+	
+	private long timeElapsed;
 
 	private Set<String> aux;
 
-	private HashMap<Integer, List<String>> events;
+	private HashMap<Long, List<String>> events;
 
 	private jade.wrapper.AgentContainer carContainer, segmentContainer;
 
@@ -42,7 +44,7 @@ public class EventManagerAgent extends Agent {
 
 	protected void setup() {
 
-		this.events = new HashMap<Integer, List<String>>();
+		this.events = new HashMap<Long, List<String>>();
 		this.aux = new HashSet<String>();
 
 		//Get the map
@@ -54,6 +56,9 @@ public class EventManagerAgent extends Agent {
 
 		//Get the folder
 		String folder = (String) this.getArguments()[3];
+
+		//Get starting tick
+		this.timeElapsed = (long) this.getArguments()[4];
 
 		//Previous minute will be used to know when to send a msg to the interface, when the minute changes
 		this.previousMinute = 0;
@@ -86,9 +91,6 @@ public class EventManagerAgent extends Agent {
 		} catch (FIPAException e) { e.printStackTrace(); }
 
 		this.interfaceAgent = result[0];
-
-		//Start at 8:00
-		this.timeElapsed = 8*3600;
 
 		//Read from file
 		//Get all files from the given folder
@@ -149,7 +151,7 @@ public class EventManagerAgent extends Agent {
 			int hours = Integer.parseInt(time.split(":")[0]);
 			int minutes = Integer.parseInt(time.split(":")[1]);
 
-			int tick = 3600 * hours + 60 * minutes;
+			long tick = 3600 * hours + 60 * minutes;
 
 			//Add it to the event queue
 			if (this.getEvents().containsKey(tick)) {
@@ -167,11 +169,11 @@ public class EventManagerAgent extends Agent {
 	}
 
 	//Getters and setter
-	public int getTimeElapsed() {
+	public long getTimeElapsed() {
 		return timeElapsed;
 	}
 
-	public void setTimeElapsed(int timeElapsed) {
+	public void setTimeElapsed(long timeElapsed) {
 		this.timeElapsed = timeElapsed;
 	}
 
@@ -180,7 +182,7 @@ public class EventManagerAgent extends Agent {
 		this.timeElapsed += 1;
 	}
 
-	public HashMap<Integer, List<String>> getEvents() {
+	public HashMap<Long, List<String>> getEvents() {
 		return events;
 	}
 

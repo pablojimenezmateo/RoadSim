@@ -1,5 +1,10 @@
 package agents;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 
 import behaviours.SegmentListenBehaviour;
@@ -137,6 +142,7 @@ public class SegmentAgent extends Agent {
 	public void doLog(long currentTick) {
 
 		if (currentTick % 60 == 0) {
+
 			int totalMinutes = (int)currentTick / 60;
 			int hours = (int)(totalMinutes / 60);
 			int minutes = (int)(totalMinutes % 60);
@@ -147,10 +153,28 @@ public class SegmentAgent extends Agent {
 			//The time properly formated
 			String time = String.format("%02d", hours) + ":" + String.format("%02d", minutes);
 
-			ret.append(time + "," + this.getSegment().getMaxSpeed() + "," + this.segment.getCurrentAllowedSpeed() + "," + this.segment.getCurrentServiceLevel() + "," + cars.size());
+			ret.append(time + "," + this.getSegment().getMaxSpeed() + "," + this.segment.getCurrentAllowedSpeed() + "," + this.segment.getCurrentServiceLevel() + "," + cars.size() + '\n');
 
-			//TODO: Save to file
-			System.out.println(ret.toString());
+			//Check if file exists
+			File f = new File(Paths.get(this.segment.getLoggingDirectory() + "/" + this.getLocalName() + ".csv").toString());
+
+			if (!f.exists()) {
+				
+				try {
+					Files.write(Paths.get(this.segment.getLoggingDirectory() + "/" + this.getLocalName() + ".csv"), ("Time,Vmax,Vcurrent,Service,Num cars\n" + ret.toString()).getBytes());
+				}catch (IOException e) {
+
+					e.printStackTrace();
+				}
+
+			} else 
+
+				try {
+					Files.write(Paths.get(this.segment.getLoggingDirectory() + "/" + this.getLocalName() + ".csv"), ret.toString().getBytes(), StandardOpenOption.APPEND);
+				}catch (IOException e) {
+
+					e.printStackTrace();
+				}
 		}
 	}
 

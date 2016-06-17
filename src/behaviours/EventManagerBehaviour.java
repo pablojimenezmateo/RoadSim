@@ -36,7 +36,7 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 
 		if (msg != null) {
 			
-			int totalMinutes = this.agent.getTimeElapsed() / 60;
+			int totalMinutes = ((int) this.agent.getTimeElapsed()) / 60;
 			int hours = (int)(totalMinutes / 60);
 			int minutes = (int)(totalMinutes % 60);
 			
@@ -56,8 +56,8 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 			//Increment the elapsed time
 			this.agent.incrementeTimeElapsed();
 			
-			HashMap<Integer, List<String>> events = this.agent.getEvents();
-			int currentTick = this.agent.getTimeElapsed();
+			HashMap<Long, List<String>> events = this.agent.getEvents();
+			long currentTick = this.agent.getTimeElapsed();
 			int counter = 0;
 			
 			//Check for events that need to be fired at this tick
@@ -76,7 +76,7 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 						
 						try {
 
-							AgentController agent = this.agent.getCarContainer().createNewAgent("car" + Integer.toString(currentTick) + Integer.toString(counter), "agents.CarAgent", new Object[]{this.agent.getMap(), parts[2], parts[3], Integer.parseInt(parts[4]), parts[5]});
+							AgentController agent = this.agent.getCarContainer().createNewAgent("car" + Long.toString(currentTick) + Integer.toString(counter), "agents.CarAgent", new Object[]{this.agent.getMap(), parts[2], parts[3], Integer.parseInt(parts[4]), parts[5]});
 
 							agent.start();
 							

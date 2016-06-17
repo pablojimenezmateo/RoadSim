@@ -31,16 +31,22 @@ public class Map implements Serializable {
 
 	//The container where the segment agents will be created
 	private transient jade.wrapper.AgentContainer mainContainer;
+	
+	//Parameters for the segments
+	private boolean segmentLogging;
+	private String loggingDirectory;
 
 	/**
 	 * Constructor that builds a Map from a folder.
 	 * 
 	 * @param folder Folder where the files are stored.
 	 */
-	public Map(String folder, jade.wrapper.AgentContainer mainContainer) throws IOException{
+	public Map(String folder, jade.wrapper.AgentContainer mainContainer, boolean segmentLogging, String loggingDirectory) throws IOException{
 
 		//For the agents
 		this.mainContainer = mainContainer;		
+		this.segmentLogging = segmentLogging;
+		this.loggingDirectory = loggingDirectory;
 
 		//Read the files
 		this.intersectionCount = 0;
@@ -125,7 +131,7 @@ public class Map implements Serializable {
 					}
 
 					//Populate the map
-					Segment segment = new Segment(seg.getString("id"), origin, destination, seg.getDouble("length"), seg.getInt("maxSpeed"), seg.getInt("capacity"), seg.getInt("density"), seg.getInt("numberTracks"), this.mainContainer);
+					Segment segment = new Segment(seg.getString("id"), origin, destination, seg.getDouble("length"), seg.getInt("maxSpeed"), seg.getInt("capacity"), seg.getInt("density"), seg.getInt("numberTracks"), this.mainContainer, this.segmentLogging, this.loggingDirectory);
 
 					if(origin != null){
 						origin.addOutSegment(segment);

@@ -53,12 +53,15 @@ public class SegmentSendToDrawBehaviour extends CyclicBehaviour {
 		ACLMessage msg = myAgent.receive(mtTick);
 
 		if (msg != null) {
+			
+			//Log
+			if (this.agent.getSegment().isSegmentLogging()) {
+				
+				this.agent.doLog(Long.parseLong(msg.getContent()));
+			}
 
 			if (this.agent.carsSize() > 0) {
-				
-				//Log
-				this.agent.doLog(Long.parseLong(msg.getContent()));
-				
+
 				//Send the data to the InterfaceAgent
 				msg = new ACLMessage(ACLMessage.INFORM);
 				msg.setOntology("drawOntology");

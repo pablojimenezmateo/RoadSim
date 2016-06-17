@@ -63,6 +63,11 @@ public class Segment implements Serializable{
 	//The current service level
 	private Character currentServiceLevel;
 	
+	//Logging info
+	private boolean segmentLogging;
+	
+	private String loggingDirectory;
+	
 	/**
 	 * Default constructor. 
 	 */
@@ -91,7 +96,7 @@ public class Segment implements Serializable{
 	 * @param  destination {@link Intersection} where this {@link Segment} ends.
 	 * @param  length The length of this {@link Segment} in Km.
 	 */
-	public Segment(String id, Intersection origin, Intersection destination, double length, int maxSpeed, int capacity, int density, int numberTracks, jade.wrapper.AgentContainer mainContainer){
+	public Segment(String id, Intersection origin, Intersection destination, double length, int maxSpeed, int capacity, int density, int numberTracks, jade.wrapper.AgentContainer mainContainer, boolean segmentLogging, String loggingDirectory){
 
 		this.id = id;
 		this.origin = origin;
@@ -106,6 +111,8 @@ public class Segment implements Serializable{
 		this.currentAllowedSpeed = this.maxSpeed;
 		this.serviceLevels = new HashMap<Character, Float>();
 		this.currentServiceLevel = 'A';
+		this.segmentLogging = segmentLogging;
+		this.loggingDirectory = loggingDirectory;
 		
 		//Put the service levels
 		this.serviceLevels.put('A', 1.00f);
@@ -210,5 +217,13 @@ public class Segment implements Serializable{
 	public void setCurrentServiceLevel(Character currentServiceLevel) {
 		this.currentServiceLevel = currentServiceLevel;
 		this.currentAllowedSpeed = (int) (this.maxSpeed * this.serviceLevels.get(currentServiceLevel));
+	}
+
+	public boolean isSegmentLogging() {
+		return segmentLogging;
+	}
+
+	public String getLoggingDirectory() {
+		return loggingDirectory;
 	}
 }

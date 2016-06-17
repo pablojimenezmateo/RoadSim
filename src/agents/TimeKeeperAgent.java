@@ -24,7 +24,7 @@ import jade.lang.acl.MessageTemplate;
 public class TimeKeeperAgent extends Agent {
 
 	private static final long serialVersionUID = 4546329963020795810L;
-	private long tickLength, currentTick;
+	private long tickLength, currentTick, finishingTick;
 	private List<AID> agents = new ArrayList<AID>();
 	private int numberOfCars = 0;
 	private DFAgentDescription interfaceAgent;
@@ -62,6 +62,12 @@ public class TimeKeeperAgent extends Agent {
 
 		//Get the ticklength
 		this.tickLength = (long) this.getArguments()[0];
+		
+		//Start at specific tick
+		this.currentTick = (long) this.getArguments()[1];
+		
+		//End the simulation at specific tick
+		this.finishingTick = (long) this.getArguments()[2];
 
 		//A reference to myself
 		TimeKeeperAgent timeKeeperAgent = this;
@@ -96,9 +102,6 @@ public class TimeKeeperAgent extends Agent {
 		DFAgentDescription[] segments = segmentsaux;
 		DFAgentDescription[] manager = manageraux;
 		
-		//Set the currentTick
-		this.currentTick = 0;
-		
 		//This is the behaviour that sends a tick message to all the agents
 		addBehaviour(new Behaviour() {
 
@@ -106,12 +109,17 @@ public class TimeKeeperAgent extends Agent {
 
 			@Override
 			public void action() {
-
+				
+				if (timeKeeperAgent.currentTick == timeKeeperAgent.finishingTick) {
+					
+					System.exit(0);
+				}
+				
 				//I was using a TickerBehaviour, but you cannot change the tick length
 				try {
 					Thread.sleep(((TimeKeeperAgent) myAgent).getTickLength());
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					System.out.println("Bye");
 				}
 				
 				timeKeeperAgent.currentTick++;
@@ -155,7 +163,7 @@ public class TimeKeeperAgent extends Agent {
 				msg.setOntology("tickOntology"); 
 				msg.setContent(Long.toString(timeKeeperAgent.currentTick));
 				myAgent.send(msg);
-
+				
 				//Send the number of cars to the interface agent
 				msg = new ACLMessage(ACLMessage.INFORM);
 				msg.addReceiver(interfaceAgent.getName());

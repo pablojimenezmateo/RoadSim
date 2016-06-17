@@ -182,7 +182,10 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 		JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 1, 200, 100);
 		speedSlider.setBackground(Color.WHITE);
-
+		
+		//Ignore the default tick value if the GUI is drawn
+		this.interfaceAgent.setTick(100);
+		
 		//Labels
 		Hashtable<Integer, JLabel> labels = new Hashtable<Integer, JLabel>();
 		labels.put(1, new JLabel("Faster"));

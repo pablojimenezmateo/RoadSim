@@ -14,10 +14,29 @@ import jade.wrapper.StaleProxyException;
  */
 public class Main {
 
-	private static final long tickLength = 100;
+	//Initial tick length, this value is ignored if the GUI is drawn
+	private static final long tickLength = 1L;
+	
+	//Start at specific tick
+	private static final long startingTick = 8*3600; //Start at 8:00
+	
+	//Finish the simulation at specific tick
+	private static final long finishingTick = 23*3600; //End at 23:00
+	
+	//Random smart cars from the beginning
 	private static final int numberOfCars = 0;
+	
+	//Draw the GUI
 	private static final boolean drawGUI = true;
+	
+	//Start the RMA
 	private static final boolean startRMA = false;
+	
+	//Activate segment logging
+	private static final boolean segmentLogging = false;
+	
+	//Logging directory for the segments
+	private static final String loggingDirectory = "/home/gef/Documents/SimulationResults";
 
 	public static void main(String[] args) {
 
@@ -60,7 +79,7 @@ public class Main {
 		//Load the map
 		try {
 
-			map = new Map("staticFiles/map", segmentContainer);
+			map = new Map("staticFiles/map", segmentContainer, segmentLogging, loggingDirectory);
 		} catch (IOException e) {
 
 			System.out.println("Error reading the maps file.");
@@ -83,7 +102,7 @@ public class Main {
 
 		//TimeKeeper
 		try {
-			AgentController agent = mainContainer.createNewAgent("timeKeeperAgent", "agents.TimeKeeperAgent", new Object[]{tickLength});
+			AgentController agent = mainContainer.createNewAgent("timeKeeperAgent", "agents.TimeKeeperAgent", new Object[]{tickLength, startingTick, finishingTick});
 
 			agent.start();
 
@@ -96,7 +115,6 @@ public class Main {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 
@@ -125,7 +143,7 @@ public class Main {
 
 		//EventManager
 		try {
-			AgentController agent = mainContainer.createNewAgent("eventManagerAgent", "agents.EventManagerAgent", new Object[]{map, carContainer, segmentContainer, "staticFiles/events"});
+			AgentController agent = mainContainer.createNewAgent("eventManagerAgent", "agents.EventManagerAgent", new Object[]{map, carContainer, segmentContainer, "staticFiles/events", startingTick});
 
 			agent.start();
 
