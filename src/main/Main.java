@@ -60,7 +60,7 @@ public class Main {
 		//Load the map
 		try {
 
-			map = new Map("map/base", segmentContainer);
+			map = new Map("staticFiles/map", segmentContainer);
 		} catch (IOException e) {
 
 			System.out.println("Error reading the maps file.");
@@ -125,7 +125,7 @@ public class Main {
 
 		//EventManager
 		try {
-			AgentController agent = mainContainer.createNewAgent("eventManagerAgent", "agents.EventManagerAgent", new Object[]{map, carContainer, segmentContainer, "events"});
+			AgentController agent = mainContainer.createNewAgent("eventManagerAgent", "agents.EventManagerAgent", new Object[]{map, carContainer, segmentContainer, "staticFiles/events"});
 
 			agent.start();
 

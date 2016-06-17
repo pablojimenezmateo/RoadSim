@@ -150,7 +150,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		//Legend
 		BufferedImage legend = null;
 		try {
-			legend = ImageIO.read(new File(getClass().getResource("legend.png").getPath()));
+			legend = ImageIO.read(new File(CanvasWorld.class.getClassLoader().getResource("staticFiles/images/legend.png").getPath()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -293,7 +293,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		private HashMap<String, Mobile> carPositions;
 
 		private Image backGround;
-		private ImageIcon mapImage = new ImageIcon(getClass().getResource("red.png"));
+		private ImageIcon mapImage = new ImageIcon(CanvasWorld.class.getClassLoader().getResource("staticFiles/images/red.png"));
 
 		/**
 		 * Default constructor.
