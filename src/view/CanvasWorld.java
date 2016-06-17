@@ -88,6 +88,10 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 
 		setTitle("Car enviroment");
 		setBounds(10, 10, MAXWORLDX, MAXWORLDY);
+		
+		//Set the icon
+		ImageIcon icon = new ImageIcon(CanvasWorld.class.getClassLoader().getResource("staticFiles/images/icon.png"));
+		this.setIconImage(icon.getImage());
 
 		//Create a layout
 		this.getContentPane().setLayout(new GridBagLayout());
