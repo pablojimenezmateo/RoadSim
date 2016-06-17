@@ -24,7 +24,7 @@ import jade.lang.acl.MessageTemplate;
 public class TimeKeeperAgent extends Agent {
 
 	private static final long serialVersionUID = 4546329963020795810L;
-	private long tickLength;
+	private long tickLength, currentTick;
 	private List<AID> agents = new ArrayList<AID>();
 	private int numberOfCars = 0;
 	private DFAgentDescription interfaceAgent;
@@ -96,6 +96,9 @@ public class TimeKeeperAgent extends Agent {
 		DFAgentDescription[] segments = segmentsaux;
 		DFAgentDescription[] manager = manageraux;
 		
+		//Set the currentTick
+		this.currentTick = 0;
+		
 		//This is the behaviour that sends a tick message to all the agents
 		addBehaviour(new Behaviour() {
 
@@ -110,6 +113,8 @@ public class TimeKeeperAgent extends Agent {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				
+				timeKeeperAgent.currentTick++;
 
 				//Search for cars that are currently in the DF
 				DFAgentDescription[] cars = null;
@@ -148,6 +153,7 @@ public class TimeKeeperAgent extends Agent {
 				//before the message arrives, so we ignore the failure
 				msg.addUserDefinedParameter(ACLMessage.IGNORE_FAILURE, "true");
 				msg.setOntology("tickOntology"); 
+				msg.setContent(Long.toString(timeKeeperAgent.currentTick));
 				myAgent.send(msg);
 
 				//Send the number of cars to the interface agent

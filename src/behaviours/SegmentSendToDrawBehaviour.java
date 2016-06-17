@@ -9,6 +9,11 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
+/**
+ * This is the behaviour that sends the data to draw to the interface,
+ * it has all the information about the cars that belong to a segment.
+ *
+ */
 public class SegmentSendToDrawBehaviour extends CyclicBehaviour {
 
 	private static final long serialVersionUID = -6962886464372429902L;
@@ -50,6 +55,9 @@ public class SegmentSendToDrawBehaviour extends CyclicBehaviour {
 		if (msg != null) {
 
 			if (this.agent.carsSize() > 0) {
+				
+				//Log
+				this.agent.doLog(Long.parseLong(msg.getContent()));
 				
 				//Send the data to the InterfaceAgent
 				msg = new ACLMessage(ACLMessage.INFORM);
