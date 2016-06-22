@@ -1,6 +1,7 @@
 package agents;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import jade.core.AID;
@@ -112,6 +113,7 @@ public class TimeKeeperAgent extends Agent {
 				
 				if (timeKeeperAgent.currentTick == timeKeeperAgent.finishingTick) {
 					
+					System.out.println(new Date().toString());
 					System.exit(0);
 				}
 				

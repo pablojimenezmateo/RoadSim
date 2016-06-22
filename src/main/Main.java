@@ -1,6 +1,7 @@
 package main;
 
 import java.io.IOException;
+import java.util.Date;
 
 import environment.Map;
 import jade.core.Profile;
@@ -13,15 +14,15 @@ import jade.wrapper.StaleProxyException;
  *
  */
 public class Main {
-
+	
 	//Initial tick length, this value is ignored if the GUI is drawn
 	private static final long tickLength = 1L;
 	
 	//Start at specific tick
-	private static final long startingTick = 8*3600; //Start at 8:00
+	private static final long startingTick = 7*3600 + 59*60; //Start at 7:59
 	
 	//Finish the simulation at specific tick
-	private static final long finishingTick = 23*3600; //End at 23:00
+	private static final long finishingTick = 24*3600; //End at 00:00
 	
 	//Random smart cars from the beginning
 	private static final int numberOfCars = 0;
@@ -39,6 +40,8 @@ public class Main {
 	private static final String loggingDirectory = "/home/gef/Documents/SimulationResults";
 
 	public static void main(String[] args) {
+		
+		System.out.println(new Date().toString());
 
 		Map map = null;
 
@@ -52,15 +55,30 @@ public class Main {
 		Profile profile = new ProfileImpl(null, 1099, null);
 		profile.setParameter(Profile.CONTAINER_NAME, "Main container");
 
+		/*
+		 * This should make the program go smoother
+		 */
 		//How many threads will be in charge of delivering the messages, maximum 100, default 5
 		profile.setParameter("jade_core_messaging_MessageManager_poolsize", "100");
 		
-		//Size of the message queue, default 10000000
-		profile.setParameter("jade_core_messaging_MessageManager_maxqueuesize", "20000000");
+		/*
+		 * This is needed because when the MessageManager fills up, it slows down all the agents,
+		 * so to achieve a good performance we make the queue bigger.
+		 */
+		//Size of the message queue, default 100000000 (100Mb), now 4G
+		profile.setParameter("jade_core_messaging_MessageManager_maxqueuesize", "4000000000");
 		
+		/*
+		 * This is needed becaus the TimeKeeperAgent has to search for more than
+		 * 100 agents
+		 */
 		//By default, the maximum number of returned matches by the DF is 100
 		//this makes it larger
 		profile.setParameter("jade_domain_df_maxresult", "10000");
+		
+		//Default 1000ms, now 5000ms
+		profile.setParameter("jade_core_messaging_MessageManager_deliverytimethreshold", "5000");
+		
 
 		//Container that will hold the agents
 		jade.wrapper.AgentContainer mainContainer = rt.createMainContainer(profile);

@@ -38,7 +38,7 @@ public class CarBehaviour extends CyclicBehaviour {
 	public void action() {
 
 		//Block until tick is received
-		ACLMessage msg = this.agent.blockingReceive(mtTick);
+		ACLMessage msg = this.agent.receive(mtTick);
 
 		if (msg != null) {
 
@@ -145,7 +145,7 @@ public class CarBehaviour extends CyclicBehaviour {
 					this.informSegment(next.getSegment(), "update");
 				}
 			}
-		}
+		} else block();
 	}
 
 	//This method will send a message to a given segment

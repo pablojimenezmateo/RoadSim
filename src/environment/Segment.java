@@ -33,7 +33,7 @@ public class Segment implements Serializable{
 	private int capacity;
 	
 	//Density
-	private int density;
+	private double density;
 
 	//Number of tracks
 	private int numberTracks;
@@ -194,11 +194,11 @@ public class Segment implements Serializable{
 		this.segmentAgent.setSegment(this);
 	}
 
-	public int getDensity() {
+	public double getDensity() {
 		return density;
 	}
 
-	public void setDensity(int density) {
+	public void setDensity(double density) {
 		this.density = density;
 	}
 

@@ -53,7 +53,7 @@ public class SegmentListenBehaviour extends Behaviour {
 				if (msg.getConversationId().equals("register")) { 
 
 					this.agent.addCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Boolean.valueOf(parts[3]));
-
+					
 				} else if (msg.getConversationId().equals("deregister")) { //Deregister
 
 					this.agent.removeCar(parts[0]);
@@ -61,6 +61,34 @@ public class SegmentListenBehaviour extends Behaviour {
 				} else if (msg.getConversationId().equals("update")) { //Update position
 
 					this.agent.updateCar(parts[0], Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Boolean.valueOf(parts[3]));
+				}
+				
+				Segment segment = this.agent.getSegment();
+				int numCars = this.agent.getCars().size();
+				
+				//Set the density
+				double density = numCars/segment.getLength();
+				segment.setDensity(density);
+				
+				//Set the service level
+				if (density < 6.2) {
+					
+					segment.setCurrentServiceLevel('A');
+				} else if (density > 6.2 && density < 10.0) {
+					
+					segment.setCurrentServiceLevel('B');
+				} else if (density >= 10.0 && density < 15.0) {
+					
+					segment.setCurrentServiceLevel('C');
+				} else if (density >= 15.0 && density < 20.0) {
+					
+					segment.setCurrentServiceLevel('D');
+				} else if (density >= 20.0  && density < 22.8) {
+					
+					segment.setCurrentServiceLevel('E');
+				} else if (density > 22.8) {
+					
+					segment.setCurrentServiceLevel('F');
 				}
 				
 			} else if (msg.getOntology().equals("eventManagerToSegmentOntology")) {

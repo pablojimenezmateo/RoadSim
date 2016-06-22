@@ -32,7 +32,7 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 	public void action() {
 
 		//Block until tick is received
-		ACLMessage msg = this.agent.blockingReceive(mtTick);
+		ACLMessage msg = this.agent.receive(mtTick);
 
 		if (msg != null) {
 			
@@ -111,6 +111,6 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 
 				myAgent.send(msg);
 			}
-		}
+		} else block();
 	}
 }
