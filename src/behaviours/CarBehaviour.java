@@ -7,7 +7,6 @@ import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.messaging.TopicManagementHelper;
 import jade.domain.DFService;
-import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -196,8 +195,7 @@ public class CarBehaviour extends CyclicBehaviour {
 		
 		try {
 			DFService.deregister(this.agent,  dfd);
-		} catch (FIPAException fe) { 
-			fe.printStackTrace(); 
+		} catch (Exception e) { 
 		}
 
 		this.agent.doDelete();
