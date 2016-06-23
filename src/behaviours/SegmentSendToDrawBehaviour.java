@@ -1,7 +1,9 @@
 package behaviours;
 
 import agents.SegmentAgent;
+import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.messaging.TopicManagementHelper;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -20,11 +22,7 @@ public class SegmentSendToDrawBehaviour extends CyclicBehaviour {
 
 	private SegmentAgent agent;
 	private DFAgentDescription interfaceAgent;
-
-	private MessageTemplate mtTick = 
-			MessageTemplate.and(
-					MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-					MessageTemplate.MatchOntology("tickOntology"));
+	private AID topic;
 
 	public SegmentSendToDrawBehaviour(SegmentAgent agent) {
 
@@ -44,13 +42,25 @@ public class SegmentSendToDrawBehaviour extends CyclicBehaviour {
 		} catch (FIPAException e) { e.printStackTrace(); }
 
 		this.interfaceAgent = result[0];
+		
+		this.topic = null;
+		
+		try {
+			TopicManagementHelper topicHelper = (TopicManagementHelper) this.agent.getHelper(TopicManagementHelper.SERVICE_NAME);
+			topic = topicHelper.createTopic("tick");
+			topicHelper.register(topic);
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void action() {
 
 		//Block until tick is received
-		ACLMessage msg = myAgent.receive(mtTick);
+		ACLMessage msg = myAgent.receive(MessageTemplate.MatchTopic(topic));
 
 		if (msg != null) {
 			

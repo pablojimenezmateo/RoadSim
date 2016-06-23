@@ -54,7 +54,7 @@ public class Main {
 		//Create a profile for the main container
 		Profile profile = new ProfileImpl(null, 1099, null);
 		profile.setParameter(Profile.CONTAINER_NAME, "Main container");
-
+		
 		/*
 		 * This should make the program go smoother
 		 */
@@ -69,17 +69,27 @@ public class Main {
 		profile.setParameter("jade_core_messaging_MessageManager_maxqueuesize", "4000000000");
 		
 		/*
-		 * This is needed becaus the TimeKeeperAgent has to search for more than
+		 * This does not work, but is should
+		 */
+		profile.setParameter("jade_core_messaging_MessageManager_warningqueuesize", "4000000000000");
+		
+		//Default 1000ms, now 5000ms
+		profile.setParameter("jade_core_messaging_MessageManager_deliverytimethreshold", "5000");
+
+		/*
+		 * This is needed because the TimeKeeperAgent has to search for more than
 		 * 100 agents
 		 */
 		//By default, the maximum number of returned matches by the DF is 100
 		//this makes it larger
 		profile.setParameter("jade_domain_df_maxresult", "10000");
 		
-		//Default 1000ms, now 5000ms
-		profile.setParameter("jade_core_messaging_MessageManager_deliverytimethreshold", "5000");
+		/*
+		 * This activates the Topic service, which allows us to "broadcast" messages.
+		 * It will be activated in all containers
+		 */
+		profile.setParameter(Profile.SERVICES, "jade.core.messaging.TopicManagementService");
 		
-
 		//Container that will hold the agents
 		jade.wrapper.AgentContainer mainContainer = rt.createMainContainer(profile);
 
@@ -101,6 +111,32 @@ public class Main {
 		profile = new ProfileImpl(null, 1099, null);
 		profile.setParameter(Profile.CONTAINER_NAME, "Segment container");
 		
+		/*
+		 * This should make the program go smoother
+		 */
+		//How many threads will be in charge of delivering the messages, maximum 100, default 5
+		profile.setParameter("jade_core_messaging_MessageManager_poolsize", "100");
+		
+		/*
+		 * This is needed because when the MessageManager fills up, it slows down all the agents,
+		 * so to achieve a good performance we make the queue bigger.
+		 */
+		//Size of the message queue, default 100000000 (100Mb), now 4G
+		profile.setParameter("jade_core_messaging_MessageManager_maxqueuesize", "4000000000");
+		
+		/*
+		 * This does not work, but is should
+		 */
+		profile.setParameter("jade_core_messaging_MessageManager_warningqueuesize", "4000000000000");
+		
+		//Default 1000ms, now 5000ms
+		profile.setParameter("jade_core_messaging_MessageManager_deliverytimethreshold", "5000");
+		
+		/*
+		 * This activates the Topic service, which allows us to "broadcast" messages
+		 */
+		profile.setParameter(Profile.SERVICES, "jade.core.messaging.TopicManagementService");
+
 		//Container that will hold the agents
 		jade.wrapper.AgentContainer segmentContainer = rt.createAgentContainer(profile);
 
@@ -162,6 +198,32 @@ public class Main {
 		//Create a profile for the car container
 		profile = new ProfileImpl(null, 1099, null);
 		profile.setParameter(Profile.CONTAINER_NAME, "Car container");
+		
+		/*
+		 * This should make the program go smoother
+		 */
+		//How many threads will be in charge of delivering the messages, maximum 100, default 5
+		profile.setParameter("jade_core_messaging_MessageManager_poolsize", "100");
+		
+		/*
+		 * This is needed because when the MessageManager fills up, it slows down all the agents,
+		 * so to achieve a good performance we make the queue bigger.
+		 */
+		//Size of the message queue, default 100000000 (100Mb), now 4G
+		profile.setParameter("jade_core_messaging_MessageManager_maxqueuesize", "4000000000");
+		
+		/*
+		 * This does not work, but is should
+		 */
+		profile.setParameter("jade_core_messaging_MessageManager_warningqueuesize", "4000000000000");
+		
+		//Default 1000ms, now 5000ms
+		profile.setParameter("jade_core_messaging_MessageManager_deliverytimethreshold", "5000");
+		
+		/*
+		 * This activates the Topic service, which allows us to "broadcast" messages
+		 */
+		profile.setParameter(Profile.SERVICES, "jade.core.messaging.TopicManagementService");
 
 		//Container that will hold the agents
 		jade.wrapper.AgentContainer carContainer = rt.createAgentContainer(profile);

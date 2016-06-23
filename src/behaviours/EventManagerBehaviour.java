@@ -7,6 +7,7 @@ import java.util.List;
 import agents.EventManagerAgent;
 import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.messaging.TopicManagementHelper;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.wrapper.AgentController;
@@ -17,22 +18,32 @@ public class EventManagerBehaviour extends CyclicBehaviour {
 	private static final long serialVersionUID = 4537023518719689317L;
 
 	private EventManagerAgent agent;
-
-	private MessageTemplate mtTick = 
-			MessageTemplate.and(
-					MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-					MessageTemplate.MatchOntology("tickOntology"));
+	
+	private AID topic;
 
 	public EventManagerBehaviour(EventManagerAgent agent) {
 
 		this.agent = agent;
+		
+		this.topic = null;
+		
+		try {
+			TopicManagementHelper topicHelper = (TopicManagementHelper) this.agent.getHelper(TopicManagementHelper.SERVICE_NAME);
+			topic = topicHelper.createTopic("tick");
+			topicHelper.register(topic);
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void action() {
 
 		//Block until tick is received
-		ACLMessage msg = this.agent.receive(mtTick);
+		//ACLMessage msg = this.agent.receive(mtTick);
+		ACLMessage msg = myAgent.receive(MessageTemplate.MatchTopic(topic));
 
 		if (msg != null) {
 			

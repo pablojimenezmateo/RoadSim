@@ -7,6 +7,7 @@ import java.util.List;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.messaging.TopicManagementHelper;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -27,11 +28,10 @@ public class TimeKeeperAgent extends Agent {
 	private static final long serialVersionUID = 4546329963020795810L;
 	private long tickLength, currentTick, finishingTick;
 	private List<AID> agents = new ArrayList<AID>();
-	private int numberOfCars = 0;
 	private DFAgentDescription interfaceAgent;
 
 	protected void setup() {
-		
+
 		//Register the service
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
@@ -63,69 +63,65 @@ public class TimeKeeperAgent extends Agent {
 
 		//Get the ticklength
 		this.tickLength = (long) this.getArguments()[0];
-		
+
 		//Start at specific tick
 		this.currentTick = (long) this.getArguments()[1];
-		
+
 		//End the simulation at specific tick
 		this.finishingTick = (long) this.getArguments()[2];
 
 		//A reference to myself
 		TimeKeeperAgent timeKeeperAgent = this;
 
-		//Because the segments and the manager don't change,
-		//I'll do the search just once
-		DFAgentDescription[] segmentsaux = null;
-		DFAgentDescription[] manageraux = null;
-		
-		dfd = new DFAgentDescription();
-		sd  = new ServiceDescription();
-		sd.setType("segmentAgent");
-		dfd.addServices(sd);
-
+		//Create the tick topic
+		AID topic = null;
 		try {
-			segmentsaux = DFService.searchUntilFound(
-					timeKeeperAgent, getDefaultDF(), dfd, null, 10000);
-		} catch (FIPAException e) { e.printStackTrace(); }
+			TopicManagementHelper topicHelper = (TopicManagementHelper) getHelper(TopicManagementHelper.SERVICE_NAME);
+			topic = topicHelper.createTopic("tick");
 
-		dfd = new DFAgentDescription();
-		sd  = new ServiceDescription();
-		sd.setType("eventManagerAgent");
-		dfd.addServices(sd);
+		} catch (Exception e) {
+			System.err.println("Agent "+getLocalName()+": ERROR creating topic \"JADE\"");
+			e.printStackTrace();
+		}
 
-		try {
-			manageraux = DFService.searchUntilFound(
-					timeKeeperAgent, getDefaultDF(), dfd, null, 5000);
-		} catch (FIPAException e) { e.printStackTrace(); }
-		
-		//We need this auxiliary variables so that the variables are readable
-		//from the runnable
-		DFAgentDescription[] segments = segmentsaux;
-		DFAgentDescription[] manager = manageraux;
-		
-		//This is the behaviour that sends a tick message to all the agents
+		final AID finalTopic = topic;
+
 		addBehaviour(new Behaviour() {
 
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void action() {
-				
+
 				if (timeKeeperAgent.currentTick == timeKeeperAgent.finishingTick) {
-					
+
 					System.out.println(new Date().toString());
 					System.exit(0);
 				}
-				
+
 				//I was using a TickerBehaviour, but you cannot change the tick length
 				try {
 					Thread.sleep(((TimeKeeperAgent) myAgent).getTickLength());
 				} catch (InterruptedException e) {
 					System.out.println("Bye");
 				}
-				
+
+				try {
+					Thread.sleep(timeKeeperAgent.getTickLength());
+				} catch (InterruptedException e1) {
+
+					e1.printStackTrace();
+				}
+
 				timeKeeperAgent.currentTick++;
 
+				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+				msg.addUserDefinedParameter(ACLMessage.IGNORE_FAILURE, "true");
+				msg.addReceiver(finalTopic);
+				msg.setContent(Long.toString(timeKeeperAgent.currentTick));
+				myAgent.send(msg);
+
+				//Send the number of cars to the interface agent
 				//Search for cars that are currently in the DF
 				DFAgentDescription[] cars = null;
 
@@ -139,38 +135,10 @@ public class TimeKeeperAgent extends Agent {
 							timeKeeperAgent, getDefaultDF(), dfd, null);
 				} catch (FIPAException e) { e.printStackTrace(); }
 
-				//Send a tick to all the agents
-				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-
-				if (cars != null){
-					
-					numberOfCars = 0;
-					
-					for (DFAgentDescription dfAgentDescription : cars) {
-						
-						msg.addReceiver(dfAgentDescription.getName());
-						numberOfCars++;
-					}
-				}
-
-				for (DFAgentDescription dfAgentDescription : segments) {
-					msg.addReceiver(dfAgentDescription.getName());
-				}
-
-				msg.addReceiver(manager[0].getName());
-				
-				//It can happen that the car has already finished its execution
-				//before the message arrives, so we ignore the failure
-				msg.addUserDefinedParameter(ACLMessage.IGNORE_FAILURE, "true");
-				msg.setOntology("tickOntology"); 
-				msg.setContent(Long.toString(timeKeeperAgent.currentTick));
-				myAgent.send(msg);
-				
-				//Send the number of cars to the interface agent
 				msg = new ACLMessage(ACLMessage.INFORM);
 				msg.addReceiver(interfaceAgent.getName());
 				msg.setOntology("numberOfCarsOntology");
-				msg.setContent(Integer.toString(numberOfCars));
+				msg.setContent(Integer.toString(cars.length));
 				myAgent.send(msg);
 			}
 
@@ -179,6 +147,10 @@ public class TimeKeeperAgent extends Agent {
 				return false;
 			}
 		});
+
+		/**
+		 * End of test code
+		 */
 
 		//Check for tickLeght changes
 		addBehaviour(new Behaviour() {

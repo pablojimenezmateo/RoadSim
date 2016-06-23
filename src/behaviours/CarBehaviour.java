@@ -3,7 +3,9 @@ package behaviours;
 import agents.CarAgent;
 import environment.Segment;
 import environment.Step;
+import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.messaging.TopicManagementHelper;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -22,14 +24,23 @@ import jade.lang.acl.MessageTemplate;
 public class CarBehaviour extends CyclicBehaviour {
 
 	private CarAgent agent;
-	private MessageTemplate mtTick = 
-			MessageTemplate.and(
-					MessageTemplate.MatchPerformative(ACLMessage.INFORM),
-					MessageTemplate.MatchOntology("tickOntology"));
+	private AID topic;
 	private boolean done = false;
 
 	public CarBehaviour(CarAgent a, long timeout) {
 		this.agent = a;
+		
+		this.topic = null;
+		
+		try {
+			TopicManagementHelper topicHelper = (TopicManagementHelper) this.agent.getHelper(TopicManagementHelper.SERVICE_NAME);
+			topic = topicHelper.createTopic("tick");
+			topicHelper.register(topic);
+			
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -38,7 +49,7 @@ public class CarBehaviour extends CyclicBehaviour {
 	public void action() {
 
 		//Block until tick is received
-		ACLMessage msg = this.agent.receive(mtTick);
+		ACLMessage msg = myAgent.receive(MessageTemplate.MatchTopic(topic));
 
 		if (msg != null) {
 

@@ -113,6 +113,14 @@ public class CarAgent extends Agent {
 					this, getDefaultDF(), dfd, null, 5000);
 		} catch (FIPAException e) { e.printStackTrace(); }
 
+		while (result[0] == null) {
+			
+			try {
+				result = DFService.searchUntilFound(
+						this, getDefaultDF(), dfd, null, 5000);
+			} catch (FIPAException e) { e.printStackTrace(); }
+		}
+		
 		this.interfaceAgent = result[0];
 
 		//An unique identifier for the car
