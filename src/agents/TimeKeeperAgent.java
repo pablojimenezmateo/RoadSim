@@ -1,7 +1,6 @@
 package agents;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import jade.core.AID;
@@ -80,7 +79,7 @@ public class TimeKeeperAgent extends Agent {
 			topic = topicHelper.createTopic("tick");
 
 		} catch (Exception e) {
-			System.err.println("Agent "+getLocalName()+": ERROR creating topic \"JADE\"");
+			System.err.println("Agent " + getLocalName() + ": ERROR creating topic \"tick\"");
 			e.printStackTrace();
 		}
 
@@ -95,7 +94,6 @@ public class TimeKeeperAgent extends Agent {
 
 				if (timeKeeperAgent.currentTick == timeKeeperAgent.finishingTick) {
 
-					System.out.println(new Date().toString());
 					System.exit(0);
 				}
 
@@ -106,21 +104,25 @@ public class TimeKeeperAgent extends Agent {
 					System.out.println("Bye");
 				}
 
-				try {
-					Thread.sleep(timeKeeperAgent.getTickLength());
-				} catch (InterruptedException e1) {
+				if (timeKeeperAgent.getTickLength() > 0){
+					try {
+						Thread.sleep(timeKeeperAgent.getTickLength());
+					} catch (InterruptedException e1) {
 
-					e1.printStackTrace();
+						e1.printStackTrace();
+					}
 				}
 
 				timeKeeperAgent.currentTick++;
 
 				ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
 				msg.addUserDefinedParameter(ACLMessage.IGNORE_FAILURE, "true");
+				msg.addUserDefinedParameter(ACLMessage.DONT_NOTIFY_FAILURE, "true");
+				msg.addUserDefinedParameter(ACLMessage.SF_TIMEOUT, "-1");
 				msg.addReceiver(finalTopic);
 				msg.setContent(Long.toString(timeKeeperAgent.currentTick));
 				myAgent.send(msg);
-
+				
 				//Send the number of cars to the interface agent
 				//Search for cars that are currently in the DF
 				DFAgentDescription[] cars = null;
@@ -133,13 +135,18 @@ public class TimeKeeperAgent extends Agent {
 				try {
 					cars = DFService.search(
 							timeKeeperAgent, getDefaultDF(), dfd, null);
-				} catch (FIPAException e) { e.printStackTrace(); }
+				} catch (FIPAException e) { 
 
-				msg = new ACLMessage(ACLMessage.INFORM);
-				msg.addReceiver(interfaceAgent.getName());
-				msg.setOntology("numberOfCarsOntology");
-				msg.setContent(Integer.toString(cars.length));
-				myAgent.send(msg);
+					e.printStackTrace(); 
+				}
+
+				if (cars != null) {
+					msg = new ACLMessage(ACLMessage.INFORM);
+					msg.addReceiver(interfaceAgent.getName());
+					msg.setOntology("numberOfCarsOntology");
+					msg.setContent(Integer.toString(cars.length));
+					myAgent.send(msg);
+				}
 			}
 
 			@Override

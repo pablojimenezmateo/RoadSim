@@ -1,7 +1,6 @@
 package main;
 
 import java.io.IOException;
-import java.util.Date;
 
 import environment.Map;
 import jade.core.Profile;
@@ -41,8 +40,6 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		System.out.println(new Date().toString());
-
 		Map map = null;
 
 		//Get a hold on JADE runtime
@@ -65,13 +62,13 @@ public class Main {
 		 * This is needed because when the MessageManager fills up, it slows down all the agents,
 		 * so to achieve a good performance we make the queue bigger.
 		 */
-		//Size of the message queue, default 100000000 (100Mb), now 4G
-		profile.setParameter("jade_core_messaging_MessageManager_maxqueuesize", "4000000000");
+		//Size of the message queue, default 100000000 (100Mb), now the maximum size we can
+		profile.setParameter("jade_core_messaging_MessageManager_maxqueuesize", Integer.toString(Integer.MAX_VALUE));
 		
 		/*
-		 * This does not work, but is should
+		 * This is just so that the program does not bother us with warnings
 		 */
-		profile.setParameter("jade_core_messaging_MessageManager_warningqueuesize", "4000000000000");
+		profile.setParameter("jade_core_messaging_MessageManager_warningqueuesize", Integer.toString(Integer.MAX_VALUE));
 		
 		//Default 1000ms, now 5000ms
 		profile.setParameter("jade_core_messaging_MessageManager_deliverytimethreshold", "5000");
@@ -110,27 +107,6 @@ public class Main {
 		//We will use a container only for the segments
 		profile = new ProfileImpl(null, 1099, null);
 		profile.setParameter(Profile.CONTAINER_NAME, "Segment container");
-		
-		/*
-		 * This should make the program go smoother
-		 */
-		//How many threads will be in charge of delivering the messages, maximum 100, default 5
-		profile.setParameter("jade_core_messaging_MessageManager_poolsize", "100");
-		
-		/*
-		 * This is needed because when the MessageManager fills up, it slows down all the agents,
-		 * so to achieve a good performance we make the queue bigger.
-		 */
-		//Size of the message queue, default 100000000 (100Mb), now 4G
-		profile.setParameter("jade_core_messaging_MessageManager_maxqueuesize", "4000000000");
-		
-		/*
-		 * This does not work, but is should
-		 */
-		profile.setParameter("jade_core_messaging_MessageManager_warningqueuesize", "4000000000000");
-		
-		//Default 1000ms, now 5000ms
-		profile.setParameter("jade_core_messaging_MessageManager_deliverytimethreshold", "5000");
 		
 		/*
 		 * This activates the Topic service, which allows us to "broadcast" messages
@@ -200,27 +176,6 @@ public class Main {
 		profile.setParameter(Profile.CONTAINER_NAME, "Car container");
 		
 		/*
-		 * This should make the program go smoother
-		 */
-		//How many threads will be in charge of delivering the messages, maximum 100, default 5
-		profile.setParameter("jade_core_messaging_MessageManager_poolsize", "100");
-		
-		/*
-		 * This is needed because when the MessageManager fills up, it slows down all the agents,
-		 * so to achieve a good performance we make the queue bigger.
-		 */
-		//Size of the message queue, default 100000000 (100Mb), now 4G
-		profile.setParameter("jade_core_messaging_MessageManager_maxqueuesize", "4000000000");
-		
-		/*
-		 * This does not work, but is should
-		 */
-		profile.setParameter("jade_core_messaging_MessageManager_warningqueuesize", "4000000000000");
-		
-		//Default 1000ms, now 5000ms
-		profile.setParameter("jade_core_messaging_MessageManager_deliverytimethreshold", "5000");
-		
-		/*
 		 * This activates the Topic service, which allows us to "broadcast" messages
 		 */
 		profile.setParameter(Profile.SERVICES, "jade.core.messaging.TopicManagementService");
@@ -251,6 +206,5 @@ public class Main {
 				e.printStackTrace();
 			}
 		}
-
 	}
 }

@@ -1,10 +1,2 @@
-/agents/
-/behaviours/
-/environment/
 /main/
-/org/
-/searchAlgorithms/
-/view/
-/events/
-/staticFiles/
-/map/
+/agents/

@@ -52,7 +52,7 @@ public class CarBehaviour extends CyclicBehaviour {
 		ACLMessage msg = myAgent.receive(MessageTemplate.MatchTopic(topic));
 
 		if (msg != null) {
-
+			
 			//If I still have to move somewhere
 			if(this.agent.getPath().getGraphicalPath().size() > 0) {
 

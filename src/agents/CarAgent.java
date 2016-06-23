@@ -42,7 +42,7 @@ public class CarAgent extends Agent {
 	private boolean smart = false;
 	private Algorithm alg;
 	private int algorithmType;
-
+	
 	protected void setup() {
 
 		//Register the agent
@@ -55,8 +55,12 @@ public class CarAgent extends Agent {
 		dfd.addServices(sd);
 		try {
 			DFService.register(this,  dfd);
-		} catch (FIPAException fe) { 
-			fe.printStackTrace(); 
+		} catch (FIPAException fe) {
+			
+			//Sometimes an agent cannot find the DF in time
+			//I still don't know when this happens so I will
+			//simply kill it for now.
+			this.takeDown();
 		}
 
 		//Get the map from an argument

@@ -184,7 +184,7 @@ public class CanvasWorld extends JFrame implements ActionListener, ChangeListene
 		toolbarConstraints.gridx = 1; //Select column
 		toolbarConstraints.gridy = 5; //Select row
 
-		JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 1, 200, 100);
+		JSlider speedSlider = new JSlider(JSlider.HORIZONTAL, 0, 200, 100);
 		speedSlider.setBackground(Color.WHITE);
 		
 		//Ignore the default tick value if the GUI is drawn
