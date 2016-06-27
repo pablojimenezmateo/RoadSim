@@ -36,7 +36,7 @@ public class Main {
 	private static final boolean segmentLogging = false;
 	
 	//Logging directory for the segments
-	private static final String loggingDirectory = "/home/gef/Documents/SimulationResults";
+	private static final String loggingDirectory = "/home/usuario/Documents/SimulationResults";
 
 	public static void main(String[] args) {
 		
@@ -157,18 +157,6 @@ public class Main {
 		} catch (InterruptedException e2) {
 			e2.printStackTrace();
 		}
-		
-		//EventManager
-		try {
-			AgentController agent = mainContainer.createNewAgent("eventManagerAgent", "agents.EventManagerAgent", new Object[]{map, mainContainer, segmentContainer, "staticFiles/events", startingTick});
-
-			agent.start();
-
-		} catch (StaleProxyException e1) {
-
-			System.out.println("Error starting the EventManager agent");
-			e1.printStackTrace();
-		}
 
 		//Cars
 		//Create a profile for the car container
@@ -205,6 +193,18 @@ public class Main {
 				System.out.println("Error starting a car agent");
 				e.printStackTrace();
 			}
+		}
+		
+		//EventManager
+		try {
+			AgentController agent = mainContainer.createNewAgent("eventManagerAgent", "agents.EventManagerAgent", new Object[]{map, carContainer, segmentContainer, "staticFiles/events", startingTick});
+
+			agent.start();
+
+		} catch (StaleProxyException e1) {
+
+			System.out.println("Error starting the EventManager agent");
+			e1.printStackTrace();
 		}
 	}
 }
